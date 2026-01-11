@@ -130,7 +130,7 @@ export default function ProfileOrangtuaPage() {
                 <h3 className="font-bold text-gray-800 text-lg">Detail Profil</h3>
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-2 text-white bg-[#8EC3AA] hover:bg-[#7AB399] transition-colors px-4 py-2 rounded-xl text-sm font-medium"
+                  className="flex items-center gap-2 text-white bg-[#8EC3AA] hover:bg-[#7AB399] transition-colors px-4 py-2 rounded-xl text-sm font-medium cursor-pointer"
                 >
                   <Edit3 className="w-4 h-4" />
                   <span>Edit</span>
@@ -288,14 +288,14 @@ export default function ProfileOrangtuaPage() {
             <div className="flex flex-col sm:flex-row justify-end mt-10 gap-3 border-t pt-6">
               <button
                 onClick={() => setIsEditing(false)}
-                className="px-6 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold transition-colors w-full sm:w-auto text-sm"
+                className="px-6 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold transition-colors w-full sm:w-auto text-sm cursor-pointer"
               >
                 Batal
               </button>
 
               <button
                 onClick={handleUpdate}
-                className="px-6 py-2.5 rounded-xl bg-[#8EC3AA] hover:bg-[#7AB399] text-white font-semibold shadow-md shadow-[#8EC3AA]/20 transition-all w-full sm:w-auto text-sm"
+                className="px-6 py-2.5 rounded-xl bg-[#8EC3AA] hover:bg-[#7AB399] text-white font-semibold shadow-md shadow-[#8EC3AA]/20 transition-all w-full sm:w-auto text-sm cursor-pointer"
               >
                 Simpan Perubahan
               </button>
