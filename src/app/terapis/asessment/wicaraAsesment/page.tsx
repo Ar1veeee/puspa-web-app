@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react"; // Tambahkan Suspense
 import { ChevronDown } from "lucide-react";
 import SidebarTerapis from "@/components/layout/sidebar_terapis";
 import HeaderTerapis from "@/components/layout/header_terapis";
@@ -38,7 +38,24 @@ const parseOptions = (opt: any): string[] => {
   return [];
 };
 
+// --- KOMPONEN UTAMA (Wrapper dengan Suspense) ---
 export default function AsesmenWicaraPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen items-center justify-center bg-gray-50 text-[#36315B]">
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#409E86] border-t-transparent"></div>
+          <p className="font-semibold">Memuat Halaman Asesmen...</p>
+        </div>
+      </div>
+    }>
+      <AsesmenWicaraContent />
+    </Suspense>
+  );
+}
+
+// --- SUB-KOMPONEN KONTEN (Logika Asli Anda) ---
+function AsesmenWicaraContent() {
   const params = useSearchParams();
   const router = useRouter();
   const assessmentId = params.get("assessment_id") || "";
@@ -198,7 +215,6 @@ export default function AsesmenWicaraPage() {
         err?.message ||
         "Terjadi kesalahan";
 
-      // ⛔ TIDAK PUNYA IZIN
       if (status === 403) {
         alert(
           "❌ Anda tidak memiliki izin untuk menyimpan assessment ini.\n\n" +
@@ -209,14 +225,12 @@ export default function AsesmenWicaraPage() {
         return;
       }
 
-      // 🔐 TOKEN HABIS / BELUM LOGIN
       if (status === 401) {
         alert("⚠️ Sesi Anda telah berakhir. Silakan login kembali.");
         router.push("/login");
         return;
       }
 
-      // ❌ ERROR LAINNYA
       alert("❌ Gagal menyimpan: " + message);
     }
   };
@@ -274,22 +288,24 @@ export default function AsesmenWicaraPage() {
                       {a.questions.map((q: any) => {
                         const k = `${s.group_key}-${q.id}`;
                         return (
-                          <div key={q.id} className="mb-4">
-                            <p>{q.label}</p>
-                            {q.options.map((o: string) => (
-                              <label key={o} className="flex gap-2">
-                                 <input
-  type="radio"
-  name={k}
-  checked={responses[k] === o}
-  onChange={() => handleRadio(k, o)}
-  className="accent-[#409E86]"
-/>
-                                {o}
-                              </label>
-                            ))}
+                          <div key={q.id} className="mb-4 text-left">
+                            <p className="font-medium">{q.label}</p>
+                            <div className="mt-2 space-y-1">
+                              {q.options.map((o: string) => (
+                                <label key={o} className="flex gap-2 cursor-pointer">
+                                  <input
+                                    type="radio"
+                                    name={k}
+                                    checked={responses[k] === o}
+                                    onChange={() => handleRadio(k, o)}
+                                    className="accent-[#409E86]"
+                                  />
+                                  <span>{o}</span>
+                                </label>
+                              ))}
+                            </div>
                             <input
-                              className="w-full border mt-2 p-2"
+                              className="w-full border mt-2 p-2 rounded-lg"
                               placeholder="Catatan..."
                               value={notes[k] || ""}
                               onChange={(e) => handleNote(k, e.target.value)}
@@ -303,39 +319,40 @@ export default function AsesmenWicaraPage() {
                   {s.questions?.map((q: any) => {
                     const k = `${s.group_key}-${q.id}`;
                     return (
-                      <div key={q.id} className="mb-4">
+                      <div key={q.id} className="mb-4 text-left">
                         {activeTab === "Oral Fasial" ? (
                           <>
-                            <p>{q.label}</p>
-                            {q.options.map((o: string) => (
-                              <label key={o} className="flex gap-2">
-                               <input
-  type="radio"
-  name={k}
-  checked={responses[k] === o}
-  onChange={() => handleRadio(k, o)}
-  className="accent-[#409E86]"
-/>
-
-                                {o}
-                              </label>
-                            ))}
+                            <p className="font-medium">{q.label}</p>
+                            <div className="mt-2 space-y-1">
+                              {q.options.map((o: string) => (
+                                <label key={o} className="flex gap-2 cursor-pointer">
+                                  <input
+                                    type="radio"
+                                    name={k}
+                                    checked={responses[k] === o}
+                                    onChange={() => handleRadio(k, o)}
+                                    className="accent-[#409E86]"
+                                  />
+                                  <span>{o}</span>
+                                </label>
+                              ))}
+                            </div>
                             <input
-                              className="w-full border mt-2 p-2"
+                              className="w-full border mt-2 p-2 rounded-lg"
                               placeholder="Catatan..."
                               value={notes[k] || ""}
                               onChange={(e) => handleNote(k, e.target.value)}
                             />
                           </>
                         ) : (
-                          <label className="flex gap-2 items-center">
+                          <label className="flex gap-2 items-center cursor-pointer">
                             <input
                               type="checkbox"
                               checked={Boolean(responses[k])}
                               onChange={() => handleCheckbox(k)}
-                              className="accent-[#409E86]"
+                              className="accent-[#409E86] w-4 h-4"
                             />
-                            <span>{q.label}</span>
+                            <span className="font-medium">{q.label}</span>
                           </label>
                         )}
                       </div>
@@ -346,10 +363,10 @@ export default function AsesmenWicaraPage() {
             </div>
           ))}
 
-          <div className="flex justify-end">
+          <div className="flex justify-end mt-4">
             <button
               onClick={handleSubmit}
-              className="px-6 py-2 bg-[#36315B] text-white rounded-xl"
+              className="px-8 py-2 bg-[#36315B] text-white rounded-xl font-bold hover:bg-[#2A264A] transition-colors"
             >
               Simpan
             </button>

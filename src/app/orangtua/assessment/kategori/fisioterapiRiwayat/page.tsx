@@ -6,7 +6,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import ResponsiveOrangtuaLayout from "@/components/layout/ResponsiveOrangtuaLayout";
 import { getParentAssessmentAnswers, ParentSubmitType } from "@/lib/api/asesmentTerapiOrtu";
 
-export default function DataFisioterapiPage() {
+export default function DataFisioterapiRiwayatPage() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -77,83 +77,107 @@ export default function DataFisioterapiPage() {
 
   return (
     <ResponsiveOrangtuaLayout>
-      {/* Step Progress */}
-      <div className="flex flex-wrap justify-center mb-8 md:mb-12 gap-4">
-        {steps.map((step, i) => (
-          <div key={i} className="flex items-center flex-wrap gap-2">
-            <div className="flex flex-col items-center space-y-2 text-center">
-              <div
-                className={`w-9 h-9 flex items-center justify-center rounded-full border-2 text-sm font-semibold ${
-                  i === activeStep
-                    ? "bg-[#6BB1A0] border-[#6BB1A0] text-white"
-                    : "bg-gray-100 border-gray-300 text-gray-500"
-                }`}
-              >
-                {i + 1}
-              </div>
-              <span
-                className={`text-sm font-medium ${i === activeStep ? "text-[#36315B]" : "text-gray-500"}`}
-              >
-                {step.label}
-              </span>
-            </div>
+      {/* Tombol Tutup - Konsisten dengan UI Asesmen */}
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() => router.push(`/orangtua/assessment/kategori?assessment_id=${assessmentId}`)}
+          className="text-[#36315B] hover:text-red-500 font-bold text-2xl p-2 transition-colors"
+          aria-label="Tutup"
+        >
+          ✕
+        </button>
+      </div>
 
-            {i < steps.length - 1 && (
-              <div className="w-8 md:w-12 h-px bg-gray-300 mx-1 md:mx-2 hidden md:block translate-y-[-12px]" />
-            )}
-          </div>
-        ))}
+      {/* Step Progress - Dioptimalkan untuk scrolling pada Mobile */}
+      <div className="mb-8 md:mb-12 overflow-x-auto pb-4 scrollbar-hide">
+        <div className="flex items-start min-w-max md:justify-center px-4 md:px-0">
+          {steps.map((step, i) => (
+            <div key={i} className="flex items-center">
+              <div className="flex flex-col items-center text-center space-y-2 w-24 sm:w-32 md:w-40">
+                <div
+                  className={`w-9 h-9 flex items-center justify-center rounded-full border-2 text-sm font-semibold transition-all ${
+                    i === activeStep
+                      ? "bg-[#6BB1A0] border-[#6BB1A0] text-white shadow-md"
+                      : "bg-gray-100 border-gray-300 text-gray-500"
+                  }`}
+                >
+                  {i + 1}
+                </div>
+                <span
+                  className={`text-[10px] sm:text-xs md:text-sm font-medium leading-tight ${
+                    i === activeStep ? "text-[#36315B]" : "text-gray-500"
+                  }`}
+                >
+                  {step.label}
+                </span>
+              </div>
+              {/* Garis penghubung antar langkah */}
+              {i < steps.length - 1 && (
+                <div className="w-8 sm:w-12 md:w-16 h-px bg-gray-300 mx-1 mt-4.5" />
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Card utama read-only */}
-      <div className="bg-white rounded-2xl shadow-sm p-4 md:p-8 w-full max-w-4xl mx-auto">
-        <h3 className="text-lg md:text-xl font-semibold mb-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6 md:p-8 w-full max-w-4xl mx-auto transition-all">
+        <h3 className="text-base sm:text-lg md:text-xl font-bold text-[#36315B] mb-6">
           II. Data Fisioterapi (Riwayat Jawaban)
         </h3>
 
         {loading ? (
-          <p>Loading...</p>
+          <div className="flex justify-center items-center py-10">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#6BB1A0]"></div>
+          </div>
         ) : error ? (
-          <p className="text-red-500">{error}</p>
+          <p className="text-red-500 text-center py-4 bg-red-50 rounded-lg">{error}</p>
         ) : (
           <div className="space-y-6">
 
             {/* Keluhan */}
-            <div>
-              <label className="block text-sm md:text-base font-medium text-gray-700 mb-2">
+            <div className="animate-in fade-in duration-500">
+              <label className="block text-xs sm:text-sm md:text-base font-semibold text-gray-700 mb-2">
                 Keluhan utama yang dialami anak saat ini:
               </label>
-              <textarea
-                readOnly
-                value={dataRiwayat.keluhan}
-                className="w-full border border-gray-300 rounded-lg p-3 bg-gray-100 text-gray-700 min-h-[120px] resize-none"
-              />
+              <div className="w-full border border-gray-200 rounded-xl p-4 bg-gray-50 text-gray-700 text-sm md:text-base min-h-[120px] whitespace-pre-wrap leading-relaxed shadow-inner">
+                {dataRiwayat.keluhan || <span className="text-gray-400 italic">Tidak ada keluhan yang dicatat</span>}
+              </div>
             </div>
 
             {/* Riwayat */}
-            <div>
-              <label className="block text-sm md:text-base font-medium text-gray-700 mb-2">
+            <div className="animate-in fade-in duration-700">
+              <label className="block text-xs sm:text-sm md:text-base font-semibold text-gray-700 mb-2">
                 Riwayat penyakit atau kondisi yang berhubungan dengan fisioterapi:
               </label>
-              <textarea
-                readOnly
-                value={dataRiwayat.riwayat}
-                className="w-full border border-gray-300 rounded-lg p-3 bg-gray-100 text-gray-700 min-h-[120px] resize-none"
-              />
+              <div className="w-full border border-gray-300 rounded-xl p-4 bg-gray-50 text-gray-700 text-sm md:text-base min-h-[120px] whitespace-pre-wrap leading-relaxed shadow-inner">
+                {dataRiwayat.riwayat || <span className="text-gray-400 italic">Tidak ada riwayat penyakit yang dicatat</span>}
+              </div>
             </div>
           </div>
         )}
 
-        {/* Button Back */}
-        <div className="flex justify-end mt-6 md:mt-8">
+        {/* Button Back - Responsive width on Mobile */}
+        <div className="flex flex-col sm:flex-row justify-end mt-8 gap-3">
           <button
             onClick={() => router.back()}
-            className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+            className="w-full sm:w-auto px-8 py-3 bg-gray-100 text-[#36315B] font-bold rounded-xl hover:bg-gray-200 transition-all active:scale-95 text-sm md:text-base text-center"
           >
             Kembali
           </button>
         </div>
       </div>
+
+      {/* Sembunyikan scrollbar stepper pada mobile */}
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </ResponsiveOrangtuaLayout>
   );
 }

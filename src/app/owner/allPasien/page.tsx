@@ -153,15 +153,19 @@ const DataAnakListPage: React.FC = () => {
       </div>
 
       {/* Modal Detail Pasien */}
-      {(selectedChildDetail || loadingDetail || errorDetail) && (
-        <div
-          className="fixed inset-0  bg-opacity-50 flex justify-center items-start pt-20 z-50 overflow-auto"
-          onClick={() => setSelectedChildDetail(null)}
-        >
+     {/* Modal Detail Pasien */}
+{(selectedChildDetail || loadingDetail || errorDetail) && (
+  <div
+    className="fixed inset-0 z-50 flex items-center justify-center "
+    onClick={() => setSelectedChildDetail(null)}
+  >
+
           <div
-                className="bg-white rounded-lg p-6 w-96 relative"
-                onClick={(e) => e.stopPropagation()}
-              >
+  className="bg-white rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto relative shadow-xl"
+  onClick={(e) => e.stopPropagation()}
+>
+
+              
                 <button
                   className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
                   onClick={() => setSelectedChildDetail(null)}
@@ -211,6 +215,8 @@ const DataAnakListPage: React.FC = () => {
                     <ul className="list-disc list-inside text-sm text-[#36315B] space-y-1">
                       <li>Nama Ayah : {selectedChildDetail.father_name || "-"}</li>
                       <li>Hubungan : {selectedChildDetail.father_relationship || "-"}</li>
+                      <li>Tanggal Lahir : {selectedChildDetail.father_birth_date || "-"}</li>
+                    
                       <li>Usia : {selectedChildDetail.father_age || "-"}</li>
                       <li>Pekerjaan : {selectedChildDetail.father_occupation || "-"}</li>
                       <li>Nomor Telpon : {selectedChildDetail.father_phone || "-"}</li>
@@ -223,6 +229,7 @@ const DataAnakListPage: React.FC = () => {
                     <ul className="list-disc list-inside text-sm text-[#36315B] space-y-1">
                       <li>Nama Ibu : {selectedChildDetail.mother_name || "-"}</li>
                       <li>Hubungan : {selectedChildDetail.mother_relationship || "-"}</li>
+                      <li>Tanggal Lahir : {selectedChildDetail.mother_birth_date || "-"}</li>
                       <li>Usia : {selectedChildDetail.mother_age || "-"}</li>
                       <li>Pekerjaan : {selectedChildDetail.mother_occupation || "-"}</li>
                       <li>Nomor Telpon : {selectedChildDetail.mother_phone || "-"}</li>
@@ -235,6 +242,7 @@ const DataAnakListPage: React.FC = () => {
                     <ul className="list-disc list-inside text-sm text-[#36315B] space-y-1">
                       <li>Nama Wali : {selectedChildDetail.guardian_name || "-"}</li>
                       <li>Hubungan : {selectedChildDetail.guardian_relationship || "-"}</li>
+                      <li>Tanggal Lahir : {selectedChildDetail.guardian_birth_date || "-"}</li>
                       <li>Usia : {selectedChildDetail.guardian_age || "-"}</li>
                       <li>Pekerjaan : {selectedChildDetail.guardian_occupation || "-"}</li>
                       <li>Nomor Telpon : {selectedChildDetail.guardian_phone || "-"}</li>

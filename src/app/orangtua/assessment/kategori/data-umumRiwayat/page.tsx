@@ -4,7 +4,20 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ResponsiveOrangtuaLayout from "@/components/layout/ResponsiveOrangtuaLayout";
-import { ChevronDown } from "lucide-react";
+import {
+  ChevronDown,
+  X,
+  User,
+  Users,
+  Baby,
+  Calendar,
+  MapPin,
+  BookOpen,
+  ArrowLeft,
+  ArrowRight,
+  ClipboardList,
+  Info
+} from "lucide-react";
 
 import {
   getParentAssessmentAnswers,
@@ -34,7 +47,6 @@ export default function RiwayatJawabanOrangtua() {
   const [activeCategory, setActiveCategory] = useState<string>(
     parentGeneralRanges[0].group_key
   );
-  const [childInfo, setChildInfo] = useState<any>({});
   const [familyInfo, setFamilyInfo] = useState<any>({});
   const [loading, setLoading] = useState(true);
 
@@ -64,7 +76,6 @@ export default function RiwayatJawabanOrangtua() {
         const found = (myAssessments?.data || []).find(
           (x: any) => String(x.assessment_id) === String(assessmentId)
         );
-        setChildInfo(found || {});
 
         if (found?.child_id) {
           const detail = await getChildDetail(found.child_id);
@@ -92,7 +103,6 @@ export default function RiwayatJawabanOrangtua() {
     })
     .map(([id, val]) => ({ question_id: id, ...val }));
 
-  /* ================= NAVIGASI KATEGORI ================= */
   const categoryOrder = parentGeneralRanges.map((g) => g.group_key);
   const currentIndex = categoryOrder.indexOf(activeCategory);
 
@@ -109,7 +119,6 @@ export default function RiwayatJawabanOrangtua() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
-  /* ===================================================== */
 
   const renderCellValue = (value: any) => {
     if (typeof value === "object" && value !== null) {
@@ -120,39 +129,29 @@ export default function RiwayatJawabanOrangtua() {
   };
 
   const renderAnswer = (answer: any) => {
-    if (!answer) return <span>-</span>;
+    if (!answer) return <span className="text-gray-400 italic">Belum diisi</span>;
     if (typeof answer === "string" || typeof answer === "number")
-      return <span>{answer}</span>;
+      return <span className="text-[#36315B] font-semibold">{answer}</span>;
 
     if (Array.isArray(answer)) {
-      if (!answer.length) return <span>-</span>;
+      if (!answer.length) return <span className="text-gray-400">-</span>;
       if (typeof answer[0] === "object") {
         const headers = Object.keys(answer[0]);
         return (
-          <div className="overflow-x-auto">
-            <table className="border-collapse border border-gray-300 w-full text-sm min-w-[500px]">
-              <thead>
+          <div className="overflow-x-auto my-2 rounded-lg border border-gray-200">
+            <table className="w-full text-xs md:text-sm text-left">
+              <thead className="bg-gray-50 text-gray-600 uppercase text-[10px] tracking-wider">
                 <tr>
                   {headers.map((h) => (
-                    <th
-                      key={h}
-                      className="border border-gray-300 px-2 py-1 font-semibold bg-gray-100 text-left"
-                    >
-                      {h}
-                    </th>
+                    <th key={h} className="px-4 py-3 font-bold border-b">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-100">
                 {answer.map((row, idx) => (
-                  <tr key={idx}>
+                  <tr key={idx} className="bg-white">
                     {headers.map((h) => (
-                      <td
-                        key={h}
-                        className="border border-gray-300 px-2 py-1"
-                      >
-                        {renderCellValue(row[h])}
-                      </td>
+                      <td key={h} className="px-4 py-3 text-gray-700">{renderCellValue(row[h])}</td>
                     ))}
                   </tr>
                 ))}
@@ -162,7 +161,7 @@ export default function RiwayatJawabanOrangtua() {
         );
       }
       return (
-        <ul className="list-disc pl-5 space-y-1">
+        <ul className="list-disc pl-5 space-y-1 text-[#36315B] font-semibold">
           {answer.map((v, i) => (
             <li key={i}>{v ?? "-"}</li>
           ))}
@@ -172,23 +171,15 @@ export default function RiwayatJawabanOrangtua() {
 
     if (typeof answer === "object") {
       const allNull = Object.values(answer).every((v) => !v);
-      if (allNull) return <span>-</span>;
+      if (allNull) return <span className="text-gray-400">-</span>;
       return (
-        <div className="overflow-x-auto">
-          <table className="border-collapse border border-gray-300 w-full text-sm min-w-[300px]">
-            <tbody>
-              {Object.entries(answer).map(([k, v]) => (
-                <tr key={k}>
-                  <td className="border border-gray-300 px-2 py-1 font-semibold min-w-[150px]">
-                    {k}
-                  </td>
-                  <td className="border border-gray-300 px-2 py-1">
-                    {renderCellValue(v)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
+          {Object.entries(answer).map(([k, v]) => (
+            <div key={k} className="flex flex-col p-2 bg-white rounded-lg border border-gray-100 shadow-sm">
+              <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wide">{k}</span>
+              <span className="text-sm font-semibold text-[#36315B]">{renderCellValue(v)}</span>
+            </div>
+          ))}
         </div>
       );
     }
@@ -196,150 +187,153 @@ export default function RiwayatJawabanOrangtua() {
     return <span>{String(answer)}</span>;
   };
 
+  const InfoRow = ({ label, value, icon: Icon }: any) => (
+    <div className="flex flex-col space-y-1">
+      <div className="flex items-center gap-2 text-gray-400 text-[10px] md:text-xs font-bold uppercase tracking-widest">
+        {Icon && <Icon size={12} className="text-[#6BB1A0]" />}
+        {label}
+      </div>
+      <div className="text-sm md:text-base font-semibold text-[#36315B] leading-tight">
+        {value || "-"}
+      </div>
+    </div>
+  );
+
   return (
-    <ResponsiveOrangtuaLayout>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-[#36315B]">
-          Riwayat Jawaban Orangtua
-        </h2>
+    <ResponsiveOrangtuaLayout maxWidth="max-w-5xl">
+      {/* HEADER SECTION */}
+      <div className="flex justify-between items-center mb-6 md:mb-8">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-[#EAF4F0] rounded-xl text-[#6BB1A0]">
+            <ClipboardList size={24} />
+          </div>
+          <div>
+            <h2 className="text-xl md:text-2xl font-black text-[#36315B]">
+              Riwayat Jawaban
+            </h2>
+            <p className="text-xs text-gray-400 font-medium">Data Umum Orang Tua</p>
+          </div>
+        </div>
         <button
           onClick={() => router.push(`/orangtua/assessment/kategori?assessment_id=${assessmentId}`)}
-          className="text-[#36315B] hover:text-red-500 font-bold text-2xl"
+          className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-red-500"
         >
-          ✕
+          <X size={28} />
         </button>
       </div>
 
-      {/* IDENTITAS ANAK & ORANGTUA */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm border mb-8">
-        <h3 className="font-semibold text-[#36315B] mb-4">
-          Identitas Anak & Orangtua
+      {/* IDENTITAS CARD */}
+      <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 mb-8 overflow-hidden relative group">
+        <div className="absolute top-0 left-0 w-2 h-full bg-[#6BB1A0]" />
+
+        <h3 className="font-black text-[#36315B] mb-6 flex items-center gap-2 text-lg">
+          <Baby size={20} className="text-[#6BB1A0]" />
+          Identitas Anak & Keluarga
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
-          <div><p className="font-semibold">Nama Anak</p><p>{familyInfo.child_name || "-"}</p></div>
-          <div><p className="font-semibold">Tempat, Tanggal Lahir</p><p>{familyInfo.child_birth_info || "-"}</p></div>
-          <div><p className="font-semibold">Usia</p><p>{familyInfo.child_age || "-"}</p></div>
-          <div><p className="font-semibold">Jenis Kelamin</p><p>{familyInfo.child_gender || "-"}</p></div>
-          <div><p className="font-semibold">Agama</p><p>{familyInfo.child_religion || "-"}</p></div>
-          <div><p className="font-semibold">Sekolah</p><p>{familyInfo.child_school || "-"}</p></div>
-          <div className="col-span-1 md:col-span-2">
-            <p className="font-semibold">Alamat</p>
-            <p>{familyInfo.child_address || "-"}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
+          <InfoRow label="Nama Anak" value={familyInfo.child_name} icon={User} />
+          <InfoRow label="Tempat, Tgl Lahir" value={familyInfo.child_birth_info} icon={MapPin} />
+          <InfoRow label="Usia / Gender" value={`${familyInfo.child_age} • ${familyInfo.child_gender}`} icon={Calendar} />
+          <InfoRow label="Agama" value={familyInfo.child_religion} icon={Users} />
+          <InfoRow label="Sekolah" value={familyInfo.child_school} icon={BookOpen} />
+          <div className="sm:col-span-2 lg:col-span-1">
+            <InfoRow label="Alamat" value={familyInfo.child_address} icon={MapPin} />
           </div>
 
-          <div className="col-span-1 md:col-span-2 mt-4 font-semibold border-t pt-2">
-            Data Ayah
+          {/* Sub Headers for Parents */}
+          <div className="col-span-full pt-4 border-t border-gray-50 mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="space-y-4">
+              <h4 className="text-xs font-black text-[#6BB1A0] uppercase tracking-widest border-l-4 border-[#6BB1A0] pl-2">Data Ayah</h4>
+              <InfoRow label="Nama Ayah" value={familyInfo.father_name} />
+              <InfoRow label="NIK / Pekerjaan" value={`${familyInfo.father_identity_number || '-'} / ${familyInfo.father_occupation || '-'}`} />
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="text-xs font-black text-[#6BB1A0] uppercase tracking-widest border-l-4 border-[#6BB1A0] pl-2">Data Ibu</h4>
+              <InfoRow label="Nama Ibu" value={familyInfo.mother_name} />
+              <InfoRow label="NIK / Pekerjaan" value={`${familyInfo.mother_identity_number || '-'} / ${familyInfo.mother_occupation || '-'}`} />
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="text-xs font-black text-[#6BB1A0] uppercase tracking-widest border-l-4 border-[#6BB1A0] pl-2">Data Wali</h4>
+              <InfoRow label="Nama Wali" value={familyInfo.guardian_name} />
+              <InfoRow label="Hubungan" value={familyInfo.guardian_relationship} />
+            </div>
           </div>
-          <div><p className="font-semibold">Nama Ayah</p><p>{familyInfo.father_name || "-"}</p></div>
-          <div>
-  <p className="font-semibold">Tanggal Lahir</p>
-  <p>{familyInfo.father_birth_date || "-"}</p>
-</div>
-
-          <div><p className="font-semibold">No. Telepon</p><p>{familyInfo.father_phone || "-"}</p></div>
-          <div><p className="font-semibold">NIK</p><p>{familyInfo.father_identity_number || "-"}</p></div>
-          <div><p className="font-semibold">Pekerjaan</p><p>{familyInfo.father_occupation || "-"}</p></div>
-          <div><p className="font-semibold">Hubungan dengan Anak</p><p>{familyInfo.father_relationship || "-"}</p></div>
-
-          <div className="col-span-1 md:col-span-2 mt-4 font-semibold border-t pt-2">
-            Data Ibu
-          </div>
-          <div><p className="font-semibold">Nama Ibu</p><p>{familyInfo.mother_name || "-"}</p></div>
-          <div>
-  <p className="font-semibold">Tanggal Lahir</p>
-  <p>{familyInfo.mother_birth_date || "-"}</p>
-</div>
-
-          <div><p className="font-semibold">No. Telepon</p><p>{familyInfo.mother_phone || "-"}</p></div>
-          <div><p className="font-semibold">NIK</p><p>{familyInfo.mother_identity_number || "-"}</p></div>
-          <div><p className="font-semibold">Pekerjaan</p><p>{familyInfo.mother_occupation || "-"}</p></div>
-          <div><p className="font-semibold">Hubungan dengan Anak</p><p>{familyInfo.mother_relationship || "-"}</p></div>
-
-          <div className="col-span-1 md:col-span-2 mt-4 font-semibold border-t pt-2">
-            Data Wali
-          </div>
-          <div><p className="font-semibold">Nama Wali</p><p>{familyInfo.guardian_name || "-"}</p></div>
-         <div>
-  <p className="font-semibold">Tanggal Lahir</p>
-  <p>{familyInfo.guardian_birth_date || "-"}</p>
-</div>
-
-          <div><p className="font-semibold">No. Telepon</p><p>{familyInfo.guardian_phone || "-"}</p></div>
-          <div><p className="font-semibold">NIK</p><p>{familyInfo.guardian_identity_number || "-"}</p></div>
-          <div><p className="font-semibold">Pekerjaan</p><p>{familyInfo.guardian_occupation || "-"}</p></div>
-          <div><p className="font-semibold">Hubungan dengan Anak</p><p>{familyInfo.guardian_relationship || "-"}</p></div>
         </div>
       </div>
 
-      {/* PILIH KATEGORI */}
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="font-semibold">Kategori Pertanyaan</h3>
-        <div className="relative inline-block">
+      {/* FILTER KATEGORI */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h3 className="font-bold text-[#36315B]">Kategori Pertanyaan</h3>
+        <div className="relative w-full sm:w-auto">
           <select
             value={activeCategory}
             onChange={(e) => setActiveCategory(e.target.value)}
-            className="appearance-none border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm"
+            className="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm font-bold text-[#36315B] focus:ring-2 focus:ring-[#6BB1A0]/20 focus:border-[#6BB1A0] outline-none w-full transition-all shadow-sm"
           >
             {parentGeneralRanges.map((g) => (
-              <option key={g.group_key} value={g.group_key}>
-                {g.title}
-              </option>
+              <option key={g.group_key} value={g.group_key}>{g.title}</option>
             ))}
           </select>
-          <ChevronDown className="absolute right-2.5 top-2.5 w-4 h-4" />
+          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6BB1A0] pointer-events-none" />
         </div>
       </div>
 
-      {/* DAFTAR PERTANYAAN */}
-      <section className="bg-white rounded-2xl shadow-sm border p-4 md:p-8 text-[#36315B]">
+      {/* QUESTIONS LIST */}
+      <section className="bg-white rounded-3xl shadow-sm border border-gray-100 p-5 md:p-10 text-[#36315B]">
         {loading ? (
-          <p>Memuat data...</p>
+          <div className="py-20 flex flex-col items-center justify-center space-y-3">
+            <div className="w-8 h-8 border-4 border-[#6BB1A0] border-t-transparent rounded-full animate-spin" />
+            <p className="text-gray-400 text-sm font-medium">Sinkronisasi data...</p>
+          </div>
         ) : currentQuestions.length === 0 ? (
-          <p>Tidak ada pertanyaan.</p>
+          <p className="py-10 text-center text-gray-400">Tidak ada pertanyaan di kategori ini.</p>
         ) : (
-          currentQuestions.map((q) => (
-            <div key={q.question_id} className="mb-5">
-              <label className="block font-medium mb-1">
-                {q.question_number ? `${q.question_number}. ` : ""}
-                {q.question_text}
-              </label>
-              <div className="text-sm bg-gray-50 border rounded-md px-3 py-2 font-medium">
-                {renderAnswer(q.value)}
+          <div className="space-y-8">
+            {currentQuestions.map((q) => (
+              <div key={q.question_id} className="group">
+                <label className="block font-bold text-sm md:text-base mb-3 leading-relaxed">
+                  <span className="text-[#6BB1A0] mr-1">{q.question_number ? `${q.question_number}. ` : ""}</span>
+                  {q.question_text}
+                </label>
+                <div className="bg-gray-50/50 border border-gray-100 rounded-2xl p-4 md:p-5 transition-colors group-hover:bg-white group-hover:border-[#EAF4F0] group-hover:shadow-sm">
+                  {renderAnswer(q.value)}
+                </div>
+                {q.note && (
+                  <div className="mt-2 flex items-start gap-2 text-xs italic text-gray-400 ml-2">
+                    <Info size={14} className="mt-0.5 shrink-0" />
+                    <span>Catatan: {q.note}</span>
+                  </div>
+                )}
               </div>
-              {q.note && (
-                <p className="text-sm mt-1 italic">
-                  Keterangan: {q.note}
-                </p>
-              )}
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </section>
 
-      {/* NAVIGASI KATEGORI */}
-      <div className="flex justify-between mt-6">
-        {currentIndex > 0 ? (
-          <button
-            onClick={goPrevCategory}
-            className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2 rounded-xl"
-          >
-            Sebelumnya
-          </button>
-        ) : (
-          <div />
-        )}
+      {/* NAVIGATION BUTTONS */}
+      <div className="flex flex-col sm:flex-row justify-between items-center mt-10 gap-4">
+        <button
+          onClick={goPrevCategory}
+          disabled={currentIndex === 0}
+          className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl font-bold text-sm transition-all w-full sm:w-auto
+            disabled:opacity-0 disabled:pointer-events-none bg-gray-100 text-gray-500 hover:bg-gray-200"
+        >
+          <ArrowLeft size={18} />
+          Sebelumnya
+        </button>
 
-        {currentIndex < categoryOrder.length - 1 ? (
-          <button
-            onClick={goNextCategory}
-            className="bg-[#6BB1A0] hover:bg-[#5EA391] text-white px-6 py-2 rounded-xl"
-          >
-            Selanjutnya
-          </button>
-        ) : (
-          <div />
-        )}
+        <button
+          onClick={goNextCategory}
+          disabled={currentIndex === categoryOrder.length - 1}
+          className="flex items-center justify-center gap-2 px-10 py-3.5 rounded-2xl font-black text-sm transition-all w-full sm:w-auto
+            disabled:opacity-0 disabled:pointer-events-none bg-[#6BB1A0] text-white hover:bg-[#599A8A] shadow-lg shadow-[#6BB1A0]/20 active:scale-95"
+        >
+          Selanjutnya
+          <ArrowRight size={18} />
+        </button>
       </div>
     </ResponsiveOrangtuaLayout>
   );

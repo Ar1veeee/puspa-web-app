@@ -3,11 +3,9 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Menu, X, ChevronDown, FileDown } from "lucide-react";
+import { ChevronDown, Download, Play, History, Info, X } from "lucide-react";
 
-import SidebarOrangtua from "@/components/layout/sidebar-orangtua";
-import HeaderOrangtua from "@/components/layout/header-orangtua";
-
+import ResponsiveOrangtuaLayout from "@/components/layout/ResponsiveOrangtuaLayout";
 import { downloadAssessmentReport } from "@/lib/api/childrenAsesment";
 import { getMyAssessmentDetail } from "@/lib/api/checkStatusAsesment";
 
@@ -24,12 +22,11 @@ export default function AssessmentPage() {
 
   const assessmentId = searchParams.get("assessment_id") ?? "";
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const [loading, setLoading] = useState(true);
   const [types, setTypes] = useState<string[]>([]);
   const [hasNewFile, setHasNewFile] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   const [completionStatus, setCompletionStatus] = useState<
     Record<string, string>
@@ -62,7 +59,7 @@ export default function AssessmentPage() {
 
   if (!assessmentId) {
     return (
-      <div className="flex items-center justify-center h-screen text-red-600 text-xl">
+      <div className="flex items-center justify-center h-screen text-red-600 text-xl font-bold">
         Assessment ID tidak ditemukan.
       </div>
     );
@@ -70,8 +67,8 @@ export default function AssessmentPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-50">
-        <div className="h-10 w-10 border-4 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="h-10 w-10 border-4 border-[#68B2A0] border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -115,7 +112,7 @@ export default function AssessmentPage() {
       kategori: "V. Data Paedagog",
       subkategori: [
         "A. Aspek Akademis",
-        "B. Aspek Ketunanan",
+        "B. Aspek Ketunaan",
         "C. Aspek Sosialisasi - Komunikasi",
       ],
       link: `/orangtua/assessment/kategori/paedagog?assessment_id=${assessmentId}`,
@@ -143,119 +140,135 @@ export default function AssessmentPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <aside
-        className={`
-          fixed md:static inset-y-0 left-0 z-20
-          w-64 bg-white shadow-md
-          transform transition-transform duration-300
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-        `}
-      >
-        <SidebarOrangtua />
-      </aside>
+    <ResponsiveOrangtuaLayout maxWidth="max-w-5xl">
+      <div className="space-y-6">
+        {/* Tombol Tutup/Keluar */}
+        <div className="flex justify-end">
+          <button
+            onClick={() => router.push("/orangtua/assessment")}
+            className="text-[#36315B] hover:bg-gray-100 p-2 rounded-full transition-colors"
+            aria-label="Tutup"
+          >
+            <X size={28} />
+          </button>
+        </div>
 
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/30 z-10 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      <button
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed top-4 left-4 z-30 md:hidden bg-white p-2 rounded-md shadow"
-      >
-        {sidebarOpen ? <X /> : <Menu />}
-      </button>
-
-<div className="flex-1 flex flex-col">
-        <HeaderOrangtua />
-
-        <main className="flex-1 overflow-y-auto p-8 space-y-6">
-          <div className="flex justify-end">
-            <button
-              onClick={() => router.push("/orangtua/assessment")}
-              className="text-[#36315B] hover:text-red-500 font-bold text-2xl"
-            >
-              ✕
-            </button>
+        {/* Card Utama List Kategori */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 md:p-8 relative z-20">
+          <div className="flex justify-between border-b border-gray-100 pb-4 mb-6">
+            <h2 className="font-bold text-[#36315B] text-lg">Kategori</h2>
+            <h2 className="font-bold text-[#36315B] text-lg hidden sm:block">Status</h2>
           </div>
 
-          <div className="bg-white shadow rounded-xl border p-6">
-            <div className="flex justify-between border-b pb-3 mb-4">
-              <h2 className="font-semibold">Kategori</h2>
-              <h2 className="font-semibold">Status</h2>
-            </div>
+          <div className="space-y-8">
+            {filteredKategori.map((item, index) => {
+              const isCompleted = completionStatus[item.code] === "completed";
 
-            <div className="space-y-6">
-              {filteredKategori.map((item, index) => {
-                const isCompleted =
-                  completionStatus[item.code] === "completed";
+              return (
+                <div
+                  key={index}
+                  className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 border-b border-gray-50 pb-6 last:border-none last:pb-0"
+                >
+                  <div className="flex-1">
+                    <h3 className="font-bold text-[#36315B] text-base md:text-lg mb-2">
+                      {item.kategori}
+                    </h3>
 
-                return (
-                  <div
-                    key={index}
-                    className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 border-b pb-4 last:border-none"
-                  >
-                    <div>
-                      <h3 className="font-semibold mb-1">
-                        {item.kategori}
-                      </h3>
-
-                      <ul className="ml-5 text-sm text-gray-700 space-y-0.5">
-                        {item.subkategori.map((sub, idx) => (
-                          <li key={idx}>{sub}</li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className="relative">
-                      <select
-                        className="appearance-none border border-gray-300 rounded-lg bg-[#C0DCD6] text-sm px-4 py-2 pr-8 cursor-pointer min-h-[44px]"
-                        onChange={(e) =>
-                          handleAction(e.target.value, item)
-                        }
-                        defaultValue=""
-                      >
-                        <option value="" disabled hidden>
-                          Aksi
-                        </option>
-                        <option value="mulai" disabled={isCompleted}>
-                          Mulai
-                        </option>
-                        <option value="riwayat">Riwayat Jawaban</option>
-                      </select>
-
-                      <ChevronDown className="absolute right-2 top-2.5 w-4 h-4" />
-                    </div>
+                    <ul className="ml-5 text-sm text-gray-600 space-y-1">
+                      {item.subkategori.map((sub, idx) => (
+                        <li key={idx} className="list-none relative pl-0">
+                          {sub}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                );
-              })}
-            </div>
-          </div>
 
-          <div className="bg-[#EEF7F4] border p-5 rounded-xl flex items-center justify-between shadow">
+                  {/* Dropdown Action */}
+                  <div className="relative inline-block text-left self-end sm:self-start">
+                    <button
+                      onClick={() =>
+                        setActiveId(activeId === item.code ? null : item.code)
+                      }
+                      className="flex items-center justify-between gap-2 min-h-[40px] px-5 py-2 text-sm font-bold text-white bg-[#68B2A0] hover:bg-[#599A8A] rounded-xl w-full sm:w-auto shadow-sm transition-all"
+                    >
+                      Aksi
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeId === item.code ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {activeId === item.code && (
+                      <div className="absolute right-0 z-50 mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200">
+                        <button
+                          disabled={isCompleted}
+                          onClick={() => {
+                            handleAction("mulai", item);
+                            setActiveId(null);
+                          }}
+                          className={`flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold border-b border-gray-50 transition-colors ${isCompleted
+                              ? "text-gray-300 cursor-not-allowed"
+                              : "text-[#68B2A0] hover:bg-gray-50"
+                            }`}
+                        >
+                          <Play className="w-4 h-4 fill-current" />
+                          Mulai
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            handleAction("riwayat", item);
+                            setActiveId(null);
+                          }}
+                          className="flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold text-[#68B2A0] hover:bg-gray-50 transition-colors"
+                        >
+                          <History className="w-4 h-4" />
+                          Riwayat Jawaban
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Bottom Section: Unduh Laporan */}
+        <div className="bg-white border-2 border-[#68B2A0] p-5 md:p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+          <div className="flex items-start gap-4">
+            <div className="bg-[#EAF4F0] p-2 rounded-lg mt-1">
+              <Info className="w-5 h-5 text-[#68B2A0]" />
+            </div>
             <div>
-              <p className="font-semibold text-lg">File laporan asesmen</p>
-              <p className="text-sm mt-1">
+              <p className="font-bold text-[#36315B] text-base md:text-lg">File Baru Telah Diunggah</p>
+              <p className="text-xs md:text-sm text-gray-500 mt-0.5">
                 {hasNewFile
                   ? "Asesor telah mengunggah laporan perkembangan terbaru anak Anda."
-                  : "Laporan belum tersedia, silakan menunggu unggahan dari asesor."}
+                  : "Asesor belum mengunggah laporan perkembangan terbaru anak Anda."}
               </p>
             </div>
-
-            <button
-              onClick={handleDownload}
-              disabled={!hasNewFile || downloading}
-              className="flex items-center gap-2 bg-[#36315B] text-white px-5 py-2 rounded-lg disabled:opacity-60"
-            >
-              <FileDown className="w-5 h-5" />
-              {downloading ? "Mengunduh..." : "Unduh Laporan"}
-            </button>
           </div>
-        </main>
+
+          <button
+            onClick={handleDownload}
+            disabled={!hasNewFile || downloading}
+            className="w-full md:w-auto flex items-center justify-center gap-2 bg-[#68B2A0] hover:bg-[#599A8A] text-white px-6 py-3 rounded-xl font-bold disabled:opacity-50 transition-all text-sm shadow-sm"
+          >
+            <Download className="w-4 h-4" />
+            <span>
+              {downloading ? "Mengunduh..." : "Unduh Laporan"}
+            </span>
+          </button>
+        </div>
       </div>
-    </div>
+
+      <style jsx global>{`
+        .animate-in {
+          animation: fadeIn 0.2s ease-out;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
+    </ResponsiveOrangtuaLayout>
   );
 }

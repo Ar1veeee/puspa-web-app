@@ -1,12 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { X, Plus, Baby, MapPin, Calendar, Users, Info } from "lucide-react";
 
-import SidebarOrangtua from "@/components/layout/sidebar-orangtua";
-import HeaderOrangtua from "@/components/layout/header-orangtua";
-
+import ResponsiveOrangtuaLayout from "@/components/layout/ResponsiveOrangtuaLayout";
 import {
   getChildren,
   getChildDetail,
@@ -24,65 +21,40 @@ import FormHapusAnak from "@/components/form/FormHapusAnak";
 import { FaEye, FaPen, FaTrash } from "react-icons/fa";
 
 export default function ChildList() {
-  const router = useRouter();
-  const params = useParams();
-
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const [children, setChildren] = useState<ChildItem[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [openDetail, setOpenDetail] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [openAdd, setOpenAdd] = useState(false);
-
   const [selectedChild, setSelectedChild] = useState<ChildDetail | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  // Inisialisasi formAdd
-const [formAdd, setFormAdd] = useState({
-  child_name: "",
-  child_gender: "",
-  child_birth_place: "",
-  child_birth_date: "",
-  child_school: "",
-  child_address: "",
-  child_complaint: "",
-  child_service_choice: [] as string[], // array
-});
+  const [formAdd, setFormAdd] = useState({
+    child_name: "",
+    child_gender: "",
+    child_birth_place: "",
+    child_birth_date: "",
+    child_school: "",
+    child_address: "",
+    child_complaint: "",
+    child_service_choice: [] as string[],
+  });
 
-const handleAddChange = (
-  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-) => {
-  const { name, value } = e.target;
+  const handleAddChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    if (name === "child_service_choice" && e.target instanceof HTMLInputElement && e.target.type === "checkbox") {
+      const checked = e.target.checked;
+      setFormAdd((prev) => {
+        let newArray = [...prev.child_service_choice];
+        if (checked) { newArray.push(value); } else { newArray = newArray.filter((v) => v !== value); }
+        return { ...prev, child_service_choice: newArray };
+      });
+    } else {
+      setFormAdd((prev) => ({ ...prev, [name]: value }));
+    }
+  };
 
-  // Jika checkbox layanan
-  if (
-    name === "child_service_choice" &&
-    e.target instanceof HTMLInputElement &&
-    e.target.type === "checkbox"
-  ) {
-    const checked = e.target.checked;
-    setFormAdd((prev) => {
-      let newArray = [...prev.child_service_choice];
-      if (checked) {
-        newArray.push(value);
-      } else {
-        newArray = newArray.filter((v) => v !== value);
-      }
-      return { ...prev, child_service_choice: newArray };
-    });
-  } else {
-    // input / textarea biasa
-    setFormAdd((prev) => ({ ...prev, [name]: value }));
-  }
-};
-
-// Saat submit, konversi array menjadi string agar sesuai tipe API
-
-
-  /* ================= LOAD DATA ================= */
   useEffect(() => {
     async function fetchData() {
       try {
@@ -128,316 +100,203 @@ const handleAddChange = (
     setOpenEdit(false);
   };
 
- async function handleTambah() {
-  const payload = {
-    ...formAdd,
-    child_service_choice: formAdd.child_service_choice.join(", "), // gabungkan array jadi string
-  };
-  await createChild(payload);
-  const refreshed = await getChildren();
-  setChildren(refreshed.data || []);
-  setOpenAdd(false);
-}
+  async function handleTambah() {
+    const payload = { ...formAdd, child_service_choice: formAdd.child_service_choice.join(", ") };
+    await createChild(payload);
+    const refreshed = await getChildren();
+    setChildren(refreshed.data || []);
+    setOpenAdd(false);
+  }
+
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* ================= SIDEBAR ================= */}
-      <aside
-        className={`
-          fixed md:static inset-y-0 left-0 z-20
-          w-64 bg-white shadow-md
-          transform transition-transform duration-300
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-        `}
-      >
-        <SidebarOrangtua />
-      </aside>
+    <ResponsiveOrangtuaLayout maxWidth="max-w-7xl">
+      <div className="space-y-6 md:space-y-8">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-black text-[#36315B]">Data Anak</h1>
+            <p className="text-gray-400 text-sm mt-1">Kelola informasi profil dan riwayat medis anak Anda</p>
+          </div>
+          <button
+            onClick={() => setOpenAdd(true)}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#409E86] hover:bg-[#368672] text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-[#409E86]/20 transition-all active:scale-95"
+          >
+            <Plus size={20} />
+            <span>Tambah Data</span>
+          </button>
+        </div>
 
-      {/* overlay mobile */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/30 z-10 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* hamburger (mobile only) */}
-      <button
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed top-4 left-4 z-30 md:hidden bg-white p-2 rounded-md shadow"
-      >
-        {sidebarOpen ? <X /> : <Menu />}
-      </button>
-
-      {/* ================= CONTENT ================= */}
-<div className="flex-1 flex flex-col">
-        <HeaderOrangtua />
-
-       <div className="p-6 text-[#36315B]">
-
-          <h1 className="text-xl font-semibold mb-4">Data Anak</h1>
-
-          {loading ? (
-            <p className="text-gray-600">Memuat data...</p>
-          ) : (
-            <div className="flex gap-4 flex-wrap">
-              {children.map((child) => (
-                <div
-                  key={child.child_id}
-                  className="border rounded-lg p-4 w-60 shadow-sm flex flex-col gap-2 bg-white"
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="bg-green-200 text-green-800 rounded-full w-10 h-10 flex items-center justify-center">
-                      👶
-                    </div>
-
-                    <div className="flex-1">
-                      <h2 className="font-semibold">{child.child_name}</h2>
-                      <p className="text-sm text-gray-500">
-                        {child.child_birth_info}
-                      </p>
-                      <p className="text-sm text-gray-500 capitalize">
-                        {child.child_gender}
-                      </p>
-                    </div>
-
-                    <span className="text-xs font-semibold px-2 py-1 rounded-full bg-green-100 text-green-800">
-                      Aktif
-                    </span>
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-24 space-y-4">
+            <div className="w-12 h-12 border-4 border-[#C0DCD6] border-t-[#409E86] rounded-full animate-spin" />
+            <p className="text-gray-400 font-medium animate-pulse">Sinkronisasi data...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6">
+            {children.map((child) => (
+              <div
+                key={child.child_id}
+                className="bg-white border border-gray-100 rounded-3xl p-5 shadow-sm hover:shadow-xl hover:border-[#C0DCD6] transition-all duration-300 flex flex-col group"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="bg-[#EAF4F0] text-[#409E86] rounded-2xl w-14 h-14 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">
+                    👶
                   </div>
-
-                 <div className="flex justify-end gap-3 mt-2">
-  <button
-    onClick={() => handleOpenDetail(child.child_id)}
-    className="text-[#36315B] hover:text-[#36315B]"
-  >
-    <FaEye size={16} />
-  </button>
-
-  <button
-    onClick={() => handleOpenEdit(child.child_id)}
-    className="text-[#36315B] hover:text-[#36315B]"
-  >
-    <FaPen size={16} />
-  </button>
-
-  <button
-    onClick={() => handleOpenDelete(child.child_id)}
-    className="text-red-500 hover:text-red-700"
-  >
-    <FaTrash size={16} />
-  </button>
-</div>
-
+                  <span className="text-[10px] font-black px-3 py-1 rounded-full bg-green-50 text-green-600 border border-green-100 uppercase tracking-wider">
+                    Aktif
+                  </span>
                 </div>
-              ))}
 
-              <button
-                onClick={() => setOpenAdd(true)}
-                className="border-dashed border-2 border-gray-300 rounded-lg w-60 h-32 flex items-center justify-center text-gray-500 bg-white"
-              >
-                + Tambah Anak
-              </button>
-            </div>
-          )}
-        </div>
+                <div className="flex-1 space-y-3">
+                  <h2 className="font-bold text-[#36315B] text-lg leading-tight line-clamp-1">{child.child_name}</h2>
+                  
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-gray-500 text-xs">
+                      <Calendar size={14} className="text-[#409E86]" />
+                      <span>{child.child_birth_date}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-500 text-xs">
+                      <Users size={14} className="text-[#409E86]" />
+                      <span className="capitalize">{child.child_gender}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 mt-6 pt-4 border-t border-gray-50">
+                  <button
+                    onClick={() => handleOpenDetail(child.child_id)}
+                    className="flex items-center justify-center p-3 text-gray-400 hover:text-[#409E86] hover:bg-[#EAF4F0] rounded-xl transition-colors"
+                    title="Detail"
+                  >
+                    <FaEye size={18} />
+                  </button>
+                  <button
+                    onClick={() => handleOpenEdit(child.child_id)}
+                    className="flex items-center justify-center p-3 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-colors"
+                    title="Edit"
+                  >
+                    <FaPen size={16} />
+                  </button>
+                  <button
+                    onClick={() => handleOpenDelete(child.child_id)}
+                    className="flex items-center justify-center p-3 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+                    title="Hapus"
+                  >
+                    <FaTrash size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+
+            {/* Tombol Tambah Card Style */}
+            <button
+              onClick={() => setOpenAdd(true)}
+              className="border-2 border-dashed border-gray-200 rounded-3xl min-h-[220px] flex flex-col items-center justify-center gap-4 text-gray-400 hover:border-[#409E86] hover:text-[#409E86] hover:bg-[#EAF4F0]/30 transition-all group"
+            >
+              <div className="p-4 rounded-full bg-gray-50 group-hover:bg-white transition-colors shadow-sm">
+                <Plus size={32} />
+              </div>
+              <span className="font-bold text-sm">Tambah Data Anak</span>
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* ================= MODALS (UNCHANGED) ================= */}
-      <FormDetailPasien
-        open={openDetail}
-        onClose={() => setOpenDetail(false)}
-        pasien={selectedChild}
-      />
+      {/* ================= MODALS ================= */}
+      <FormDetailPasien open={openDetail} onClose={() => setOpenDetail(false)} pasien={selectedChild} />
+      <FormUbahPasien open={openEdit} onClose={() => setOpenEdit(false)} initialData={selectedChild || undefined} onUpdate={handleUbah} />
+      <FormHapusAnak open={openDelete} onClose={() => setOpenDelete(false)} childId={deleteId ?? undefined} onConfirm={(id) => handleHapus(id)} />
 
-      <FormUbahPasien
-        open={openEdit}
-        onClose={() => setOpenEdit(false)}
-        initialData={selectedChild || undefined}
-        onUpdate={handleUbah}
-      />
-
-      <FormHapusAnak
-        open={openDelete}
-        onClose={() => setOpenDelete(false)}
-        childId={deleteId ?? undefined}
-        onConfirm={(id) => handleHapus(id)}
-      />
-
-      {/* ================= TAMBAH ANAK ================= */}
+      {/* MODAL TAMBAH ANAK - Responsive Optimized */}
       {openAdd && (
-  <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
-    <div className="bg-white w-full max-w-2xl mx-4 rounded-xl p-6 text-[#36315B] max-h-[90vh] overflow-y-auto">
-      <h2 className="text-xl font-semibold mb-6">Tambah Data Anak</h2>
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 transition-all">
+          <div className="bg-white w-full max-w-2xl rounded-t-[2rem] sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] animate-in slide-in-from-bottom duration-300">
+            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-[#EAF4F0] rounded-lg text-[#409E86]">
+                  <Baby size={24} />
+                </div>
+                <h2 className="text-xl font-black text-[#36315B]">Tambah Data Anak</h2>
+              </div>
+              <button onClick={() => setOpenAdd(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400"><X size={24} /></button>
+            </div>
 
-      <div className="space-y-4">
-        {/* Nama Lengkap */}
-        <div>
-          <label className="text-sm font-medium">
-            Nama Lengkap <span className="text-red-500">*</span>
-          </label>
-          <input
-            name="child_name"
-            value={formAdd.child_name}
-            onChange={handleAddChange}
-            className="w-full border rounded-lg px-3 py-2 mt-1"
-          />
-        </div>
+            <div className="p-6 md:p-8 overflow-y-auto space-y-6 custom-scrollbar">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="md:col-span-2 space-y-1.5">
+                  <label className="text-xs font-bold text-gray-500 uppercase ml-1 flex items-center gap-1">
+                    Nama Lengkap <span className="text-red-500">*</span>
+                  </label>
+                  <input name="child_name" value={formAdd.child_name} onChange={handleAddChange} className="w-full border border-gray-200 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-[#C0DCD6] focus:border-[#409E86] outline-none transition-all" placeholder="Masukkan nama lengkap" />
+                </div>
+                
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-gray-500 uppercase ml-1 flex items-center gap-1">
+                    <MapPin size={12} /> Tempat Lahir <span className="text-red-500">*</span>
+                  </label>
+                  <input name="child_birth_place" value={formAdd.child_birth_place} onChange={handleAddChange} className="w-full border border-gray-200 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-[#C0DCD6] outline-none transition-all" placeholder="Kota lahir" />
+                </div>
 
-        {/* Tempat & Tanggal Lahir */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="text-sm font-medium">
-              Tempat Lahir <span className="text-red-500">*</span>
-            </label>
-            <input
-              name="child_birth_place"
-              value={formAdd.child_birth_place}
-              onChange={handleAddChange}
-              className="w-full border rounded-lg px-3 py-2 mt-1"
-            />
-          </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-gray-500 uppercase ml-1 flex items-center gap-1">
+                    <Calendar size={12} /> Tanggal Lahir <span className="text-red-500">*</span>
+                  </label>
+                  <input type="date" name="child_birth_date" value={formAdd.child_birth_date} onChange={handleAddChange} className="w-full border border-gray-200 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-[#C0DCD6] outline-none transition-all" />
+                </div>
+              </div>
 
-          <div>
-            <label className="text-sm font-medium">
-              Tanggal Lahir <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="date"
-              name="child_birth_date"
-              value={formAdd.child_birth_date}
-              onChange={handleAddChange}
-              className="w-full border rounded-lg px-3 py-2 mt-1"
-            />
-          </div>
-        </div>
+              <div className="space-y-3">
+                <label className="text-xs font-bold text-gray-500 uppercase ml-1">Jenis Kelamin <span className="text-red-500">*</span></label>
+                <div className="grid grid-cols-2 gap-3">
+                  {["laki-laki", "perempuan"].map((g) => (
+                    <label key={g} className="relative flex items-center justify-center gap-2 border-2 border-gray-100 rounded-2xl py-4 cursor-pointer transition-all has-[:checked]:bg-[#EAF4F0] has-[:checked]:border-[#409E86]">
+                      <input type="radio" name="child_gender" value={g} checked={formAdd.child_gender === g} onChange={handleAddChange} className="hidden" />
+                      <span className="capitalize text-sm font-bold text-gray-600">{g === 'laki-laki' ? '👦 Laki-laki' : '👧 Perempuan'}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
 
-        {/* Jenis Kelamin */}
-        <div>
-          <label className="text-sm font-medium">
-            Jenis Kelamin <span className="text-red-500">*</span>
-          </label>
-          <div className="flex gap-6 mt-2">
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="radio"
-                name="child_gender"
-                value="laki-laki"
-                checked={formAdd.child_gender === "laki-laki"}
-                onChange={handleAddChange}
-                className="accent-[#409E86] "
-              />
-              Laki - laki
-            </label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-gray-500 uppercase ml-1">Alamat Domisili <span className="text-red-500">*</span></label>
+                <textarea name="child_address" value={formAdd.child_address} onChange={handleAddChange} rows={3} className="w-full border border-gray-200 rounded-2xl px-5 py-3.5 outline-none focus:ring-2 focus:ring-[#C0DCD6] transition-all" placeholder="Alamat lengkap saat ini" />
+              </div>
 
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="radio"
-                name="child_gender"
-                value="perempuan"
-                checked={formAdd.child_gender === "perempuan"}
-                onChange={handleAddChange}
-                className="accent-[#409E86] "
-              />
-              Perempuan
-            </label>
-          </div>
-        </div>
+              <div className="space-y-4">
+                <label className="text-xs font-bold text-gray-500 uppercase ml-1 flex items-center gap-2">
+                  <Info size={14} /> Layanan yang Dibutuhkan <span className="text-red-500">*</span>
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {["Asesmen Tumbuh Kembang", "Asesmen Terpadu", "Konsultasi Dokter", "Daycare", "Lainnya"].map((item) => (
+                    <label key={item} className="group flex items-center gap-3 p-4 border border-gray-100 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors has-[:checked]:bg-[#EAF4F0] has-[:checked]:border-[#C0DCD6]">
+                      <input type="checkbox" value={item} onChange={handleAddChange} name="child_service_choice" checked={formAdd.child_service_choice.includes(item)} className="w-5 h-5 rounded accent-[#409E86]" />
+                      <span className="text-sm font-semibold text-gray-700">{item}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
 
-        {/* Sekolah */}
-        <div>
-          <label className="text-sm font-medium">Sekolah</label>
-          <input
-            name="child_school"
-            value={formAdd.child_school}
-            onChange={handleAddChange}
-            className="w-full border rounded-lg px-3 py-2 mt-1"
-          />
-        </div>
-
-        {/* Alamat */}
-        <div>
-          <label className="text-sm font-medium">
-            Alamat <span className="text-red-500">*</span>
-          </label>
-          <textarea
-            name="child_address"
-            value={formAdd.child_address}
-            onChange={handleAddChange}
-            rows={3}
-            className="w-full border rounded-lg px-3 py-2 mt-1"
-          />
-        </div>
-
-        {/* Keluhan */}
-        <div>
-          <label className="text-sm font-medium">
-            Keluhan <span className="text-red-500">*</span>
-          </label>
-          <textarea
-            name="child_complaint"
-            value={formAdd.child_complaint}
-            onChange={handleAddChange}
-            rows={3}
-            placeholder="Isi Keluhan"
-            className="w-full border rounded-lg px-3 py-2 mt-1"
-          />
-        </div>
-
-        {/* Pilih Layanan */}
-        <div>
-          <label className="text-sm font-medium">
-            Pilih Layanan <span className="text-red-500">*</span>
-          </label>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2 text-sm">
-  {[
-    "Asesmen Tumbuh Kembang",
-    "Asesmen Terpadu",
-    "Konsultasi Dokter",
-    "Konsultasi Psikolog",
-    "Konsultasi Keluarga",
-    "Test Psikolog",
-    "Layanan Minat Bakat",
-    "Daycare",
-    "Home Care",
-    "Hydrotherapy",
-    "Baby Spa",
-    "Lainnya",
-  ].map((item) => (
-    <label key={item} className="flex items-center gap-2">
-      <input
-        type="checkbox"
-        value={item}
-        onChange={handleAddChange}
-        name="child_service_choice"
-        checked={formAdd.child_service_choice.includes(item)}
-        className="accent-[#409E86] "
-      />
-      {item}
-    </label>
-  ))}
-</div>
-
-        </div>
-      </div>
-
-            <div className="flex justify-end gap-3 mt-6">
-              <button
-                onClick={() => setOpenAdd(false)}
-                className="px-4 py-2 border rounded-lg"
-              >
-                Batal
-              </button>
-              <button
-                onClick={handleTambah}
-                className="px-4 py-2 bg-[#409E86] text-white rounded-lg"
-              >
-                Simpan
-              </button>
+            <div className="p-6 md:p-8 border-t border-gray-100 bg-gray-50 flex flex-col sm:flex-row gap-3">
+              <button onClick={() => setOpenAdd(false)} className="w-full sm:flex-1 py-4 border border-gray-300 rounded-2xl font-bold text-gray-600 hover:bg-white transition-all order-2 sm:order-1">Batal</button>
+              <button onClick={handleTambah} className="w-full sm:flex-1 py-4 bg-[#409E86] text-white rounded-2xl font-bold shadow-lg shadow-[#409E86]/20 hover:bg-[#368672] transition-all active:scale-95 order-1 sm:order-2">Simpan Data</button>
             </div>
           </div>
         </div>
       )}
-    </div>
+
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #f8fafc;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #cbd5e1;
+          border-radius: 10px;
+        }
+      `}</style>
+    </ResponsiveOrangtuaLayout>
   );
 }

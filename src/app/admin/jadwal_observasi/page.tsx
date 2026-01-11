@@ -411,80 +411,79 @@ setOpenDropdown(j.observation_id);
          {/* DROPDOWN AKSI */}
 {openDropdown && selectedPasien && (
   <div
-    className="fixed top-[100px] left-1/2 -translate-x-1/2 z-50 bg-white border border-[#80C2B0] shadow-xl rounded-lg w-64 text-[#5F52BF]"
-    onClick={(e) => e.stopPropagation()}
+    className="fixed inset-0 z-40"
+    onClick={() => setOpenDropdown(null)}
   >
-    <div className="divide-y divide-gray-200">
+    <div
+      className="absolute right-10 top-32 w-56 bg-white border border-[#80C2B0] rounded-lg shadow-lg"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="divide-y divide-gray-200 text-left">
 
-      {/* 👇 Kondisi dropdown berdasarkan tab */}
-      {tab === "selesai" ? (
-        <>
-          <button
-            onClick={() => handleAturAsesmen(selectedPasien)}
-            className="flex items-center w-full px-4 py-3 text-sm hover:bg-[#E9F4F1]"
-          >
-            <Settings size={16} className="mr-2" />
-            Atur Asesmen
-          </button>
+        {/* ================= TAB SELESAI ================= */}
+        {tab === "selesai" && (
+          <>
+            <button
+              onClick={() => handleAturAsesmen(selectedPasien)}
+              className="flex items-center w-full px-4 py-3 text-sm text-[#5F52BF] hover:bg-[#E9F4F1]"
+            >
+              <Settings size={16} className="mr-2" />
+              Atur Asesmen
+            </button>
 
-          <button
-  onClick={() => handleRiwayatJawaban(selectedPasien.observation_id)}
-  className="flex items-center w-full px-4 py-3 text-sm hover:bg-[#E9F4F1]"
->
-  <Clock3 size={16} className="mr-2" />
-  Riwayat Jawaban
-</button>
+            <button
+              onClick={() => handleRiwayatJawaban(selectedPasien.observation_id)}
+              className="flex items-center w-full px-4 py-3 text-sm text-[#5F52BF] hover:bg-[#E9F4F1]"
+            >
+              <Clock3 size={16} className="mr-2" />
+              Riwayat Jawaban
+            </button>
 
-<button
-  onClick={() => handleLihatHasil(selectedPasien.observation_id)}
-  className="flex items-center w-full px-4 py-3 text-sm hover:bg-[#E9F4F1]"
->
-  <Eye size={16} className="mr-2" />
-  Lihat Hasil
-</button>
+            <button
+              onClick={() => handleLihatHasil(selectedPasien.observation_id)}
+              className="flex items-center w-full px-4 py-3 text-sm text-[#5F52BF] hover:bg-[#E9F4F1]"
+            >
+              <Eye size={16} className="mr-2" />
+              Lihat Hasil
+            </button>
+          </>
+        )}
 
-        </>
-      ) : (
-        <>
-          {/* MENU KHUSUS TAB TERJADWAL */}
+        {/* ================= TAB TERJADWAL ================= */}
+        {tab === "terjadwal" && (
+          <>
+            <button
+              onClick={() => handleAturAsesmen(selectedPasien)}
+              className="flex items-center w-full px-4 py-3 text-sm hover:bg-[#E9F4F1]"
+            >
+              <Settings size={16} className="mr-2" />
+              Edit Jadwal
+            </button>
 
-          <button
-            onClick={() => handleAturAsesmen(selectedPasien)}
-            className="flex items-center w-full px-4 py-3 text-sm hover:bg-[#E9F4F1]"
-          >
-            <Settings size={16} className="mr-2" />
-            Atur Jadwal
-          </button>
-
-          <button
-            onClick={async () => {
-              if (!selectedPasien) return;
-
-              try {
-                const token = localStorage.getItem("token");
-                const res = await fetch(
-                  `/api/observations/${selectedPasien.observation_id}/detail?type=scheduled`,
-                  {
-                    headers: { Authorization: `Bearer ${token}` },
-                  }
-                );
-
-                const data = await res.json();
-                setSelectedObservation(data.data);
-                setOpenDetail(true);
-                setOpenDropdown(null);
-              } catch (err) {
-                console.error(err);
-                alert("Gagal memuat detail observasi!");
-              }
-            }}
-            className="flex items-center w-full px-4 py-3 text-sm hover:bg-[#E9F4F1]"
-          >
-            <Eye size={16} className="mr-2" />
-            Detail
-          </button>
-        </>
-      )}
+            <button
+              onClick={async () => {
+                try {
+                  const token = localStorage.getItem("token");
+                  const res = await fetch(
+                    `/api/observations/${selectedPasien.observation_id}/detail?type=scheduled`,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                  );
+                  const data = await res.json();
+                  setSelectedObservation(data.data);
+                  setOpenDetail(true);
+                  setOpenDropdown(null);
+                } catch {
+                  alert("Gagal memuat detail observasi");
+                }
+              }}
+              className="flex items-center w-full px-4 py-3 text-sm hover:bg-[#E9F4F1]"
+            >
+              <Eye size={16} className="mr-2" />
+              Detail
+            </button>
+          </>
+        )}
+      </div>
     </div>
   </div>
 )}

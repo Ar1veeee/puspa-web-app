@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Play, Clock3 } from "lucide-react";
 import SidebarTerapis from "@/components/layout/sidebar_terapis";
@@ -9,6 +9,7 @@ import HeaderTerapis from "@/components/layout/header_terapis";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getAssessments } from "@/lib/api/asesment";
 
+// --- INTERFACES (Tetap Sama) ---
 type TerapiTab =
   | "PLB (Paedagog)"
   | "Terapi Okupasi"
@@ -29,12 +30,28 @@ interface Assessment {
   assessor: string | null;
   scheduled_date?: string;
   scheduled_time?: string;
-  completed_at?: string; // ⬅️ TAMBAHAN
+  completed_at?: string; 
   status: string;
 }
 
-
+// --- KOMPONEN UTAMA (Wrapper dengan Suspense) ---
 export default function AssessmentPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 text-[#36315B]">
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#81B7A9] border-t-transparent"></div>
+          <p className="font-semibold">Memuat Halaman Asesmen...</p>
+        </div>
+      </div>
+    }>
+      <AssessmentContent />
+    </Suspense>
+  );
+}
+
+// --- SUB-KOMPONEN KONTEN (Logika Asli Anda) ---
+function AssessmentContent() {
   const router = useRouter();
   const params = useSearchParams();
 
@@ -73,7 +90,6 @@ export default function AssessmentPage() {
     router.replace(`?type=${getType()}&status=${mappedStatus}`);
   }, [activeFilter, activeTab]);
 
-  // Reset page ke 1 setiap filter berubah
   useEffect(() => {
     setPage(1);
   }, [activeTab, activeFilter, dateFilter, searchName]);
@@ -247,10 +263,10 @@ export default function AssessmentPage() {
 
                         <td className="px-3 py-2">{item.scheduled_date}</td>
                         <td className="px-3 py-2">
-  {activeFilter === "Selesai"
-    ? item.completed_at
-    : item.scheduled_time}
-</td>
+                          {activeFilter === "Selesai"
+                            ? item.completed_at
+                            : item.scheduled_time}
+                        </td>
                         <td className="px-3 py-2 relative">
                           <button
                             onClick={() => toggleDropdown(item.assessment_id)}
@@ -305,8 +321,6 @@ export default function AssessmentPage() {
                                     </button>
 
                                     <div className="border-t border-[#81B7A9]" />
-
-                                    
                                   </>
                                 )}
                               </motion.div>
@@ -319,38 +333,35 @@ export default function AssessmentPage() {
                 </table>
 
                 {/* PAGINATION */}
-                {/* PAGINATION */}
-<div className="flex justify-center mt-4">
-  <div className="flex items-center gap-4">
-    <button
-      disabled={page === 1}
-      onClick={() => setPage(page - 1)}
-      className={`px-3 py-1 rounded border ${
-        page === 1
-          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-          : "bg-white hover:bg-gray-100"
-      }`}
-    >
-      Prev
-    </button>
-    <span className="text-sm font-medium">
-      Page {page} / {totalPages}
-    </span>
-    <button
-      disabled={page === totalPages || totalPages === 0}
-      onClick={() => setPage(page + 1)}
-      className={`px-3 py-1 rounded border ${
-        page === totalPages || totalPages === 0
-          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-          : "bg-white hover:bg-gray-100"
-      }`}
-    >
-      Next
-    </button>
-  </div>
-</div>
-
-                
+                <div className="flex justify-center mt-4">
+                  <div className="flex items-center gap-4">
+                    <button
+                      disabled={page === 1}
+                      onClick={() => setPage(page - 1)}
+                      className={`px-3 py-1 rounded border ${
+                        page === 1
+                          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                          : "bg-white hover:bg-gray-100"
+                      }`}
+                    >
+                      Prev
+                    </button>
+                    <span className="text-sm font-medium">
+                      Page {page} / {totalPages}
+                    </span>
+                    <button
+                      disabled={page === totalPages || totalPages === 0}
+                      onClick={() => setPage(page + 1)}
+                      className={`px-3 py-1 rounded border ${
+                        page === totalPages || totalPages === 0
+                          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                          : "bg-white hover:bg-gray-100"
+                      }`}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
               </>
             )}
           </div>

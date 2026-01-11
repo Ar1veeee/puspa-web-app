@@ -2,11 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Menu, X, CalendarDays, User } from "lucide-react";
+import { CalendarDays, User, ChevronRight, ClipboardList, Baby, Mars } from "lucide-react";
 
-import SidebarOrangtua from "@/components/layout/sidebar-orangtua";
-import HeaderOrangtua from "@/components/layout/header-orangtua";
-
+import ResponsiveOrangtuaLayout from "@/components/layout/ResponsiveOrangtuaLayout";
 import {
   getMyAssessments,
   AssessmentItem,
@@ -16,8 +14,6 @@ import {
 export default function DataUmumPage() {
   const router = useRouter();
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const [assessments, setAssessments] = useState<AssessmentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingDetail, setLoadingDetail] = useState(false);
@@ -26,7 +22,7 @@ export default function DataUmumPage() {
     async function fetchData() {
       try {
         const res = await getMyAssessments();
-        setAssessments(res.data);
+        setAssessments(res.data || []);
       } catch (error) {
         console.error("Failed to load assessments:", error);
       } finally {
@@ -55,92 +51,97 @@ export default function DataUmumPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-50">
-        <div className="h-10 w-10 border-4 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
+      <div className="flex flex-col justify-center items-center min-h-[60vh] gap-4">
+        <div className="h-10 w-10 border-4 border-[#409E86] border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-gray-500 font-medium animate-pulse text-sm">Memuat daftar assessment...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* ================= SIDEBAR ================= */}
-      <aside
-        className={`
-          fixed md:static inset-y-0 left-0 z-20
-          w-64 bg-white shadow-md
-          transform transition-transform duration-300
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-        `}
-      >
-        <SidebarOrangtua />
-      </aside>
-
-      {/* overlay mobile */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/30 z-10 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* hamburger */}
-      <button
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed top-4 left-4 z-30 md:hidden bg-white p-2 rounded-md shadow"
-      >
-        {sidebarOpen ? <X /> : <Menu />}
-      </button>
-
-      {/* ================= CONTENT ================= */}
-<div className="flex-1 flex flex-col">
-        <HeaderOrangtua />
-
-        <main className="flex-1 overflow-y-auto p-8 relative">
-          <h2 className="text-lg text-center font-semibold mb-6 text-gray-700">
+    <ResponsiveOrangtuaLayout maxWidth="max-w-6xl">
+      <div className="relative">
+        {/* Header Section */}
+        <div className="mb-8 text-center md:text-left">
+          <h2 className="text-2xl md:text-3xl font-black text-[#36315B]">
             Pilih Assessment Anak
           </h2>
+          <p className="text-gray-400 text-sm mt-2">
+            Pilih salah satu jadwal assessment di bawah ini untuk melihat detail data
+          </p>
+        </div>
 
-          {/* loading detail overlay (unchanged) */}
-          {loadingDetail && (
-            <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-50">
-              <div className="h-10 w-10 border-4 border-teal-600 border-t-transparent rounded-full animate-spin" />
+        {/* Loading detail overlay */}
+        {loadingDetail && (
+          <div className="fixed inset-0 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center z-[60]">
+            <div className="h-12 w-12 border-4 border-[#409E86] border-t-transparent rounded-full animate-spin mb-4" />
+            <p className="text-[#36315B] font-bold">Membuka Assessment...</p>
+          </div>
+        )}
+
+        {/* Assessment Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 md:gap-6">
+          {assessments.length === 0 ? (
+            <div className="col-span-full bg-white rounded-2xl p-12 border border-dashed border-gray-200 flex flex-col items-center">
+              <ClipboardList className="w-16 h-16 text-gray-200 mb-4" />
+              <p className="text-gray-400 font-medium">Tidak ada data assessment ditemukan.</p>
             </div>
-          )}
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {assessments.length === 0 && (
-              <p className="text-center text-gray-600 col-span-full">
-                Tidak ada assessment ditemukan.
-              </p>
-            )}
-
-            {assessments.map((item) => (
+          ) : (
+            assessments.map((item) => (
               <div
                 key={item.assessment_id}
                 onClick={() => handleSelectAssessment(item.assessment_id)}
-                className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer p-5"
+                className="group relative bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:border-[#C0DCD6] transition-all duration-300 cursor-pointer overflow-hidden"
               >
-                <h3 className="text-lg font-semibold text-[#277373] mb-3">
-                  {item.child_name}
-                </h3>
+                {/* Decorative background element */}
+                <div className="absolute -right-4 -top-4 w-24 h-24 bg-[#EAF4F0] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0" />
 
-                <div className="flex items-center text-sm text-gray-600 mb-2">
-                  <User className="w-4 h-4 mr-2 text-[#277373]" />
-                  {item.child_age} • {item.child_gender}
-                </div>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-[#EAF4F0] rounded-xl text-[#409E86] group-hover:scale-110 transition-transform duration-300">
+                      <Baby size={24} />
+                    </div>
+                    <h3 className="text-lg font-bold text-[#36315B] group-hover:text-[#409E86] transition-colors line-clamp-1">
+                      {item.child_name}
+                    </h3>
+                  </div>
 
-                <div className="flex items-center text-sm text-gray-600">
-                  <CalendarDays className="w-4 h-4 mr-2 text-[#277373]" />
-                  Jadwal:
-                  <span className="ml-1 font-medium">
-                    {item.scheduled_date}
-                  </span>
+                  <div className="space-y-3">
+                    <div className="flex items-center text-sm text-gray-500 font-medium gap-2">
+                      <div className="w-8 flex justify-center">
+                        <User className="w-4 h-4 text-[#409E86]" />
+                      </div>
+                      <span>{item.child_age}</span>
+                      <div className="mx-1 text-gray-300">
+                        <Mars className="w-4 h-4 text-[#409E86]" />
+                      </div> <span className="capitalize">{item.child_gender}</span>
+                    </div>
+
+                    <div className="flex items-center text-sm text-gray-500 font-medium">
+                      <div className="w-8 flex justify-center">
+                        <CalendarDays className="w-4 h-4 text-[#409E86]" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Jadwal Assessment</span>
+                        <span className="text-[#36315B] font-semibold">{item.scheduled_date}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-gray-50 flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#409E86] opacity-0 group-hover:opacity-100 transition-opacity">
+                      Lihat Detail
+                    </span>
+                    <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#409E86] group-hover:text-white transition-all ml-auto">
+                      <ChevronRight size={18} />
+                    </div>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </main>
+            ))
+          )}
+        </div>
       </div>
-    </div>
+    </ResponsiveOrangtuaLayout>
   );
 }

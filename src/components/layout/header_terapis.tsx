@@ -24,7 +24,13 @@ export default function HeaderTerapis({ pageTitle }: HeaderTerapisProps) {
           item.dropdown.some((sub) => pathname.startsWith(sub.href)))
     ) || null;
 
-  const title = pageTitle || activeItem?.name || "Dashboard";
+  const title =
+  pageTitle ||
+  (pathname.startsWith("/terapis/riwayat-hasil") ||
+  pathname.startsWith("/terapis/hasil-observasi")
+    ? "Observasi"
+    : activeItem?.name || "Dashboard");
+
 
   // ✅ pastikan STRING, bukan null
   const profileImage: string | null =

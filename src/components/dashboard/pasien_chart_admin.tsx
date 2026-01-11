@@ -5,10 +5,14 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { useMemo } from "react";
 import { Users } from "lucide-react";
 
+// ✅ PERBAIKAN: Tambahkan Index Signature [key: string]: any
+// Ini memberitahu TypeScript bahwa objek ini bisa diakses dengan kunci string apa pun,
+// yang diperlukan oleh komponen internal Recharts.
 interface ChartItem {
   name: string;
   value: number;
   percentage: number;
+  [key: string]: any; 
 }
 
 interface PasienChartProps {
@@ -25,23 +29,23 @@ type PieLabelProps = {
 
 export default function PasienChartAdmin({ data, loading }: PasienChartProps) {
   const COLORS = ["#81B7A9", "#6356C1", "#F59E0B", "#10B981", "#3B82F6"];
-const CATEGORY_LABEL_MAP: Record<string, string> = {
-  fisio: "Fisioterapi",
-};
- const chartData: ChartItem[] = useMemo(() => {
-  if (!data || data.length === 0) return [];
+  const CATEGORY_LABEL_MAP: Record<string, string> = {
+    fisio: "Fisioterapi",
+  };
 
-  return data.map((item: any) => {
-    const key = item.type_key?.toLowerCase();
+  const chartData: ChartItem[] = useMemo(() => {
+    if (!data || data.length === 0) return [];
 
-    return {
-      name: CATEGORY_LABEL_MAP[key] || item.type || "Unknown",
-      value: Number(item.count) || 0,
-      percentage: Number(item.percentage) || 0,
-    };
-  });
-}, [data]);
+    return data.map((item: any) => {
+      const key = item.type_key?.toLowerCase();
 
+      return {
+        name: CATEGORY_LABEL_MAP[key] || item.type || "Unknown",
+        value: Number(item.count) || 0,
+        percentage: Number(item.percentage) || 0,
+      };
+    });
+  }, [data]);
 
   const hasData = chartData.length > 0 && chartData.some(d => d.value > 0);
 
@@ -83,7 +87,7 @@ const CATEGORY_LABEL_MAP: Record<string, string> = {
               >
                 {chartData.map((_, index) => (
                   <Cell
-                    key={index}
+                    key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}
                   />
                 ))}

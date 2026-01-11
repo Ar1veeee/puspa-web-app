@@ -510,15 +510,16 @@ export default function JadwalAsesmenPage() {
           title={tab === "terjadwal" ? "Edit Asesmen" : "Atur Asesmen"}
           pasienName={selectedPasien.nama}
           initialDate={
-            selectedPasien.tanggalObservasi !== "-"
-              ? selectedPasien.tanggalObservasi
-              : ""
-          }
+  selectedPasien.tanggalObservasi && selectedPasien.tanggalObservasi !== "-"
+    ? selectedPasien.tanggalObservasi
+    : undefined
+}
+
           initialTime={
-            selectedPasien.waktu !== "-"
-              ? selectedPasien.waktu
-              : ""
-          }
+  selectedPasien.waktu && selectedPasien.waktu !== "-"
+    ? selectedPasien.waktu
+    : undefined
+}
           onClose={() => {
             setOpenAsesmen(false);
             setSelectedPasien(null);

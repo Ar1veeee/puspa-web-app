@@ -1,16 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Eye, EyeOff, CheckCircle2 } from "lucide-react";
 import { resetPassword } from "@/lib/api/resetpassword";
 
+
 export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-[#C9EAE0] text-[#36315B]">
+        Memuat...
+      </div>
+    }>
+      <ResetPasswordContent />
+    </Suspense>
+  );
+}
+
+function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -161,9 +172,8 @@ export default function ResetPasswordPage() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full h-[45px] rounded-lg font-medium text-white transition-colors ${
-                loading ? "bg-[#81B7A9] cursor-not-allowed" : "bg-[#81B7A9] hover:bg-[#6EA092]"
-              }`}
+              className={`w-full h-[45px] rounded-lg font-medium text-white transition-colors ${loading ? "bg-[#81B7A9] cursor-not-allowed" : "bg-[#81B7A9] hover:bg-[#6EA092]"
+                }`}
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>

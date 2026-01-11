@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-
 import React, { useEffect, useState, useMemo } from "react";
 import {
   AreaChart,
@@ -12,7 +11,7 @@ import {
   Tooltip as ReTooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Menu, X, Search } from "lucide-react";
+import { Menu, X, Search, Calendar, Clock, User, Activity } from "lucide-react";
 
 import SidebarOrangtua from "@/components/layout/sidebar-orangtua";
 import HeaderOrangtua from "@/components/layout/header-orangtua";
@@ -94,7 +93,6 @@ export default function DashboardOrtuPage() {
   useEffect(() => {
     async function load() {
       try {
-        /* ===== STATS ===== */
         const ST = (await getOrtuDashboardStats())?.data ?? {};
         setStats({
           total_children: ST.total_children ?? { count: 0 },
@@ -102,36 +100,25 @@ export default function DashboardOrtuPage() {
           total_assessments: ST.total_assessments ?? { count: 0 },
         });
 
-        /* ===== CHART ===== */
-      const CH = (await getOrtuDashboardChart())?.data ?? [];
+        const CH = (await getOrtuDashboardChart())?.data ?? [];
+        const mappedChart: ChartItem[] = CH
+          .map((x: any): ChartItem => {
+            const [bulan] = String(x.month ?? "").split(" ");
+            const m = MONTH_ORDER[bulan];
+            return {
+              monthIndex: m?.index ?? 0,
+              name: m?.label ?? "-",
+              total_children: Number(x.total_children ?? 0),
+              total_observations: Number(x.total_observations ?? 0),
+              total_assessments: Number(x.total_assessments ?? 0),
+            };
+          })
+          .sort((a: ChartItem, b: ChartItem) => a.monthIndex - b.monthIndex);
+        setChartData(mappedChart);
 
-const mappedChart: ChartItem[] = CH
-  .map((x: any): ChartItem => {
-    const [bulan] = String(x.month ?? "").split(" ");
-    const m = MONTH_ORDER[bulan];
-
-    return {
-      monthIndex: m?.index ?? 0,
-      name: m?.label ?? "-",
-      total_children: Number(x.total_children ?? 0),
-      total_observations: Number(x.total_observations ?? 0),
-      total_assessments: Number(x.total_assessments ?? 0),
-    };
-  })
-  .sort((a: ChartItem, b: ChartItem) => a.monthIndex - b.monthIndex);
-
-setChartData(mappedChart);
-
-
-        /* ===== SCHEDULE ===== */
         const SC = (await getOrtuUpcomingSchedules("all"))?.data ?? [];
-
         const mappedSchedule: ScheduleItem[] = SC.map((r: any) => {
-          const isAssessment =
-            String(r.service_type)
-              .toLowerCase()
-              .includes("assessment");
-
+          const isAssessment = String(r.service_type).toLowerCase().includes("assessment");
           return {
             id: r.id,
             jenis: isAssessment ? "assessment" : "observation",
@@ -144,17 +131,14 @@ setChartData(mappedChart);
             waktu: r.time ?? "-",
           };
         });
-
         setSchedule(mappedSchedule);
       } finally {
         setLoading(false);
       }
     }
-
     load();
   }, []);
 
-  /* ================= FILTER ================= */
   const filteredSchedule = useMemo(() => {
     return schedule
       .filter((s) => {
@@ -162,201 +146,259 @@ setChartData(mappedChart);
         if (activeTab === "Assessment") return s.jenis === "assessment";
         return true;
       })
-      .filter((s) =>
-        s.nama_pasien.toLowerCase().includes(q.toLowerCase())
-      );
+      .filter((s) => s.nama_pasien.toLowerCase().includes(q.toLowerCase()));
   }, [schedule, q, activeTab]);
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        Loading...
+      <div className="h-screen flex flex-col items-center justify-center bg-white space-y-4">
+        <div className="w-10 h-10 border-4 border-[#81B7A9] border-t-transparent rounded-full animate-spin" />
+        <p className="text-gray-500 font-medium animate-pulse">Menyiapkan Dashboard...</p>
       </div>
     );
   }
 
   return (
-    <div className="h-screen overflow-hidden bg-[#F8FAFC] text-[#36315B]">
+    <div className="h-screen overflow-hidden bg-[#F8FAFC] text-[#36315B] relative">
+      {/* SIDEBAR OVERLAY */}
+      <div 
+        className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300 md:hidden ${
+          sidebarOpen ? "opacity-100 visible" : "opacity-0 invisible"
+        }`} 
+        onClick={() => setSidebarOpen(false)}
+      />
+
       {/* SIDEBAR */}
       <aside
-        className={`fixed top-0 left-0 z-40 w-64 h-screen bg-white shadow
-        transform transition-transform
+        className={`fixed top-0 left-0 z-50 w-64 h-screen bg-white shadow-xl
+        transform transition-transform duration-300 ease-in-out
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
       >
         <SidebarOrangtua />
       </aside>
 
-      {/* TOGGLE */}
-      <button
-        onClick={() => setSidebarOpen((v) => !v)}
-        className="fixed top-4 left-4 z-50 md:hidden p-2 bg-white shadow rounded"
-      >
-        {sidebarOpen ? <X /> : <Menu />}
-      </button>
-
       {/* CONTENT */}
-      <div className="ml-0 md:ml-64 h-screen flex flex-col">
-        <header className="fixed top-0 left-0 md:left-64 right-0 h-16 z-30 bg-white shadow">
+      <div className="ml-0 md:ml-64 h-screen flex flex-col transition-all duration-300">
+        <header className="fixed top-0 left-0 md:left-64 right-0 h-16 z-30 bg-white shadow-sm flex items-center px-4">
+          <button 
+            onClick={() => setSidebarOpen(true)}
+            className="mr-3 md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <Menu size={22} />
+          </button>
           <HeaderOrangtua />
         </header>
 
-        <main className="mt-16 h-[calc(100vh-4rem)] overflow-y-auto p-6 space-y-8">
+        <main className="mt-16 h-[calc(100vh-4rem)] overflow-y-auto p-4 md:p-8 space-y-6 md:space-y-10 custom-scrollbar">
+          
           {/* ================= METRIC ================= */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <MetricCard title="Total Anak/Pasien" data={stats.total_children} icon="👶" />
-            <MetricCard title="Total Observasi" data={stats.total_observations} icon="👁️" />
-            <MetricCard title="Total Assessment" data={stats.total_assessments} icon="🧠" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <MetricCard title="Total Anak/Pasien" data={stats.total_children} icon="👶" color="bg-blue-50" />
+            <MetricCard title="Total Observasi" data={stats.total_observations} icon="👁️" color="bg-green-50" />
+            <MetricCard title="Total Assessment" data={stats.total_assessments} icon="🧠" color="bg-orange-50" />
           </div>
 
           {/* ================= CHART ================= */}
-           <div className="bg-white rounded-xl p-5 shadow">
-  <h3 className="font-semibold mb-3">Grafik Aktivitas</h3>
+          <div className="bg-white rounded-2xl p-5 md:p-8 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-bold text-gray-800 text-base md:text-lg flex items-center gap-2">
+                <Activity size={20} className="text-[#81B7A9]" />
+                Grafik Aktivitas
+              </h3>
+              <div className="hidden md:flex gap-4 text-xs font-medium">
+                <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-[#7c73f6] rounded-full"></span> Anak</div>
+                <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-[#34d399] rounded-full"></span> Observasi</div>
+                <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-[#fb923c] rounded-full"></span> Assessment</div>
+              </div>
+            </div>
+            
+            <div className="h-[280px] md:h-[320px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorChild" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#7c73f6" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="#7c73f6" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{fontSize: 11, fill: '#94A3B8'}} 
+                    dy={10}
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{fontSize: 11, fill: '#94A3B8'}} 
+                  />
+                  <ReTooltip 
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                  />
+                  <Area type="monotone" dataKey="total_children" stroke="#7c73f6" strokeWidth={3} fill="url(#colorChild)" />
+                  <Area type="monotone" dataKey="total_observations" stroke="#34d399" strokeWidth={3} fillOpacity={0} />
+                  <Area type="monotone" dataKey="total_assessments" stroke="#fb923c" strokeWidth={3} fillOpacity={0} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            
+            {/* Legend Mobile Only */}
+            <div className="flex flex-wrap gap-4 mt-6 text-[10px] md:hidden justify-center border-t border-gray-50 pt-4 font-semibold text-gray-500 uppercase tracking-wider">
+               <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 bg-[#7c73f6] rounded-full"></div> Anak</div>
+               <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 bg-[#34d399] rounded-full"></div> Observasi</div>
+               <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 bg-[#fb923c] rounded-full"></div> Assmt</div>
+            </div>
+          </div>
 
-  <div className="h-[260px]">
-    <ResponsiveContainer width="100%" height="100%">
-      <AreaChart data={chartData}>
-        <CartesianGrid strokeDasharray="3 3" opacity={0.08} />
-
-        <XAxis dataKey="name" />
-
-        <YAxis
-          domain={[0, 100]}
-          ticks={[0, 20, 40, 60, 80, 100]}
-          allowDecimals={false}
-        />
-
-        <ReTooltip />
-
-        <Area
-          dataKey="total_children"
-          stroke="#7c73f6"
-          fillOpacity={0.15}
-        />
-        <Area
-          dataKey="total_observations"
-          stroke="#34d399"
-          fillOpacity={0.15}
-        />
-        <Area
-          dataKey="total_assessments"
-          stroke="#fb923c"
-          fillOpacity={0.15}
-        />
-      </AreaChart>
-    </ResponsiveContainer>
-  </div>
-</div>
-
-
-          {/* ================= TABLE ================= */}
-          <div className="bg-white rounded-xl p-6 shadow">
-            {/* HEADER */}
-            <div className="flex justify-between mb-6">
-              <h3 className="font-semibold">Jadwal Mendatang</h3>
-              <div className="flex gap-3 items-center">
-                <div className="relative">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          {/* ================= JADWAL SECTION ================= */}
+          <div className="bg-white rounded-2xl p-5 md:p-8 shadow-sm border border-gray-100 mb-10">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 mb-8">
+              <h3 className="font-bold text-gray-800 text-base md:text-lg flex items-center gap-2">
+                <Calendar size={20} className="text-[#81B7A9]" />
+                Jadwal Mendatang
+              </h3>
+              
+              <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
+                <div className="relative group">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#81B7A9] transition-colors" />
                   <input
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
-                    placeholder="Cari Pasien"
-                    className="pl-9 pr-3 py-2 border rounded-lg text-sm"
+                    placeholder="Cari nama anak..."
+                    className="w-full sm:w-64 pl-10 pr-4 py-2.5 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-[#81B7A9]/20 transition-all outline-none"
                   />
                 </div>
-                {["Semua", "Observasi", "Assessment"].map((t) => (
-                  <button
-                    key={t}
-                    onClick={() => setActiveTab(t as any)}
-                    className={`px-4 py-1.5 rounded-full text-sm border
-                    ${activeTab === t
-                        ? "bg-[#81B7A9] text-white"
-                        : "bg-white text-gray-500"
-                      }`}
-                  >
-                    {t}
-                  </button>
-                ))}
+                
+                <div className="flex bg-gray-100 p-1 rounded-xl overflow-x-auto no-scrollbar">
+                  {["Semua", "Observasi", "Assessment"].map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => setActiveTab(t as any)}
+                      className={`whitespace-nowrap px-4 md:px-6 py-2 rounded-lg text-xs md:text-sm font-bold transition-all
+                      ${activeTab === t
+                          ? "bg-white text-[#4A8B73] shadow-sm"
+                          : "text-gray-500 hover:text-gray-700"
+                        }`}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
-            <table className="w-full text-sm">
-             <thead className="border-b text-gray-500 text-center">
-  {activeTab === "Semua" && (
-    <tr>
-      <th className="py-3">Nama Pasien</th>
-      <th>Jenis Layanan</th>
-      <th>Status</th>
-      <th>Tanggal</th>
-      <th>Waktu</th>
-    </tr>
-  )}
-  {activeTab === "Observasi" && (
-    <tr>
-      <th className="py-3">Nama Pasien</th>
-      <th>Observer</th>
-      <th>Status</th>
-      <th>Tanggal Observasi</th>
-      <th>Waktu</th>
-    </tr>
-  )}
-  {activeTab === "Assessment" && (
-    <tr>
-      <th className="py-3">Nama Pasien</th>
-      <th>Jenis Assessment</th>
-      <th>Asesor</th>
-      <th>Tanggal Assessment</th>
-      <th>Waktu</th>
-    </tr>
-  )}
-</thead>
+            {/* TABLE VIEW (Tablet & Desktop) */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="min-w-full">
+                <thead>
+                  <tr className="text-left text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50">
+                    <th className="pb-4 px-2">Pasien</th>
+                    <th className="pb-4 px-2">Layanan / Tenaga Ahli</th>
+                    <th className="pb-4 px-2">Status</th>
+                    <th className="pb-4 px-2">Jadwal</th>
+                    <th className="pb-4 px-2 text-right">Waktu</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {filteredSchedule.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="py-16 text-center text-gray-400 font-medium">
+                        Belum ada jadwal yang terdaftar
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredSchedule.map((r) => (
+                      <tr key={r.id} className="group hover:bg-gray-50/50 transition-colors">
+                        <td className="py-5 px-2">
+                          <div className="font-bold text-gray-700 group-hover:text-[#4A8B73] transition-colors">{r.nama_pasien}</div>
+                        </td>
+                        <td className="px-2">
+                          <div className="text-sm text-gray-600 font-medium">{r.service_type || "-"}</div>
+                          <div className="text-[11px] text-gray-400">Ahli: {r.observer || r.assessor || "-"}</div>
+                        </td>
+                        <td className="px-2">
+                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                            r.status.toLowerCase() === 'selesai' 
+                            ? 'bg-green-100 text-green-700' 
+                            : 'bg-[#EAF4F0] text-[#4A8B73]'
+                          }`}>
+                            {r.status}
+                          </span>
+                        </td>
+                        <td className="px-2 text-gray-600 font-medium text-sm whitespace-nowrap">
+                          {formatDateID(r.tanggal)}
+                        </td>
+                        <td className="px-2 text-right">
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-50 rounded-lg text-xs font-bold text-gray-600">
+                            <Clock size={12} />
+                            {r.waktu}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
 
-
-              <tbody className="text-center">
-  {filteredSchedule.length === 0 ? (
-    <tr>
-      <td colSpan={5} className="py-6 text-center text-gray-400">
-        Tidak ada jadwal
-      </td>
-    </tr>
-  ) : (
-    filteredSchedule.map((r) => (
-      <tr key={r.id} className="border-b">
-        {activeTab === "Semua" && (
-          <>
-            <td className="py-3">{r.nama_pasien}</td>
-            <td>{r.service_type || "-"}</td>
-            <td>{r.status}</td>
-            <td>{formatDateID(r.tanggal)}</td>
-            <td>{r.waktu}</td>
-          </>
-        )}
-        {activeTab === "Observasi" && (
-          <>
-            <td className="py-3">{r.nama_pasien}</td>
-            <td>{r.observer}</td>
-            <td>{r.status}</td>
-            <td>{formatDateID(r.tanggal)}</td>
-            <td>{r.waktu}</td>
-          </>
-        )}
-        {activeTab === "Assessment" && (
-          <>
-            <td className="py-3">{r.nama_pasien}</td>
-            <td>{r.service_type || "-"}</td>
-            <td>{r.assessor}</td>
-            <td>{formatDateID(r.tanggal)}</td>
-            <td>{r.waktu}</td>
-          </>
-        )}
-      </tr>
-    ))
-  )}
-</tbody>
-
-            </table>
+            {/* CARD VIEW (Mobile Only 414px) */}
+            <div className="sm:hidden space-y-4">
+              {filteredSchedule.length === 0 ? (
+                <div className="py-10 text-center text-gray-400 text-sm">Tidak ada jadwal ditemukan</div>
+              ) : (
+                filteredSchedule.map((r) => (
+                  <div key={r.id} className="p-4 border border-gray-100 rounded-2xl space-y-4 bg-gray-50/30">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="font-bold text-[#36315B]">{r.nama_pasien}</div>
+                        <div className="text-xs text-gray-500 mt-0.5">{r.service_type}</div>
+                      </div>
+                      <span className={`px-2 py-1 rounded-lg text-[9px] font-bold uppercase ${
+                        r.status.toLowerCase() === 'selesai' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                      }`}>
+                        {r.status}
+                      </span>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-100">
+                      <div className="flex items-center gap-2">
+                        <Calendar size={14} className="text-gray-400" />
+                        <span className="text-xs font-medium text-gray-600">{r.tanggal}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Clock size={14} className="text-gray-400" />
+                        <span className="text-xs font-medium text-gray-600">{r.waktu}</span>
+                      </div>
+                      <div className="flex items-center gap-2 col-span-2">
+                        <User size={14} className="text-gray-400" />
+                        <span className="text-xs text-gray-500 truncate">Ahli: {r.observer || r.assessor}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </main>
       </div>
+
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #E2E8F0;
+          border-radius: 10px;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </div>
   );
 }
@@ -366,29 +408,32 @@ function MetricCard({
   title,
   data,
   icon,
+  color
 }: {
   title: string;
   data: StatItem;
   icon: string;
+  color: string;
 }) {
   return (
-    <div className="bg-white rounded-xl p-5 shadow flex justify-between items-center">
-      <div>
-        <div className="text-xs text-gray-500">{title}</div>
-        <div className="text-2xl font-bold">{data.count}</div>
+    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex justify-between items-center group hover:border-[#81B7A9] transition-all duration-300">
+      <div className="space-y-1">
+        <p className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">{title}</p>
+        <div className="flex items-baseline gap-2">
+          <h4 className="text-2xl md:text-3xl font-black text-[#36315B]">{data.count}</h4>
+          <span className="text-xs font-bold text-gray-400">Total</span>
+        </div>
         {data.label && (
-          <div
-            className={`text-xs mt-1 ${
-              data.direction === "down"
-                ? "text-red-500"
-                : "text-green-600"
-            }`}
-          >
-            {data.label}
+          <div className={`text-[10px] font-bold px-2 py-0.5 rounded-full inline-block mt-2 ${
+            data.direction === "down" ? "bg-red-50 text-red-500" : "bg-green-50 text-green-600"
+          }`}>
+            {data.direction === "up" ? "↑" : "↓"} {data.label}
           </div>
         )}
       </div>
-      <div className="text-2xl">{icon}</div>
+      <div className={`text-2xl md:text-3xl ${color} w-12 h-12 md:w-16 md:h-16 flex items-center justify-center rounded-2xl shadow-inner group-hover:scale-110 transition-transform duration-300`}>
+        {icon}
+      </div>
     </div>
   );
 }

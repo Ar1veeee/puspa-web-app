@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react"; // Tambahkan Suspense
 import { useRouter, useSearchParams } from "next/navigation";
 import ResponsiveOrangtuaLayout from "@/components/layout/ResponsiveOrangtuaLayout";
 
@@ -24,7 +24,21 @@ type AnswerItem = {
 
 type Aspect = { key: string; label: string; };
 
+// --- KOMPONEN UTAMA (Wrapper dengan Suspense) ---
 export default function PaedagogFormPageReadOnly() {
+  return (
+    <Suspense fallback={
+      <div className="p-10 text-center text-lg font-medium text-[#36315B]">
+        Memuat halaman...
+      </div>
+    }>
+      <PaedagogRiwayatContent />
+    </Suspense>
+  );
+}
+
+// --- SUB-KOMPONEN KONTEN (Logika Asli Anda) ---
+function PaedagogRiwayatContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const assessmentId = searchParams.get("assessment_id") as string;
@@ -98,7 +112,7 @@ export default function PaedagogFormPageReadOnly() {
     };
 
     fetchData();
-  }, [assessmentId]);
+  }, [assessmentId, questionType, submitType]);
 
   const activeQuestions = answers.filter((q) => q.aspect_key === activeAspectKey);
 
@@ -126,75 +140,155 @@ export default function PaedagogFormPageReadOnly() {
 
   return (
     <ResponsiveOrangtuaLayout>
-      <div className="p-4 md:p-8 max-w-5xl mx-auto">
-        {/* CLOSE */}
-        <div className="flex justify-end mb-4">
+      <div className="p-4 sm:p-6 md:p-8 max-w-5xl mx-auto">
+        {/* CLOSE BUTTON */}
+        <div className="flex justify-end mb-4 md:mb-6">
           <button
-  onClick={() =>
-    router.push(
-      `/orangtua/assessment/kategori?assessment_id=${assessmentId}`
-    )
-  }
-  className="font-bold text-2xl hover:text-red-500"
->
-  ✕
-</button>
-
-        </div>
-
-        {/* STEP PROGRESS */}
-        <div className="flex flex-wrap justify-center mb-6 gap-4">
-          {steps.map((step, i) => {
-            const isActive = i === activeStep;
-            return (
-              <div key={i} className="flex items-start flex-wrap gap-2">
-                <div className="flex flex-col items-center min-w-[70px]">
-                  <div className={`w-8 h-8 flex items-center justify-center rounded-full border-2 text-sm font-semibold ${isActive ? "bg-[#6BB1A0] border-[#6BB1A0] text-white" : "bg-white border-gray-300 text-gray-400"}`}>
-                    {i + 1}
-                  </div>
-                  <span className={`mt-2 text-sm text-center ${isActive ? "font-semibold text-[#36315B]" : "text-gray-400"}`}>{step}</span>
-                </div>
-                {i < steps.length - 1 && <div className="w-6 md:w-14 h-px bg-gray-300 mt-4" />}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* ASPEK DROPDOWN */}
-        <div className="mb-6 flex justify-end">
-          <select
-            value={activeAspectKey}
-            onChange={(e) => setActiveAspectKey(e.target.value)}
-            className="border rounded-lg px-3 py-2 w-full md:w-64"
+            onClick={() =>
+              router.push(`/orangtua/assessment/kategori?assessment_id=${assessmentId}`)
+            }
+            className="font-bold text-2xl text-[#36315B] hover:text-red-500 transition-colors p-2"
+            aria-label="Tutup"
           >
-            {aspects.map((asp) => <option key={asp.key} value={asp.key}>{asp.label}</option>)}
-          </select>
+            ✕
+          </button>
         </div>
 
-        {/* CARD */}
-        <div className="bg-white rounded-xl p-4 md:p-6 shadow space-y-6">
-          {Object.keys(sectionGroups).map((section) => (
-            <div key={section}>
-              <h3 className="font-semibold mb-3">{section}</h3>
-              <div className="space-y-3">
-                {sectionGroups[section].map((q, i) => (
-                  <div key={q.question_id} className="bg-gray-50 p-3 rounded-lg">
-                    <p className="font-medium mb-1">{i + 1}. {q.question_text}</p>
-                    <input type="text" value={q.answer_value ?? "-"} readOnly disabled className="w-full border rounded px-3 py-2 bg-white" />
-                    {q.note && <p className="mt-1 text-sm text-gray-500">Catatan: {q.note}</p>}
+        {/* STEP PROGRESS - Optimized for Mobile Scrolling */}
+        <div className="mb-8 overflow-x-auto pb-4 scrollbar-hide">
+          <div className="flex items-start justify-between min-w-[600px] md:min-w-0 md:justify-center gap-2 px-2">
+            {steps.map((step, i) => {
+              const isActive = i === activeStep;
+              return (
+                <div key={i} className="flex items-start flex-1 last:flex-none gap-2">
+                  <div className="flex flex-col items-center min-w-[80px]">
+                    <div
+                      className={`w-8 h-8 flex items-center justify-center rounded-full border-2 text-sm font-semibold transition-all duration-300 ${
+                        isActive
+                          ? "bg-[#6BB1A0] border-[#6BB1A0] text-white shadow-sm"
+                          : "bg-white border-gray-300 text-gray-400"
+                      }`}
+                    >
+                      {i + 1}
+                    </div>
+                    <span
+                      className={`mt-2 text-[11px] md:text-sm text-center leading-tight ${
+                        isActive ? "font-semibold text-[#36315B]" : "text-gray-400"
+                      }`}
+                    >
+                      {step}
+                    </span>
                   </div>
-                ))}
-              </div>
-            </div>
-          ))}
+                  {i < steps.length - 1 && (
+                    <div className="flex-1 h-px bg-gray-300 mt-4 min-w-[20px]" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        {/* NAVIGASI ASPEK */}
-        <div className="mt-8 flex flex-col md:flex-row justify-between gap-3">
-          <button onClick={handlePrevAspect} disabled={currentIndex === 0} className={`px-5 py-2 rounded-lg font-medium border w-full md:w-auto ${currentIndex === 0 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-white text-[#36315B] hover:bg-gray-100"}`}>← Sebelumnya</button>
-          <button onClick={handleNextAspect} disabled={currentIndex === aspects.length - 1} className={`px-5 py-2 rounded-lg font-medium w-full md:w-auto ${currentIndex === aspects.length - 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-[#6BB1A0] text-white hover:opacity-90"}`}>Selanjutnya →</button>
+        {/* ASPEK DROPDOWN - Full width on mobile */}
+        <div className="mb-6 flex justify-center md:justify-end">
+          <div className="w-full md:w-auto">
+            <label className="block text-xs font-bold text-gray-500 mb-1 md:hidden">Pilih Aspek:</label>
+            <select
+              value={activeAspectKey}
+              onChange={(e) => setActiveAspectKey(e.target.value)}
+              className="border border-gray-300 rounded-lg px-4 py-2.5 w-full md:w-72 bg-white text-sm focus:ring-2 focus:ring-[#6BB1A0] outline-none shadow-sm"
+            >
+              {aspects.map((asp) => (
+                <option key={asp.key} value={asp.key}>
+                  {asp.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* CONTENT CARD */}
+        <div className="bg-white rounded-2xl p-5 md:p-8 shadow-sm border border-gray-100 space-y-8">
+          {Object.keys(sectionGroups).length > 0 ? (
+            Object.keys(sectionGroups).map((section) => (
+              <div key={section} className="animate-fadeIn">
+                <h3 className="font-bold text-[#36315B] text-lg mb-4 border-b pb-2">
+                  {section}
+                </h3>
+                <div className="space-y-4">
+                  {sectionGroups[section].map((q, i) => (
+                    <div key={q.question_id} className="bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+                      <p className="font-semibold text-[#36315B] text-sm md:text-base mb-2">
+                        {i + 1}. {q.question_text}
+                      </p>
+                      <input
+                        type="text"
+                        value={q.answer_value ?? "-"}
+                        readOnly
+                        disabled
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2.5 bg-gray-100/50 text-gray-700 text-sm cursor-not-allowed"
+                      />
+                      {q.note && (
+                        <div className="mt-2 flex gap-2 items-start bg-blue-50/50 p-2 rounded-lg">
+                          <span className="text-xs font-bold text-blue-600 uppercase">Catatan:</span>
+                          <p className="text-sm text-gray-600">{q.note}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="text-center py-10 text-gray-400 italic">
+              Tidak ada data riwayat untuk aspek ini.
+            </div>
+          )}
+        </div>
+
+        {/* ASPEK NAVIGATION - Responsive buttons */}
+        <div className="mt-8 flex flex-col sm:flex-row justify-between gap-4">
+          <button
+            onClick={handlePrevAspect}
+            disabled={currentIndex === 0}
+            className={`px-6 py-3 rounded-xl font-bold border transition-all duration-200 w-full sm:w-auto text-sm md:text-base flex items-center justify-center gap-2 ${
+              currentIndex === 0
+                ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                : "bg-white text-[#36315B] border-gray-300 hover:bg-gray-50 active:scale-95"
+            }`}
+          >
+            <span>←</span> Sebelumnya
+          </button>
+          
+          <button
+            onClick={handleNextAspect}
+            disabled={currentIndex === aspects.length - 1}
+            className={`px-8 py-3 rounded-xl font-bold transition-all duration-200 w-full sm:w-auto text-sm md:text-base flex items-center justify-center gap-2 ${
+              currentIndex === aspects.length - 1
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-[#6BB1A0] text-white hover:bg-[#5aa191] active:scale-95 shadow-lg shadow-[#6BB1A0]/20"
+            }`}
+          >
+            Selanjutnya <span>→</span>
+          </button>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.4s ease-out forwards;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </ResponsiveOrangtuaLayout>
   );
 }

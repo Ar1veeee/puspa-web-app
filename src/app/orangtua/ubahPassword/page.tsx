@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import ResponsiveOrangtuaLayout from "@/components/layout/ResponsiveOrangtuaLayout";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Lock, ChevronLeft, Save } from "lucide-react";
 import { updatePassword } from "@/lib/api/profile";
+import Link from "next/link";
 
 export default function PasswordOrangtuaPage() {
   const [showOld, setShowOld] = useState(false);
@@ -52,26 +53,37 @@ export default function PasswordOrangtuaPage() {
 
   return (
     <ResponsiveOrangtuaLayout maxWidth="max-w-md">
-      <div className="bg-white rounded-xl p-6 shadow-md mt-4">
-        <h2 className="text-xl font-semibold text-[#4A8B73] text-center">
-          Ubah Password
-        </h2>
+      <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm md:shadow-lg border border-gray-100 mt-4 md:mt-8">
+        <div className="flex flex-col items-center mb-8">
+          <div className="bg-[#EAF4F0] p-3 rounded-full mb-3">
+            <Lock className="text-[#4A8B73] w-6 h-6" />
+          </div>
+          <h2 className="text-xl md:text-2xl font-bold text-[#3A6B58] text-center">
+            Ubah Password
+          </h2>
+          <p className="text-gray-400 text-sm text-center mt-1">
+            Pastikan password baru Anda kuat dan aman
+          </p>
+        </div>
 
-        <div className="mt-6 space-y-4">
+        <div className="space-y-5">
           {/* PASSWORD SAAT INI */}
-          <div>
-            <label className="text-sm font-semibold">Password Saat Ini</label>
-            <div className="relative mt-1">
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-gray-600 uppercase ml-1">
+              Password Saat Ini
+            </label>
+            <div className="relative">
               <input
                 value={oldPass}
                 onChange={(e) => setOldPass(e.target.value)}
                 type={showOld ? "text" : "password"}
-                className="border w-full px-3 py-2 rounded"
+                className="w-full pl-4 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8EC3AA] focus:border-transparent outline-none transition-all text-sm"
+                placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowOld(!showOld)}
-                className="absolute right-3 top-2.5 text-gray-500"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#4A8B73] transition-colors p-1"
               >
                 {showOld ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -79,19 +91,22 @@ export default function PasswordOrangtuaPage() {
           </div>
 
           {/* PASSWORD BARU */}
-          <div>
-            <label className="text-sm font-semibold">Password Baru</label>
-            <div className="relative mt-1">
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-gray-600 uppercase ml-1">
+              Password Baru
+            </label>
+            <div className="relative">
               <input
                 value={newPass}
                 onChange={(e) => setNewPass(e.target.value)}
                 type={showNew ? "text" : "password"}
-                className="border w-full px-3 py-2 rounded"
+                className="w-full pl-4 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8EC3AA] focus:border-transparent outline-none transition-all text-sm"
+                placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowNew(!showNew)}
-                className="absolute right-3 top-2.5 text-gray-500"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#4A8B73] transition-colors p-1"
               >
                 {showNew ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -99,40 +114,54 @@ export default function PasswordOrangtuaPage() {
           </div>
 
           {/* KONFIRMASI PASSWORD */}
-          <div>
-            <label className="text-sm font-semibold">Konfirmasi Password</label>
-            <div className="relative mt-1">
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-gray-600 uppercase ml-1">
+              Konfirmasi Password Baru
+            </label>
+            <div className="relative">
               <input
                 value={confirmPass}
                 onChange={(e) => setConfirmPass(e.target.value)}
                 type={showConfirm ? "text" : "password"}
-                className="border w-full px-3 py-2 rounded"
+                className="w-full pl-4 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8EC3AA] focus:border-transparent outline-none transition-all text-sm"
+                placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirm(!showConfirm)}
-                className="absolute right-3 top-2.5 text-gray-500"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#4A8B73] transition-colors p-1"
               >
                 {showConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
           </div>
 
-          {/* BUTTON */}
-          <div className="flex flex-col sm:flex-row justify-between mt-6 gap-3">
-            <a
+          {/* BUTTON GROUP */}
+          <div className="flex flex-col sm:flex-row items-center justify-between mt-10 gap-3 pt-4 border-t border-gray-50">
+            <Link
               href="/orangtua/profil"
-              className="px-4 py-2 rounded bg-gray-300 w-full sm:w-auto text-center"
+              className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold transition-all w-full sm:w-auto text-sm order-2 sm:order-1"
             >
-              Kembali
-            </a>
+              <ChevronLeft size={18} />
+              <span>Kembali</span>
+            </Link>
 
             <button
               onClick={handleSave}
               disabled={loading}
-              className="px-4 py-2 rounded bg-[#8EC3AA] text-white disabled:opacity-50 w-full sm:w-auto"
+              className="flex items-center justify-center gap-2 px-8 py-3 rounded-xl bg-[#8EC3AA] hover:bg-[#7AB399] text-white font-bold shadow-md shadow-[#8EC3AA]/20 disabled:opacity-50 transition-all w-full sm:w-auto text-sm order-1 sm:order-2"
             >
-              {loading ? "Menyimpan..." : "Simpan"}
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Menyimpan...
+                </span>
+              ) : (
+                <>
+                  <Save size={18} />
+                  <span>Simpan</span>
+                </>
+              )}
             </button>
           </div>
         </div>

@@ -80,7 +80,8 @@ export default function DetailAssessmentPage() {
               <li>Jenis Kelamin : {detail.child_gender}</li>
               <li>Sekolah : {detail.child_school}</li>
               <li>Alamat : {detail.child_address}</li>
-              <li>Tanggal Observasi : {detail.scheduled_date}</li>
+              <li>Tanggal Asesment : {detail.scheduled_date}</li>
+              <li>Waktu : {detail.scheduled_time}</li>
             </ul>
           </div>
 

@@ -71,81 +71,109 @@ export default function TerapiWicaraPageReadOnly() {
   ];
   const activeStep = 3;
 
-  if (loading) return <div className="p-10 text-center text-lg font-medium">Memuat jawaban...</div>;
+  if (loading) return <div className="p-10 text-center text-lg font-medium text-[#36315B]">Memuat jawaban...</div>;
   if (errorMsg) return <div className="p-10 text-center text-red-600 font-semibold">{errorMsg}</div>;
 
   return (
     <ResponsiveOrangtuaLayout maxWidth="max-w-4xl">
-      {/* Stepper */}
-      <div className="flex flex-wrap justify-center mb-8 gap-4">
-        {steps.map((label, i) => (
-          <div key={i} className="flex items-center">
-            <div className="flex flex-col items-center space-y-2 min-w-[60px]">
+      {/* STEPPER - Optimized for Mobile Scrolling */}
+      <div className="mb-8 overflow-x-auto pb-4 scrollbar-hide">
+        <div className="flex items-start justify-between min-w-[650px] md:min-w-full px-2">
+          {steps.map((label, i) => (
+            <div key={i} className="flex flex-col items-center relative flex-1">
+              {/* Line Connector */}
+              {i < steps.length - 1 && (
+                <div className="absolute top-4.5 left-1/2 w-full h-[2px] bg-gray-200 -z-0" />
+              )}
+              
               <div
-                className={`w-9 h-9 flex items-center justify-center rounded-full border-2 text-sm font-semibold ${
-                  i === activeStep ? "bg-[#6BB1A0] border-[#6BB1A0] text-white" : "bg-gray-100 border-gray-300 text-gray-500"
+                className={`relative z-10 w-9 h-9 flex items-center justify-center rounded-full border-2 text-sm font-bold transition-all ${
+                  i === activeStep 
+                    ? "bg-[#6BB1A0] border-[#6BB1A0] text-white shadow-md" 
+                    : i < activeStep 
+                    ? "bg-[#6BB1A0] border-[#6BB1A0] text-white"
+                    : "bg-white border-gray-300 text-gray-400"
                 }`}
               >
                 {i + 1}
               </div>
-              <span className={`text-sm font-medium text-center ${i === activeStep ? "text-[#36315B]" : "text-gray-500"}`}>
+              <span className={`mt-2 text-[10px] md:text-xs font-bold text-center uppercase tracking-wider leading-tight max-w-[80px] ${
+                i === activeStep ? "text-[#36315B]" : "text-gray-400"
+              }`}>
                 {label}
               </span>
             </div>
-            {i < steps.length - 1 && <div className="w-10 h-px bg-gray-300 mx-2 hidden sm:block translate-y-[-12px]" />}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      {/* Konten jawaban */}
-      <div className="bg-white rounded-2xl shadow-sm p-6 md:p-8">
-        <div className="space-y-6">
+      {/* CONTENT CARD */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-10 transition-all duration-300">
+        <h2 className="text-xl md:text-2xl font-bold text-[#36315B] mb-8 border-b pb-4">
+          Riwayat Terapi Wicara
+        </h2>
+
+        <div className="space-y-8">
           {items.map((q: any, index: number) => (
-            <div key={index} className="mb-6">
-              <label className="block font-medium mb-2">
-                {q.question_number || index + 1}. {q.question_text}
+            <div key={index} className="animate-fadeIn">
+              <label className="block font-bold text-[#36315B] mb-3 text-sm md:text-base leading-relaxed">
+                <span className="text-[#6BB1A0]">{q.question_number || index + 1}.</span> {q.question_text}
               </label>
 
-              {/* Textarea */}
+              {/* Textarea / Text field */}
               {(q.answer_type === "textarea" || q.answer_type === "text") && (
-                <textarea
-                  className="w-full border rounded-lg p-3 h-24 bg-gray-100 text-gray-700 resize-none"
-                  value={q.answer || ""}
-                  readOnly
-                  disabled
-                />
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-gray-700 text-sm md:text-base min-h-[100px] whitespace-pre-wrap leading-relaxed">
+                  {q.answer || <span className="text-gray-400 italic">Tidak ada jawaban</span>}
+                </div>
               )}
 
-              {/* Table */}
+              {/* Table Style for Activities */}
               {q.answer_type === "table" && Array.isArray(q.answer) && (
-                <div className="overflow-x-auto mt-2">
-                  <div className="min-w-[300px] space-y-2">
-                    {q.answer.map((row: any, idx: number) => (
-                      <div key={idx} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 border-b pb-2">
-                        <span className="flex-1 font-medium">{row.kegiatan}</span>
-                        <input
-                          type="text"
-                          value={row.usia ?? ""}
-                          className="border rounded-lg p-2 w-full sm:w-40 bg-gray-100 text-gray-700"
-                          readOnly
-                          disabled
-                        />
+                <div className="grid grid-cols-1 gap-3 mt-2">
+                  {q.answer.map((row: any, idx: number) => (
+                    <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-xl gap-2 transition-hover hover:bg-white hover:shadow-sm">
+                      <span className="text-sm md:text-base font-semibold text-[#36315B]">
+                        {row.kegiatan}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-tighter">Mampu pada usia:</span>
+                        <span className="bg-[#6BB1A0]/10 text-[#6BB1A0] px-3 py-1 rounded-lg text-sm font-bold border border-[#6BB1A0]/20">
+                          {row.usia || "-"}
+                        </span>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
           ))}
         </div>
 
-        <button
-          className="mt-8 bg-[#6BB1A0] text-white px-6 py-3 rounded-xl shadow-md w-full hover:bg-[#58a88f] transition"
-          onClick={() => router.back()}
-        >
-          Kembali
-        </button>
+        {/* Footer Navigation */}
+        <div className="mt-12 flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-50 gap-4">
+          <p className="text-xs md:text-sm text-gray-400 font-medium order-2 md:order-1">
+            Menampilkan data asesmen tersimpan pada sistem Puspa.
+          </p>
+          <button
+            className="w-full md:w-auto bg-[#6BB1A0] hover:bg-[#5aa391] text-white px-10 py-3.5 rounded-2xl font-bold shadow-lg shadow-[#6BB1A0]/20 transition-all active:scale-95 text-sm md:text-base order-1 md:order-2"
+            onClick={() => router.back()}
+          >
+            Kembali ke Daftar
+          </button>
+        </div>
       </div>
+
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.4s ease-out forwards;
+        }
+      `}</style>
     </ResponsiveOrangtuaLayout>
   );
 }

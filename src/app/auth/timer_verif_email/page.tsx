@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,6 +9,19 @@ import { useSearchParams } from "next/navigation";
 import { resendVerification } from "@/lib/api/resendVerification";
 
 export default function TimerVerifEmailPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center text-gray-500">
+        Memuat...
+      </div>
+    }>
+      <TimerVerifEmailContent />
+    </Suspense>
+  );
+}
+
+// --- SUB-KOMPONEN KONTEN (Logika Asli Anda) ---
+function TimerVerifEmailContent() {
   const [isClient, setIsClient] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
   const [canResend, setCanResend] = useState(false);

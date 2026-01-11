@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import ResponsiveOrangtuaLayout from "@/components/layout/ResponsiveOrangtuaLayout";
 import { getParentProfile, updateParentProfile } from "@/lib/api/profile";
 import { useProfile } from "@/context/ProfileContext";
-import { User } from "lucide-react";
+import { User, Edit3, Camera } from "lucide-react";
 
 export default function ProfileOrangtuaPage() {
   const [isEditing, setIsEditing] = useState(false);
@@ -98,177 +98,206 @@ export default function ProfileOrangtuaPage() {
 
   return (
     <ResponsiveOrangtuaLayout maxWidth="max-w-4xl">
-      <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="bg-[#F8F9FA] md:bg-white rounded-2xl shadow-none md:shadow-lg p-4 md:p-8">
         {!isEditing ? (
-          <div className="flex flex-col md:flex-row gap-6">
-            {/* Foto profil */}
-            <div className="flex flex-col items-center text-center p-6 shadow rounded-xl bg-white">
-              {formData.profile_picture ? (
-                <img
-                  src={formData.profile_picture}
-                  className="w-40 h-40 rounded-full object-cover"
-                  alt="Foto Profil"
-                />
-              ) : (
-                <div className="w-40 h-40 bg-gray-200 rounded-full flex items-center justify-center">
-                  <User className="w-16 h-16 text-gray-500" />
-                </div>
-              )}
-              <h2 className="text-xl font-semibold text-[#4A8B73] mt-4">
+          <div className="flex flex-col md:flex-row gap-6 lg:gap-8">
+            {/* Foto profil Section */}
+            <div className="flex flex-col items-center text-center p-6 shadow-sm border border-gray-100 rounded-2xl bg-white w-full md:w-1/3">
+              <div className="relative">
+                {formData.profile_picture ? (
+                  <img
+                    src={formData.profile_picture}
+                    className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-[#EAF4F0]"
+                    alt="Foto Profil"
+                  />
+                ) : (
+                  <div className="w-32 h-32 md:w-40 md:h-40 bg-gray-100 rounded-full flex items-center justify-center border-4 border-[#EAF4F0]">
+                    <User className="w-12 h-12 md:w-16 md:h-16 text-gray-400" />
+                  </div>
+                )}
+              </div>
+              <h2 className="text-xl font-bold text-[#3A6B58] mt-4 line-clamp-1">
                 {formData.guardian_name}
               </h2>
-              <p className="text-gray-500 text-sm">{formData.role}</p>
+              <span className="px-3 py-1 bg-[#EAF4F0] text-[#4A8B73] text-xs font-medium rounded-full mt-2">
+                {formData.role}
+              </span>
             </div>
 
-            {/* Info profil */}
-            <div className="flex-1 shadow rounded-xl p-6 bg-white relative">
-              <button
-                onClick={() => setIsEditing(true)}
-                className="absolute right-4 top-4 text-white bg-[#8EC3AA] px-4 py-1 rounded-full text-sm"
-              >
-                Edit
-              </button>
+            {/* Info profil Section */}
+            <div className="flex-1 shadow-sm border border-gray-100 rounded-2xl p-5 md:p-8 bg-white">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="font-bold text-gray-800 text-lg">Detail Profil</h3>
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="flex items-center gap-2 text-white bg-[#8EC3AA] hover:bg-[#7AB399] transition-colors px-4 py-2 rounded-xl text-sm font-medium"
+                >
+                  <Edit3 className="w-4 h-4" />
+                  <span>Edit</span>
+                </button>
+              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 text-sm mt-6">
-                <p className="font-semibold">Nama</p>
-                <p>{formData.guardian_name}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5 text-sm">
+                <div className="space-y-1">
+                  <p className="text-gray-400 font-medium uppercase text-[10px] tracking-wider">Nama Lengkap</p>
+                  <p className="text-gray-700 font-semibold truncate">{formData.guardian_name}</p>
+                </div>
 
-                <p className="font-semibold">Hubungan</p>
-                <p>{formData.relationship_with_child}</p>
+                <div className="space-y-1">
+                  <p className="text-gray-400 font-medium uppercase text-[10px] tracking-wider">Hubungan</p>
+                  <p className="text-gray-700 font-semibold">{formData.relationship_with_child}</p>
+                </div>
 
-                <p className="font-semibold">Tanggal Lahir</p>
-                <p>{formData.guardian_birth_date}</p>
+                <div className="space-y-1">
+                  <p className="text-gray-400 font-medium uppercase text-[10px] tracking-wider">Tanggal Lahir</p>
+                  <p className="text-gray-700 font-semibold">{formData.guardian_birth_date}</p>
+                </div>
 
-                <p className="font-semibold">Telepon</p>
-                <p>{formData.guardian_phone}</p>
+                <div className="space-y-1">
+                  <p className="text-gray-400 font-medium uppercase text-[10px] tracking-wider">Nomor Telepon</p>
+                  <p className="text-gray-700 font-semibold">{formData.guardian_phone}</p>
+                </div>
 
-                <p className="font-semibold">Email</p>
-                <p>{formData.email}</p>
+                <div className="space-y-1 sm:col-span-2">
+                  <p className="text-gray-400 font-medium uppercase text-[10px] tracking-wider">Alamat Email</p>
+                  <p className="text-gray-700 font-semibold">{formData.email}</p>
+                </div>
 
-                <p className="font-semibold">User Role</p>
-                <p>{formData.role}</p>
+                <div className="space-y-1">
+                  <p className="text-gray-400 font-medium uppercase text-[10px] tracking-wider">Pekerjaan</p>
+                  <p className="text-gray-700 font-semibold">{formData.guardian_occupation}</p>
+                </div>
 
-                <p className="font-semibold">Pekerjaan</p>
-                <p>{formData.guardian_occupation}</p>
+                <div className="space-y-1">
+                  <p className="text-gray-400 font-medium uppercase text-[10px] tracking-wider">Status User</p>
+                  <p className="text-gray-700 font-semibold">{formData.role}</p>
+                </div>
               </div>
             </div>
           </div>
         ) : (
-          <div className="shadow-lg rounded-xl p-6 bg-white">
-            <h2 className="text-xl font-semibold text-[#4A8B73] mb-4">
-              Informasi Pribadi
+          <div className="shadow-sm border border-gray-100 rounded-2xl p-5 md:p-8 bg-white">
+            <h2 className="text-xl font-bold text-[#4A8B73] mb-6 border-b pb-4">
+              Edit Informasi Pribadi
             </h2>
 
-            <div className="flex flex-col md:flex-row gap-6">
+            <div className="flex flex-col lg:flex-row gap-8">
               {/* Foto dan upload */}
-              <div className="flex flex-col items-center shadow p-5 rounded-xl">
-                {selectedFile ? (
-                  <img
-                    src={URL.createObjectURL(selectedFile)}
-                    className="w-40 h-40 rounded-full object-cover"
-                    alt="Foto Profil"
-                  />
-                ) : formData.profile_picture ? (
-                  <img
-                    src={formData.profile_picture}
-                    className="w-40 h-40 rounded-full object-cover"
-                    alt="Foto Profil"
-                  />
-                ) : (
-                  <div className="w-40 h-40 bg-gray-200 rounded-full flex items-center justify-center">
-                    <User className="w-16 h-16 text-gray-500" />
-                  </div>
-                )}
-
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="mt-3 text-sm"
-                  onChange={(e) =>
-                    setSelectedFile(e.target.files?.[0] || null)
-                  }
-                />
+              <div className="flex flex-col items-center shrink-0">
+                <div className="relative group">
+                  {selectedFile ? (
+                    <img
+                      src={URL.createObjectURL(selectedFile)}
+                      className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-[#8EC3AA]"
+                      alt="Preview"
+                    />
+                  ) : formData.profile_picture ? (
+                    <img
+                      src={formData.profile_picture}
+                      className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-[#8EC3AA]"
+                      alt="Foto Profil"
+                    />
+                  ) : (
+                    <div className="w-32 h-32 md:w-40 md:h-40 bg-gray-100 rounded-full flex items-center justify-center border-4 border-dashed border-gray-300">
+                      <User className="w-12 h-12 text-gray-400" />
+                    </div>
+                  )}
+                  <label className="absolute bottom-1 right-1 bg-[#4A8B73] p-2 rounded-full text-white cursor-pointer hover:bg-[#3A6B58] shadow-lg">
+                    <Camera className="w-4 h-4" />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                    />
+                  </label>
+                </div>
+                <p className="mt-4 text-xs text-gray-400 text-center max-w-[150px]">
+                  Klik ikon kamera untuk mengubah foto profil
+                </p>
               </div>
 
               {/* Form input */}
-              <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-semibold">Nama</label>
+              <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-600 uppercase">Nama Lengkap</label>
                   <input
                     name="guardian_name"
                     value={formData.guardian_name}
                     onChange={handleChange}
-                    className="border rounded px-3 py-1 w-full"
+                    className="border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-[#8EC3AA] focus:border-transparent outline-none transition-all text-sm"
+                    placeholder="Masukkan nama lengkap"
                   />
                 </div>
 
-                <div>
-                  <label className="text-sm font-semibold">Telepon</label>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-600 uppercase">Nomor Telepon</label>
                   <input
                     name="guardian_phone"
                     value={formData.guardian_phone}
                     onChange={handleChange}
-                    className="border rounded px-3 py-1 w-full"
+                    className="border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-[#8EC3AA] focus:border-transparent outline-none transition-all text-sm"
+                    placeholder="Contoh: 0812..."
                   />
                 </div>
 
-                <div>
-                  <label className="text-sm font-semibold">Hubungan</label>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-600 uppercase">Hubungan</label>
                   <input
                     name="relationship_with_child"
                     value={formData.relationship_with_child}
                     onChange={handleChange}
-                    className="border rounded px-3 py-1 w-full"
+                    className="border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-[#8EC3AA] focus:border-transparent outline-none transition-all text-sm"
                   />
                 </div>
 
-                <div>
-                  <label className="text-sm font-semibold">Pekerjaan</label>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-600 uppercase">Pekerjaan</label>
                   <input
                     name="guardian_occupation"
                     value={formData.guardian_occupation}
                     onChange={handleChange}
-                    className="border rounded px-3 py-1 w-full"
+                    className="border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-[#8EC3AA] focus:border-transparent outline-none transition-all text-sm"
                   />
                 </div>
 
-                <div>
-                  <label className="text-sm font-semibold">Email</label>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-600 uppercase">Email</label>
                   <input
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="border rounded px-3 py-1 w-full"
+                    className="border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-[#8EC3AA] focus:border-transparent outline-none transition-all text-sm"
                   />
                 </div>
 
-                <div>
-                  <label className="text-sm font-semibold">Tanggal Lahir</label>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-600 uppercase">Tanggal Lahir</label>
                   <input
                     type="date"
                     name="guardian_birth_date"
                     value={formData.guardian_birth_date}
                     onChange={handleChange}
-                    className="border rounded px-3 py-1 w-full"
+                    className="border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-[#8EC3AA] focus:border-transparent outline-none transition-all text-sm"
                   />
                 </div>
               </div>
             </div>
 
             {/* Button aksi */}
-            <div className="flex flex-col sm:flex-row justify-end mt-6 gap-3">
+            <div className="flex flex-col sm:flex-row justify-end mt-10 gap-3 border-t pt-6">
               <button
                 onClick={() => setIsEditing(false)}
-                className="px-4 py-2 rounded bg-gray-300 w-full sm:w-auto"
+                className="px-6 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold transition-colors w-full sm:w-auto text-sm"
               >
                 Batal
               </button>
 
               <button
                 onClick={handleUpdate}
-                className="px-4 py-2 rounded bg-[#8EC3AA] text-white w-full sm:w-auto"
+                className="px-6 py-2.5 rounded-xl bg-[#8EC3AA] hover:bg-[#7AB399] text-white font-semibold shadow-md shadow-[#8EC3AA]/20 transition-all w-full sm:w-auto text-sm"
               >
-                Perbarui
+                Simpan Perubahan
               </button>
             </div>
           </div>

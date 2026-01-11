@@ -8,15 +8,7 @@ export interface ChildItem {
   child_id: string;
   child_name: string;
   child_gender: string;
-  child_birth_info: string;
-  child_age: string;
-  child_school: string;
-}
-
-export interface ChildItem {
-  child_id: string;
-  child_name: string;
-  child_gender: string;
+  child_birth_date: string;
   child_birth_info: string;
   child_age: string;
   child_school: string;
@@ -26,6 +18,7 @@ export interface ChildDetail {
   child_id: string;
 
   child_name: string;
+  child_birth_date: string;
   child_birth_info: string;
   child_age: string;
   child_gender: string;

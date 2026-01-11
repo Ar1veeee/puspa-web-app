@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 
@@ -59,9 +60,25 @@ const groupByAspek = (items: AnswerItem[]): GroupedAnswers => {
 };
 
 /* ======================
-   PAGE
+   PAGE WRAPPER (Suspense)
 ====================== */
+// Komponen utama sekarang membungkus konten dengan Suspense
 export default function RiwayatJawabanPaedagogPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center font-medium text-[#36315B]">
+        Memuat riwayat jawaban...
+      </div>
+    }>
+      <RiwayatJawabanPaedagogContent />
+    </Suspense>
+  );
+}
+
+/* ======================
+   PAGE CONTENT (Original Logic)
+====================== */
+function RiwayatJawabanPaedagogContent() {
   const params = useSearchParams();
   const assessmentId = params.get("assessment_id") ?? "";
 
@@ -165,10 +182,9 @@ export default function RiwayatJawabanPaedagogPage() {
                   key={aspek}
                   onClick={() => setActiveAspek(aspek)}
                   className={`rounded-full border px-5 py-2 text-sm font-semibold transition
-                    ${
-                      isActive
-                        ? "border-[#81B7A9] bg-[#EAF4F1] text-[#2E7D6B]"
-                        : "border-gray-300 bg-white hover:bg-gray-100"
+                    ${isActive
+                      ? "border-[#81B7A9] bg-[#EAF4F1] text-[#2E7D6B]"
+                      : "border-gray-300 bg-white hover:bg-gray-100"
                     }`}
                 >
                   {aspek}

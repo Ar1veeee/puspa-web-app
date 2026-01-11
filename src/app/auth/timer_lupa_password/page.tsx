@@ -1,14 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react"; // ✅ Tambahkan Suspense
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { forgotPassword } from "@/lib/api/forgotpassword";
 
+// --- KOMPONEN UTAMA (Wrapper dengan Suspense) ---
 export default function TimerLupaPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center text-gray-500">
+        Memuat halaman...
+      </div>
+    }>
+      <TimerLupaPasswordContent />
+    </Suspense>
+  );
+}
+
+// --- SUB-KOMPONEN KONTEN (Logika Asli Anda) ---
+function TimerLupaPasswordContent() {
   const [timeLeft, setTimeLeft] = useState(60);
   const [canResend, setCanResend] = useState(false);
   const [loading, setLoading] = useState(false);
