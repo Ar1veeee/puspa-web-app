@@ -412,7 +412,7 @@ export default function Page() {
         <div className="mt-8 text-center">
           <p className="text-[#36315B] text-sm md:text-base">
             Sudah Mendaftar?{" "}
-            <Link href="/login" className="text-[#68B2A0] hover:text-[#599A8A] font-bold underline underline-offset-4">
+            <Link href="/auth/login" className="text-[#68B2A0] hover:text-[#599A8A] font-bold underline underline-offset-4">
               Masuk disini!
             </Link>
           </p>

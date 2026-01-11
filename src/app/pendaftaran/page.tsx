@@ -68,7 +68,7 @@ export default function TerimakasihPage() {
           </button>
           
           <button
-            onClick={() => router.push("/login")}
+            onClick={() => router.push("/auth/login")}
             className="px-8 py-3.5 rounded-full bg-white text-[#36315B] font-bold text-sm md:text-base shadow-sm hover:bg-gray-50 transition-all active:scale-95 border border-gray-100 flex items-center justify-center gap-2"
           >
             Masuk ke Akun
