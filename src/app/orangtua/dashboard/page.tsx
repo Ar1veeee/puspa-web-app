@@ -260,10 +260,10 @@ export default function DashboardOrtuPage() {
             <table className="min-w-full">
               <thead>
                 <tr className="text-left text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50">
-                  <th className="pb-4 px-2">Pasien</th>
-                  <th className="pb-4 px-2">Layanan / Tenaga Ahli</th>
+                  <th className="pb-4 px-2">Nama Pasien</th>
+                  <th className="pb-4 px-2">Jenis Layanan</th>
                   <th className="pb-4 px-2">Status</th>
-                  <th className="pb-4 px-2">Jadwal</th>
+                  <th className="pb-4 px-2">Tanggal</th>
                   <th className="pb-4 px-2 text-right">Waktu</th>
                 </tr>
               </thead>
@@ -282,7 +282,6 @@ export default function DashboardOrtuPage() {
                       </td>
                       <td className="px-2">
                         <div className="text-sm text-gray-600 font-medium">{r.service_type || "-"}</div>
-                        <div className="text-[11px] text-gray-400">Ahli: {r.observer || r.assessor || "-"}</div>
                       </td>
                       <td className="px-2">
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
