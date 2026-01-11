@@ -189,7 +189,7 @@ export default function AssessmentPage() {
                       onClick={() =>
                         setActiveId(activeId === item.code ? null : item.code)
                       }
-                      className="flex items-center justify-between gap-2 min-h-[40px] px-5 py-2 text-sm font-bold text-white bg-[#68B2A0] hover:bg-[#599A8A] rounded-xl w-full sm:w-auto shadow-sm transition-all"
+                      className="flex  cursor-pointer items-center justify-between gap-2 min-h-[40px] px-5 py-2 text-sm font-bold text-white bg-[#68B2A0] hover:bg-[#599A8A] rounded-xl w-full sm:w-auto shadow-sm transition-all"
                     >
                       Aksi
                       <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeId === item.code ? 'rotate-180' : ''}`} />
@@ -205,7 +205,7 @@ export default function AssessmentPage() {
                           }}
                           className={`flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold border-b border-gray-50 transition-colors ${isCompleted
                               ? "text-gray-300 cursor-not-allowed"
-                              : "text-[#68B2A0] hover:bg-gray-50"
+                              : "text-[#68B2A0] hover:bg-gray-50 cursor-pointer"
                             }`}
                         >
                           <Play className="w-4 h-4 fill-current" />
@@ -217,7 +217,7 @@ export default function AssessmentPage() {
                             handleAction("riwayat", item);
                             setActiveId(null);
                           }}
-                          className="flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold text-[#68B2A0] hover:bg-gray-50 transition-colors"
+                          className="flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold text-[#68B2A0] hover:bg-gray-50 transition-colors cursor-pointer"
                         >
                           <History className="w-4 h-4" />
                           Riwayat Jawaban
@@ -250,7 +250,7 @@ export default function AssessmentPage() {
           <button
             onClick={handleDownload}
             disabled={!hasNewFile || downloading}
-            className="w-full md:w-auto flex items-center justify-center gap-2 bg-[#68B2A0] hover:bg-[#599A8A] text-white px-6 py-3 rounded-xl font-bold disabled:opacity-50 transition-all text-sm shadow-sm"
+            className="w-full md:w-auto flex items-center justify-center gap-2 bg-[#68B2A0] hover:bg-[#599A8A] text-white px-6 py-3 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm shadow-sm cursor-pointer"
           >
             <Download className="w-4 h-4" />
             <span>

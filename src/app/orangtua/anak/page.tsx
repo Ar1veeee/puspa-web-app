@@ -119,7 +119,7 @@ export default function ChildList() {
           </div>
           <button
             onClick={() => setOpenAdd(true)}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#409E86] hover:bg-[#368672] text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-[#409E86]/20 transition-all active:scale-95"
+            className="w-full cursor-pointer sm:w-auto flex items-center justify-center gap-2 bg-[#409E86] hover:bg-[#368672] text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-[#409E86]/20 transition-all active:scale-95"
           >
             <Plus size={20} />
             <span>Tambah Data</span>
@@ -165,21 +165,21 @@ export default function ChildList() {
                 <div className="grid grid-cols-3 gap-2 mt-6 pt-4 border-t border-gray-50">
                   <button
                     onClick={() => handleOpenDetail(child.child_id)}
-                    className="flex items-center justify-center p-3 text-gray-400 hover:text-[#409E86] hover:bg-[#EAF4F0] rounded-xl transition-colors"
+                    className="flex cursor-pointer items-center justify-center p-3 text-gray-400 hover:text-[#409E86] hover:bg-[#EAF4F0] rounded-xl transition-colors"
                     title="Detail"
                   >
                     <FaEye size={18} />
                   </button>
                   <button
                     onClick={() => handleOpenEdit(child.child_id)}
-                    className="flex items-center justify-center p-3 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-colors"
+                    className="flex cursor-pointer items-center justify-center p-3 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-colors"
                     title="Edit"
                   >
                     <FaPen size={16} />
                   </button>
                   <button
                     onClick={() => handleOpenDelete(child.child_id)}
-                    className="flex items-center justify-center p-3 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+                    className="flex cursor-pointer items-center justify-center p-3 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"
                     title="Hapus"
                   >
                     <FaTrash size={16} />
@@ -187,17 +187,6 @@ export default function ChildList() {
                 </div>
               </div>
             ))}
-
-            {/* Tombol Tambah Card Style */}
-            <button
-              onClick={() => setOpenAdd(true)}
-              className="border-2 border-dashed border-gray-200 rounded-3xl min-h-[220px] flex flex-col items-center justify-center gap-4 text-gray-400 hover:border-[#409E86] hover:text-[#409E86] hover:bg-[#EAF4F0]/30 transition-all group"
-            >
-              <div className="p-4 rounded-full bg-gray-50 group-hover:bg-white transition-colors shadow-sm">
-                <Plus size={32} />
-              </div>
-              <span className="font-bold text-sm">Tambah Data Anak</span>
-            </button>
           </div>
         )}
       </div>

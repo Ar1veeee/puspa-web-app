@@ -69,7 +69,7 @@ export default function SidebarOrangtua() {
           return (
             <Link key={item.name} href={item.path}>
               <div
-                className={`flex items-center justify-between px-4 py-3 rounded-lg cursor-pointer transition-all ${
+                className={`flex mb-2 items-center justify-between px-4 py-3 rounded-lg cursor-pointer transition-all ${
                   active
                     ? "bg-[#C0DCD6] text-[#36315B] font-semibold"
                     : "text-[#36315B] hover:bg-[#C0DCD6]"

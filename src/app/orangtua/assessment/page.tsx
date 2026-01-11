@@ -129,7 +129,7 @@ export default function DataUmumPage() {
                   </div>
 
                   <div className="pt-4 border-t border-gray-50 flex items-center justify-between">
-                    <span className="text-xs font-bold text-[#409E86] opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-xs font-bold text-[#409E86] opacity-60 group-hover:opacity-100 transition-opacity">
                       Lihat Detail
                     </span>
                     <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#409E86] group-hover:text-white transition-all ml-auto">

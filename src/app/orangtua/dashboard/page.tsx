@@ -242,7 +242,7 @@ export default function DashboardOrtuPage() {
                   <button
                     key={t}
                     onClick={() => setActiveTab(t as any)}
-                    className={`whitespace-nowrap px-4 md:px-6 py-2 rounded-lg text-xs md:text-sm font-bold transition-all
+                    className={`whitespace-nowrap cursor-pointer px-4 md:px-6 py-2 rounded-lg text-xs md:text-sm font-bold transition-all
                     ${activeTab === t
                         ? "bg-white text-[#4A8B73] shadow-sm"
                         : "text-gray-500 hover:text-gray-700"
