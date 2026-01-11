@@ -149,7 +149,7 @@ export default function DashboardOrtuPage() {
   return (
     <ResponsiveOrangtuaLayout maxWidth="max-w-7xl">
       <div className="space-y-6 md:space-y-10 text-[#36315B]">
-        
+
         {/* Metric Cards & Activities Chart (Tetap Sama) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           <MetricCard title="Total Anak/Pasien" data={stats.total_children} icon="👶" color="bg-blue-50" />
@@ -159,7 +159,55 @@ export default function DashboardOrtuPage() {
 
         {/* Chart Section */}
         <div className="bg-white rounded-2xl p-5 md:p-8 shadow-sm border border-gray-100">
-           {/* ... Konten Chart Recharts ... */}
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="font-bold text-gray-800 text-base md:text-lg flex items-center gap-2">
+              <Activity size={20} className="text-[#81B7A9]" />
+              Grafik Aktivitas
+            </h3>
+            <div className="hidden md:flex gap-4 text-xs font-medium">
+              <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-[#7c73f6] rounded-full"></span> Anak</div>
+              <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-[#34d399] rounded-full"></span> Observasi</div>
+              <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-[#fb923c] rounded-full"></span> Assessment</div>
+            </div>
+          </div>
+
+          <div className="h-[280px] md:h-[320px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorChild" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#7c73f6" stopOpacity={0.1} />
+                    <stop offset="95%" stopColor="#7c73f6" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+                <XAxis
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 11, fill: '#94A3B8' }}
+                  dy={10}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 11, fill: '#94A3B8' }}
+                />
+                <ReTooltip
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                />
+                <Area type="monotone" dataKey="total_children" stroke="#7c73f6" strokeWidth={3} fill="url(#colorChild)" />
+                <Area type="monotone" dataKey="total_observations" stroke="#34d399" strokeWidth={3} fillOpacity={0} />
+                <Area type="monotone" dataKey="total_assessments" stroke="#fb923c" strokeWidth={3} fillOpacity={0} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="flex flex-wrap gap-4 mt-6 text-[10px] md:hidden justify-center border-t border-gray-50 pt-4 font-semibold text-gray-500 uppercase tracking-wider">
+            <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 bg-[#7c73f6] rounded-full"></div> Anak</div>
+            <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 bg-[#34d399] rounded-full"></div> Observasi</div>
+            <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 bg-[#fb923c] rounded-full"></div> Assmt</div>
+          </div>
         </div>
 
         {/* ================= JADWAL SECTION ================= */}
@@ -169,7 +217,7 @@ export default function DashboardOrtuPage() {
               <Calendar size={20} className="text-[#81B7A9]" />
               Jadwal Mendatang
             </h3>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
               <div className="relative group">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#81B7A9] transition-colors" />
@@ -180,7 +228,7 @@ export default function DashboardOrtuPage() {
                   className="w-full sm:w-64 pl-10 pr-4 py-2.5 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-[#81B7A9]/20 transition-all outline-none"
                 />
               </div>
-              
+
               <div className="flex bg-gray-100 p-1 rounded-xl overflow-x-auto no-scrollbar">
                 {["Semua", "Observasi", "Assessment"].map((t) => (
                   <button
@@ -209,11 +257,11 @@ export default function DashboardOrtuPage() {
                   <th className="pb-4 px-2">Status</th>
                   {/* DINAMIS HEADER TANGGAL */}
                   <th className="pb-4 px-2">
-                    {activeTab === "Observasi" 
-                      ? "Tanggal Observasi" 
-                      : activeTab === "Assessment" 
-                      ? "Tanggal Assessment" 
-                      : "Tanggal"}
+                    {activeTab === "Observasi"
+                      ? "Tanggal Observasi"
+                      : activeTab === "Assessment"
+                        ? "Tanggal Assessment"
+                        : "Tanggal"}
                   </th>
                   <th className="pb-4 px-2 text-right">Waktu</th>
                 </tr>
@@ -235,11 +283,10 @@ export default function DashboardOrtuPage() {
                         <div className="text-sm text-gray-600 font-medium">{r.service_type || "-"}</div>
                       </td>
                       <td className="px-2">
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                          r.status.toLowerCase() === 'selesai' 
-                          ? 'bg-green-100 text-green-700' 
-                          : 'bg-[#EAF4F0] text-[#4A8B73]'
-                        }`}>
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${r.status.toLowerCase() === 'selesai'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-[#EAF4F0] text-[#4A8B73]'
+                          }`}>
                           {r.status}
                         </span>
                       </td>
@@ -271,23 +318,22 @@ export default function DashboardOrtuPage() {
                       <div className="font-bold text-[#36315B]">{r.nama_pasien}</div>
                       <div className="text-xs text-gray-500 mt-0.5">{r.service_type}</div>
                     </div>
-                    <span className={`px-2 py-1 rounded-lg text-[9px] font-bold uppercase ${
-                      r.status.toLowerCase() === 'selesai' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
-                    }`}>
+                    <span className={`px-2 py-1 rounded-lg text-[9px] font-bold uppercase ${r.status.toLowerCase() === 'selesai' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                      }`}>
                       {r.status}
                     </span>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-100">
                     <div className="flex items-center gap-2">
                       <Calendar size={14} className="text-gray-400" />
                       {/* DINAMIS LABEL TANGGAL PADA MOBILE */}
                       <span className="text-xs font-medium text-gray-600">
-                        {activeTab === "Observasi" 
-                          ? `Obs: ${r.tanggal}` 
-                          : activeTab === "Assessment" 
-                          ? `Assmt: ${r.tanggal}` 
-                          : r.tanggal}
+                        {activeTab === "Observasi"
+                          ? `Obs: ${r.tanggal}`
+                          : activeTab === "Assessment"
+                            ? `Assmt: ${r.tanggal}`
+                            : r.tanggal}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
