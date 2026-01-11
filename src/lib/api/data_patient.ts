@@ -20,15 +20,15 @@ export interface PatientDetail {
   child_id: string;
 
   child_name: string;
-  child_birth_info: string; // display only
+  child_birth_info: string;
   child_birth_date: string;
-  child_age: string;        // display only
+  child_age: string;
   child_gender?: string | null;
   child_religion: string;
   child_school: string;
   child_address: string;
 
-  father_identity_number: string;
+  father_identity_number?: string | null;
   father_name: string;
   father_phone: string;
   father_birth_date: string;
@@ -36,7 +36,7 @@ export interface PatientDetail {
   father_occupation: string;
   father_relationship: string;
 
-  mother_identity_number: string;
+  mother_identity_number?: string | null;
   mother_name: string;
   mother_phone: string;
   mother_birth_date: string;
@@ -69,19 +69,19 @@ export interface PatientUpdatePayload {
   child_school: string;
   child_address: string;
 
-  father_identity_number: string;
-  father_name: string;
-  father_phone: string;
+  father_identity_number?: string | null;
+  father_name?: string | null
+  father_phone?: string | null
   father_birth_date?: string | null;
-  father_occupation: string;
-  father_relationship: string;
+  father_occupation?: string | null
+  father_relationship?: string | null
 
-  mother_identity_number: string;
-  mother_name: string;
-  mother_phone: string;
+  mother_identity_number?: string | null
+  mother_name?: string | null
+  mother_phone?: string | null
   mother_birth_date?: string | null;
-  mother_occupation: string;
-  mother_relationship: string;
+  mother_occupation?: string | null
+  mother_relationship?: string | null
 
   guardian_identity_number?: string | null;
   guardian_name?: string | null;

@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { PatientDetail } from "@/lib/api/data_patient";
 
 export interface FormUbahPatientProps {
     open: boolean;
     onClose: () => void;
     onUpdate: (data: {
         child_name: string;
-        child_birth_date: string; // ← WAJIB
+        child_birth_date: string;
         child_gender?: string | null;
         child_school: string;
         child_address: string;
@@ -39,52 +40,19 @@ export interface FormUbahPatientProps {
     }) => void;
 
 
-    initialData?: {
-        child_name: string;
-        child_birth_info: string;
-        child_birth_date: string;
-
-        child_age: string;
-        child_gender?: string | null;
-        child_school: string;
-        child_address: string;
-
-        father_identity_number: string;
-        father_name: string;
-        father_phone: string;
-        father_birth_date: string;
-        father_occupation: string;
-        father_relationship: string;
-
-        mother_identity_number: string;
-        mother_name: string;
-        mother_phone: string;
-        mother_birth_date: string;
-        mother_occupation: string;
-        mother_relationship: string;
-
-        guardian_identity_number: string;
-        guardian_name: string;
-        guardian_phone: string;
-        guardian_birth_date: string;
-        guardian_occupation: string;
-        guardian_relationship: string;
-
-        child_complaint: string;
-        child_service_choice: string;
-    };
+    initialData?: PatientDetail | null;
 }
 
 const toISODate = (value?: string) => {
-  if (!value || value === "-") return "";
-  const d = new Date(value);
-  return isNaN(d.getTime()) ? "" : d.toISOString().slice(0, 10);
+    if (!value || value === "-") return "";
+    const d = new Date(value);
+    return isNaN(d.getTime()) ? "" : d.toISOString().slice(0, 10);
 };
 
 const parseBirthInfo = (str?: string) => {
-  if (!str) return { place: "", date: "" };
-  const [place, date] = str.split(", ");
-  return { place: place || "", date: date || "" };
+    if (!str) return { place: "", date: "" };
+    const [place, date] = str.split(", ");
+    return { place: place || "", date: date || "" };
 };
 
 
@@ -93,7 +61,7 @@ export default function FormUbahPatient({ open, onClose, onUpdate, initialData }
         child_name: "",
         child_birth_date: "", // ← GANTI
         child_gender: "",
-        
+
         child_school: "",
         child_address: "",
 
@@ -123,114 +91,114 @@ export default function FormUbahPatient({ open, onClose, onUpdate, initialData }
     });
 
 
- useEffect(() => {
-  if (!initialData) return;
+    useEffect(() => {
+        if (!initialData) return;
 
-  const parsed = parseBirthInfo(initialData.child_birth_info);
+        const parsed = parseBirthInfo(initialData.child_birth_info);
 
-  setForm({
-    child_name: initialData.child_name ?? "",
-    child_birth_date: toISODate(parsed.date), // 🔥 FIX UTAMA
-    child_gender: initialData.child_gender ?? "",
-    child_school: initialData.child_school ?? "",
-    child_address: initialData.child_address ?? "",
+        setForm({
+            child_name: initialData.child_name ?? "",
+            child_birth_date: toISODate(parsed.date), // 🔥 FIX UTAMA
+            child_gender: initialData.child_gender ?? "",
+            child_school: initialData.child_school ?? "",
+            child_address: initialData.child_address ?? "",
 
-    father_identity_number: initialData.father_identity_number ?? "",
-    father_name: initialData.father_name ?? "",
-    father_phone: initialData.father_phone ?? "",
-    father_birth_date: toISODate(initialData.father_birth_date),
-    father_occupation: initialData.father_occupation ?? "",
-    father_relationship: "Ayah",
+            father_identity_number: initialData.father_identity_number ?? "",
+            father_name: initialData.father_name ?? "",
+            father_phone: initialData.father_phone ?? "",
+            father_birth_date: toISODate(initialData.father_birth_date),
+            father_occupation: initialData.father_occupation ?? "",
+            father_relationship: "Ayah",
 
-    mother_identity_number: initialData.mother_identity_number ?? "",
-    mother_name: initialData.mother_name ?? "",
-    mother_phone: initialData.mother_phone ?? "",
-    mother_birth_date: toISODate(initialData.mother_birth_date),
-    mother_occupation: initialData.mother_occupation ?? "",
-    mother_relationship: "Ibu",
+            mother_identity_number: initialData.mother_identity_number ?? "",
+            mother_name: initialData.mother_name ?? "",
+            mother_phone: initialData.mother_phone ?? "",
+            mother_birth_date: toISODate(initialData.mother_birth_date),
+            mother_occupation: initialData.mother_occupation ?? "",
+            mother_relationship: "Ibu",
 
-    guardian_identity_number: initialData.guardian_identity_number ?? "",
-    guardian_name: initialData.guardian_name ?? "",
-    guardian_phone: initialData.guardian_phone ?? "",
-    guardian_birth_date: toISODate(initialData.guardian_birth_date),
-    guardian_occupation: initialData.guardian_occupation ?? "",
-    guardian_relationship: initialData.guardian_relationship ?? "",
+            guardian_identity_number: initialData.guardian_identity_number ?? "",
+            guardian_name: initialData.guardian_name ?? "",
+            guardian_phone: initialData.guardian_phone ?? "",
+            guardian_birth_date: toISODate(initialData.guardian_birth_date ?? ""),
+            guardian_occupation: initialData.guardian_occupation ?? "",
+            guardian_relationship: initialData.guardian_relationship ?? "",
 
-    child_complaint: initialData.child_complaint ?? "",
-    child_service_choice: initialData.child_service_choice ?? "",
-  });
-}, [initialData]);
+            child_complaint: initialData.child_complaint ?? "",
+            child_service_choice: initialData.child_service_choice ?? "",
+        });
+    }, [initialData]);
 
 
 
     if (!open) return null;
 
     const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
+        e.preventDefault();
 
-  if (!form.child_birth_date || form.child_birth_date.trim() === "") {
-    alert("Tanggal lahir anak wajib diisi");
-    return;
-  }
+        if (!form.child_birth_date || form.child_birth_date.trim() === "") {
+            alert("Tanggal lahir anak wajib diisi");
+            return;
+        }
 
-  const emptyToString = (v?: string | null) => v ?? "";
+        const emptyToString = (v?: string | null) => v ?? "";
 
-onUpdate({
-  child_name: form.child_name,
-  child_birth_date: form.child_birth_date,
-  child_gender: form.child_gender || null,
-  child_school: form.child_school || "",
-  child_address: form.child_address || "",
+        onUpdate({
+            child_name: form.child_name,
+            child_birth_date: form.child_birth_date,
+            child_gender: form.child_gender || null,
+            child_school: form.child_school || "",
+            child_address: form.child_address || "",
 
-  father_identity_number: emptyToString(form.father_identity_number),
-  father_name: emptyToString(form.father_name),
-  father_phone: emptyToString(form.father_phone),
-  father_birth_date: form.father_birth_date || null,
-  father_occupation: emptyToString(form.father_occupation),
-  father_relationship: form.father_relationship || "Ayah",
+            father_identity_number: emptyToString(form.father_identity_number),
+            father_name: emptyToString(form.father_name),
+            father_phone: emptyToString(form.father_phone),
+            father_birth_date: form.father_birth_date || null,
+            father_occupation: emptyToString(form.father_occupation),
+            father_relationship: form.father_relationship || "Ayah",
 
-  mother_identity_number: emptyToString(form.mother_identity_number),
-  mother_name: emptyToString(form.mother_name),
-  mother_phone: emptyToString(form.mother_phone),
-  mother_birth_date: form.mother_birth_date || null,
-  mother_occupation: emptyToString(form.mother_occupation),
-  mother_relationship: form.mother_relationship || "Ibu",
+            mother_identity_number: emptyToString(form.mother_identity_number),
+            mother_name: emptyToString(form.mother_name),
+            mother_phone: emptyToString(form.mother_phone),
+            mother_birth_date: form.mother_birth_date || null,
+            mother_occupation: emptyToString(form.mother_occupation),
+            mother_relationship: form.mother_relationship || "Ibu",
 
-  guardian_identity_number: form.guardian_identity_number || null,
-  guardian_name: form.guardian_name || null,
-  guardian_phone: form.guardian_phone || null,
-  guardian_birth_date: form.guardian_birth_date || null,
-  guardian_occupation: form.guardian_occupation || null,
-  guardian_relationship: form.guardian_relationship || null,
+            guardian_identity_number: form.guardian_identity_number || null,
+            guardian_name: form.guardian_name || null,
+            guardian_phone: form.guardian_phone || null,
+            guardian_birth_date: form.guardian_birth_date || null,
+            guardian_occupation: form.guardian_occupation || null,
+            guardian_relationship: form.guardian_relationship || null,
 
-  child_complaint: form.child_complaint || "",
-  child_service_choice: form.child_service_choice || "",
-});
+            child_complaint: form.child_complaint || "",
+            child_service_choice: form.child_service_choice || "",
+        });
 
-};
+    };
 
 
 
     return (
-  <motion.div
-    className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-  >
-    <motion.div
-      className="bg-white rounded-2xl shadow-lg w-full max-w-3xl max-h-[90vh] flex flex-col"
-      initial={{ y: -50, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-    >     \
-     <div className="p-6 border-b">
+        <motion.div
+            className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+        >
+            <motion.div
+                className="bg-white rounded-2xl shadow-lg w-full max-w-3xl max-h-[90vh] flex flex-col"
+                initial={{ y: -50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+            >     \
+                <div className="p-6 border-b">
 
-                <h2 className="text-xl font-semibold mb-4 text-[#36315B]">
-                    Ubah Data Pasien
-                </h2>
+                    <h2 className="text-xl font-semibold mb-4 text-[#36315B]">
+                        Ubah Data Pasien
+                    </h2>
                 </div>
 
-                <form onSubmit={handleSubmit}         
-                className="p-6 overflow-y-auto space-y-4">
+                <form onSubmit={handleSubmit}
+                    className="p-6 overflow-y-auto space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-[#36315B] mb-1">Nama</label>
@@ -243,16 +211,16 @@ onUpdate({
                             />
                         </div>
 
-                         <div>
-                        <label className="block text-sm font-medium text-[#36315B] mb-1">Alamat</label>
-                        <input
-                            type="text"
-                            name="child_address"
-                            value={form.child_address}
-                            onChange={(e) => setForm({ ...form, child_address: e.target.value })}
-                            className="w-full border rounded-lg p-2"
-                        />
-                    </div>
+                        <div>
+                            <label className="block text-sm font-medium text-[#36315B] mb-1">Alamat</label>
+                            <input
+                                type="text"
+                                name="child_address"
+                                value={form.child_address}
+                                onChange={(e) => setForm({ ...form, child_address: e.target.value })}
+                                className="w-full border rounded-lg p-2"
+                            />
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">

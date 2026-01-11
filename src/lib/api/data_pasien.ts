@@ -9,7 +9,7 @@ export interface Pasien {
   child_birth_info: string;
   child_birth_date?: string;
   child_age: string;
-  child_gender?: string | null;
+  child_gender: string | null;
   child_religion: string | null;
   child_school: string | null;
   child_address: string | null;
