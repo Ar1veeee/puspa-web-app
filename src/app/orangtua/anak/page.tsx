@@ -149,7 +149,7 @@ export default function ChildList() {
 
                 <div className="flex-1 space-y-3">
                   <h2 className="font-bold text-[#36315B] text-lg leading-tight line-clamp-1">{child.child_name}</h2>
-                  
+
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-gray-500 text-xs">
                       <Calendar size={14} className="text-[#409E86]" />
@@ -218,7 +218,7 @@ export default function ChildList() {
                   </label>
                   <input name="child_name" value={formAdd.child_name} onChange={handleAddChange} className="w-full border border-gray-200 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-[#C0DCD6] focus:border-[#409E86] outline-none transition-all" placeholder="Masukkan nama lengkap" />
                 </div>
-                
+
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-500 uppercase ml-1 flex items-center gap-1">
                     <MapPin size={12} /> Tempat Lahir <span className="text-red-500">*</span>
@@ -256,7 +256,20 @@ export default function ChildList() {
                   <Info size={14} /> Layanan yang Dibutuhkan <span className="text-red-500">*</span>
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {["Asesmen Tumbuh Kembang", "Asesmen Terpadu", "Konsultasi Dokter", "Daycare", "Lainnya"].map((item) => (
+                  {[
+                    "Asesmen Tumbuh Kembang",
+                    "Asesmen Terpadu",
+                    "Konsultasi Dokter",
+                    "Konsultasi Psikolog",
+                    "Konsultasi Keluarga",
+                    "Test Psikolog",
+                    "Layanan Minat Bakat",
+                    "Daycare",
+                    "Home Care",
+                    "Hydrotherapy",
+                    "Baby Spa",
+                    "Lainnya",
+                  ].map((item) => (
                     <label key={item} className="group flex items-center gap-3 p-4 border border-gray-100 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors has-[:checked]:bg-[#EAF4F0] has-[:checked]:border-[#C0DCD6]">
                       <input type="checkbox" value={item} onChange={handleAddChange} name="child_service_choice" checked={formAdd.child_service_choice.includes(item)} className="w-5 h-5 rounded accent-[#409E86]" />
                       <span className="text-sm font-semibold text-gray-700">{item}</span>
