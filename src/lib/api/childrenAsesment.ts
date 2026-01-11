@@ -267,9 +267,9 @@ export async function createChild(payload: {
   child_gender: string;
   child_birth_place: string;
   child_birth_date: string;
-  child_school: string;
+  child_school?: string;
   child_address: string;
-  child_complaint: string;
+  child_complaint?: string;
   child_service_choice: string;
 }) {
   try {
