@@ -3,10 +3,10 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
-import SidebarOrangtua from "@/components/layout/sidebar-orangtua";
-import HeaderOrangtua from "@/components/layout/header-orangtua";
+// Menggunakan Layout Responsif dengan Sidebar Sticky
+import ResponsiveOrangtuaLayout from "@/components/layout/ResponsiveOrangtuaLayout";
 import StepNavigator from "./components/StepNavigator";
 import IdentitasForm from "./components/IdentitasForm";
 import QuestionRenderer from "./components/QuestionRenderer";
@@ -30,7 +30,6 @@ export default function FormAssessmentOrangtua() {
 
   const assessmentIdFromQuery = searchParams?.get("assessment_id") || null;
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>("identitas");
   const [submitting, setSubmitting] = useState<boolean>(false);
 
@@ -149,7 +148,6 @@ export default function FormAssessmentOrangtua() {
     try {
       const answerArray = Object.entries(answers).map(([qid, value]) => {
         let ansPayload: any = {};
-
         if (value === null || value === undefined || value === "") {
           ansPayload = { value: null };
         } else if (typeof value === "object") {
@@ -159,7 +157,6 @@ export default function FormAssessmentOrangtua() {
         } else {
           ansPayload = { value };
         }
-
         return {
           question_id: Number(qid),
           answer: ansPayload,
@@ -173,7 +170,6 @@ export default function FormAssessmentOrangtua() {
       };
 
       await submitParentAssessment(assessmentIdFromQuery, "umum_parent", payload);
-
       alert("Jawaban assessment berhasil dikirim.");
       router.push(`/orangtua/assessment/kategori?assessment_id=${assessmentIdFromQuery}`);
     } catch (err: any) {
@@ -185,134 +181,100 @@ export default function FormAssessmentOrangtua() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
-      {/* SIDEBAR - Fixed on Mobile, Static on Desktop */}
-      <aside
-        className={`
-          fixed inset-y-0 left-0 z-50
-          w-64 bg-white shadow-md
-          transform transition-transform duration-300 ease-in-out
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-          md:relative md:translate-x-0 md:block
-        `}
-      >
-        <SidebarOrangtua />
-      </aside>
-
-      {/* Overlay Mobile */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/30 z-40 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Hamburger Button Mobile */}
-      <button
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed top-4 left-4 z-[60] md:hidden bg-white p-2 rounded-md shadow border border-gray-200"
-      >
-        {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
-
-      {/* MAIN CONTENT */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <HeaderOrangtua />
-
-        <main className="flex-1 p-4 md:p-8 overflow-y-auto">
-          {/* Close Button */}
-          <div className="flex justify-end mb-4">
-            <button
-              onClick={() =>
-                router.push(
-                  `/orangtua/assessment/kategori?assessment_id=${assessmentIdFromQuery}`
-                )
-              }
-              className="text-[#36315B] hover:text-red-500 font-bold text-xl md:text-2xl p-1"
-            >
-              ✕
-            </button>
-          </div>
-
-          {/* Step Navigator (Container scrollable horizontal di mobile) */}
-          <div className="w-full">
-            <StepNavigator steps={ASSESSMENT_STEPS} activeStep={activeStep} />
-          </div>
-
-          {/* Content Section */}
-          <section className="bg-white rounded-xl md:rounded-2xl shadow-sm border p-4 md:p-8 max-w-5xl mx-auto mb-8">
-            {/* Title + Dropdown Kategori */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-              <h2 className="text-base md:text-lg font-bold text-[#36315B]">
-                I. Data Umum
-              </h2>
-
-              <div className="relative inline-block w-full sm:w-64">
-                <select
-                  value={activeCategory}
-                  onChange={(e) => setActiveCategory(e.target.value)}
-                  className="appearance-none border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-xs md:text-sm text-[#36315B] w-full bg-white cursor-pointer"
-                >
-                  {groups.map((g) => (
-                    <option key={g.group_key} value={g.group_key}>
-                      {g.title}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-              </div>
-            </div>
-
-            {/* IDENTITAS FORM */}
-            {activeCategory === "identitas" && (
-              <IdentitasForm
-                childName={childName}
-                setChildName={setChildName}
-                childBirthInfo={childBirthInfo}
-                setChildBirthInfo={setChildBirthInfo}
-                parentIdentity={parentIdentity}
-                setParentField={setParentField}
-                onSubmit={handleSubmitIdentity}
-                submitting={submitting}
-              />
-            )}
-
-            {/* DYNAMIC QUESTIONS */}
-            {activeCategory !== "identitas" && (
-              <div className="space-y-6 md:space-y-8">
-                {loading ? (
-                  <div className="flex justify-center py-10">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#6BB1A0]"></div>
-                  </div>
-                ) : currentQuestions.length === 0 ? (
-                  <p className="text-sm md:text-base text-gray-500 text-center py-10">Tidak ada pertanyaan di kategori ini.</p>
-                ) : (
-                  currentQuestions.map((q: any) => (
-                    <QuestionRenderer
-                      key={q.id}
-                      question={q}
-                      answer={answers[q.id]}
-                      onAnswerChange={setAnswer}
-                      onToggleCheckbox={toggleCheckboxValue}
-                      onTableCellChange={handleTableCell}
-                    />
-                  ))
-                )}
-
-                {/* Navigation Buttons */}
-                <NavigationButtons
-                  currentIndex={currentIndex}
-                  totalCategories={categoryOrder.length}
-                  onPrev={goPrevCategory}
-                  onNext={goNextCategory}
-                  onSubmit={handleSubmitAssessment}
-                  submitting={submitting}
-                />
-              </div>
-            )}
-          </section>
-        </main>
+    <ResponsiveOrangtuaLayout maxWidth="max-w-5xl">
+      {/* Close Button */}
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() =>
+            router.push(
+              `/orangtua/assessment/kategori?assessment_id=${assessmentIdFromQuery}`
+            )
+          }
+          className="text-[#36315B] hover:text-red-500 font-bold text-xl md:text-2xl p-1"
+        >
+          ✕
+        </button>
       </div>
-    </div>
+
+      {/* Step Navigator */}
+      <div className="w-full mb-8">
+        <StepNavigator steps={ASSESSMENT_STEPS} activeStep={activeStep} />
+      </div>
+
+      {/* Content Section */}
+      <section className="bg-white rounded-xl md:rounded-2xl shadow-sm border p-4 md:p-8 w-full">
+        {/* Title + Dropdown Kategori */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+          <h2 className="text-base md:text-lg font-bold text-[#36315B]">
+            I. Data Umum
+          </h2>
+
+          <div className="relative inline-block w-full sm:w-64">
+            <select
+              value={activeCategory}
+              onChange={(e) => setActiveCategory(e.target.value)}
+              className="appearance-none border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-xs md:text-sm text-[#36315B] w-full bg-white cursor-pointer"
+            >
+              {groups.map((g) => (
+                <option key={g.group_key} value={g.group_key}>
+                  {g.title}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+          </div>
+        </div>
+
+        {/* IDENTITAS FORM */}
+        {activeCategory === "identitas" && (
+          <IdentitasForm
+            childName={childName}
+            setChildName={setChildName}
+            childBirthInfo={childBirthInfo}
+            setChildBirthInfo={setChildBirthInfo}
+            parentIdentity={parentIdentity}
+            setParentField={setParentField}
+            onSubmit={handleSubmitIdentity}
+            submitting={submitting}
+          />
+        )}
+
+        {/* DYNAMIC QUESTIONS */}
+        {activeCategory !== "identitas" && (
+          <div className="space-y-6 md:space-y-8">
+            {loading ? (
+              <div className="flex justify-center py-10">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#6BB1A0]"></div>
+              </div>
+            ) : currentQuestions.length === 0 ? (
+              <p className="text-sm md:text-base text-gray-500 text-center py-10">
+                Tidak ada pertanyaan di kategori ini.
+              </p>
+            ) : (
+              currentQuestions.map((q: any) => (
+                <QuestionRenderer
+                  key={q.id}
+                  question={q}
+                  answer={answers[q.id]}
+                  onAnswerChange={setAnswer}
+                  onToggleCheckbox={toggleCheckboxValue}
+                  onTableCellChange={handleTableCell}
+                />
+              ))
+            )}
+
+            {/* Navigation Buttons */}
+            <NavigationButtons
+              currentIndex={currentIndex}
+              totalCategories={categoryOrder.length}
+              onPrev={goPrevCategory}
+              onNext={goNextCategory}
+              onSubmit={handleSubmitAssessment}
+              submitting={submitting}
+            />
+          </div>
+        )}
+      </section>
+    </ResponsiveOrangtuaLayout>
   );
 }

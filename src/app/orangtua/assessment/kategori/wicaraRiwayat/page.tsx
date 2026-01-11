@@ -76,36 +76,52 @@ export default function TerapiWicaraPageReadOnly() {
 
   return (
     <ResponsiveOrangtuaLayout maxWidth="max-w-4xl">
-      {/* STEPPER - Optimized for Mobile Scrolling */}
-      <div className="mb-8 overflow-x-auto pb-4 scrollbar-hide">
-        <div className="flex items-start justify-between min-w-[650px] md:min-w-full px-2">
-          {steps.map((label, i) => (
-            <div key={i} className="flex flex-col items-center relative flex-1">
-              {/* Line Connector */}
-              {i < steps.length - 1 && (
-                <div className="absolute top-4.5 left-1/2 w-full h-[2px] bg-gray-200 -z-0" />
-              )}
-              
-              <div
-                className={`relative z-10 w-9 h-9 flex items-center justify-center rounded-full border-2 text-sm font-bold transition-all ${
-                  i === activeStep 
-                    ? "bg-[#6BB1A0] border-[#6BB1A0] text-white shadow-md" 
-                    : i < activeStep 
-                    ? "bg-[#6BB1A0] border-[#6BB1A0] text-white"
-                    : "bg-white border-gray-300 text-gray-400"
-                }`}
-              >
-                {i + 1}
-              </div>
-              <span className={`mt-2 text-[10px] md:text-xs font-bold text-center uppercase tracking-wider leading-tight max-w-[80px] ${
-                i === activeStep ? "text-[#36315B]" : "text-gray-400"
-              }`}>
-                {label}
-              </span>
-            </div>
-          ))}
+      {/* CLOSE BUTTON */}
+        <div className="flex justify-end mb-4 md:mb-6">
+          <button
+            onClick={() =>
+              router.push(`/orangtua/assessment/kategori?assessment_id=${assessmentId}`)
+            }
+            className="font-bold text-2xl text-[#36315B] hover:text-red-500 transition-colors p-2"
+            aria-label="Tutup"
+          >
+            ✕
+          </button>
         </div>
-      </div>
+
+        {/* STEP PROGRESS - Optimized for Mobile Scrolling */}
+        <div className="mb-8 overflow-x-auto pb-4 scrollbar-hide">
+          <div className="flex items-start justify-between min-w-[600px] md:min-w-0 md:justify-center gap-2 px-2">
+            {steps.map((step, i) => {
+              const isActive = i === activeStep;
+              return (
+                <div key={i} className="flex items-start flex-1 last:flex-none gap-2">
+                  <div className="flex flex-col items-center min-w-[80px]">
+                    <div
+                      className={`w-8 h-8 flex items-center justify-center rounded-full border-2 text-sm font-semibold transition-all duration-300 ${
+                        isActive
+                          ? "bg-[#6BB1A0] border-[#6BB1A0] text-white shadow-sm"
+                          : "bg-white border-gray-300 text-gray-400"
+                      }`}
+                    >
+                      {i + 1}
+                    </div>
+                    <span
+                      className={`mt-2 text-[11px] md:text-sm text-center leading-tight ${
+                        isActive ? "font-semibold text-[#36315B]" : "text-gray-400"
+                      }`}
+                    >
+                      {step}
+                    </span>
+                  </div>
+                  {i < steps.length - 1 && (
+                    <div className="flex-1 h-px bg-gray-300 mt-4 min-w-[20px]" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
 
       {/* CONTENT CARD */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-10 transition-all duration-300">

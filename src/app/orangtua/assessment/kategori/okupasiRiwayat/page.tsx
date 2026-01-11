@@ -31,13 +31,14 @@ export default function DataTerapiOkupasiPageReadOnly() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [loading, setLoading] = useState(true);
 
+
   const lastIndex = categories.length - 1;
   const steps = [
-    { label: "Data Umum" },
-    { label: "Data Fisioterapi" },
-    { label: "Data Terapi Okupasi" },
-    { label: "Data Terapi Wicara" },
-    { label: "Data Paedagog" },
+    "Data Umum",
+    "Data Fisioterapi",
+    "Data Terapi Okupasi",
+    "Data Terapi Wicara",
+    "Data Paedagog",
   ];
   const activeStep = 2;
 
@@ -95,7 +96,7 @@ export default function DataTerapiOkupasiPageReadOnly() {
   const inputClass = "appearance-none w-5 h-5 rounded border border-gray-400 checked:bg-[#6BB1A0] disabled:checked:bg-[#6BB1A0] checked:border-[#6BB1A0] relative before:content-['✔'] before:absolute before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:text-white before:text-sm";
   const radioClass = "appearance-none w-5 h-5 rounded-full border border-gray-400 checked:bg-[#6BB1A0] disabled:checked:bg-[#6BB1A0] checked:border-[#6BB1A0] relative before:content-['✔'] before:absolute before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:text-white before:text-sm";
 
-  // Optimized Table for Mobile
+  // Table optimized for mobile (Card style) and Desktop
   const Radio3Table = ({ questions }: { questions: Q[] }) => {
     const opts = ["Ya", "Tidak", "Kadang-kadang"];
     return (
@@ -211,52 +212,68 @@ export default function DataTerapiOkupasiPageReadOnly() {
   return (
     <ResponsiveOrangtuaLayout>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 md:mt-8 pb-10">
-        <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 p-5 md:p-10 relative">
-          
-          {/* Header & Close Button */}
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="text-lg md:text-2xl font-bold text-[#36315B]">Riwayat Asesmen Okupasi</h3>
-            <button 
-              onClick={() => router.push(`/orangtua/assessment/kategori?assessment_id=${assessmentId}`)} 
-              className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
 
-          {/* Stepper - Scrollable on Mobile */}
-          <div className="mb-10 overflow-x-auto scrollbar-hide">
-            <div className="flex items-start justify-between min-w-[600px] md:min-w-full px-2">
-              {steps.map((step, i) => (
-                <div key={i} className="flex flex-col items-center flex-1 relative">
-                  {/* Progress Line */}
-                  {i < steps.length - 1 && (
-                    <div className="absolute top-4.5 left-1/2 w-full h-[2px] bg-gray-100 -z-0" />
-                  )}
-                  
-                  <div className={`relative z-10 w-9 h-9 flex items-center justify-center rounded-full border-2 text-sm font-bold transition-all
-                    ${i === activeStep ? "bg-[#6BB1A0] border-[#6BB1A0] text-white shadow-lg shadow-[#6BB1A0]/20" : "bg-white border-gray-200 text-gray-400"}`}>
-                    {i + 1}
+        {/* CLOSE BUTTON */}
+        <div className="flex justify-end mb-4 md:mb-6">
+          <button
+            onClick={() =>
+              router.push(`/orangtua/assessment/kategori?assessment_id=${assessmentId}`)
+            }
+            className="font-bold text-2xl text-[#36315B] hover:text-red-500 transition-colors p-2"
+            aria-label="Tutup"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* STEP PROGRESS - Optimized for Mobile Scrolling */}
+        <div className="mb-8 overflow-x-auto pb-4 scrollbar-hide">
+          <div className="flex items-start justify-between min-w-[600px] md:min-w-0 md:justify-center gap-2 px-2">
+            {steps.map((step, i) => {
+              const isActive = i === activeStep;
+              return (
+                <div key={i} className="flex items-start flex-1 last:flex-none gap-2">
+                  <div className="flex flex-col items-center min-w-[80px]">
+                    <div
+                      className={`w-8 h-8 flex items-center justify-center rounded-full border-2 text-sm font-semibold transition-all duration-300 ${
+                        isActive
+                          ? "bg-[#6BB1A0] border-[#6BB1A0] text-white shadow-sm"
+                          : "bg-white border-gray-300 text-gray-400"
+                      }`}
+                    >
+                      {i + 1}
+                    </div>
+                    <span
+                      className={`mt-2 text-[11px] md:text-sm text-center leading-tight ${
+                        isActive ? "font-semibold text-[#36315B]" : "text-gray-400"
+                      }`}
+                    >
+                      {step}
+                    </span>
                   </div>
-                  <span className={`mt-2 text-[10px] md:text-xs font-bold text-center uppercase tracking-wider
-                    ${i === activeStep ? "text-[#36315B]" : "text-gray-400"}`}>
-                    {step.label}
-                  </span>
+                  {i < steps.length - 1 && (
+                    <div className="flex-1 h-px bg-gray-300 mt-4 min-w-[20px]" />
+                  )}
                 </div>
-              ))}
-            </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 p-5 md:p-10">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-8 border-b border-gray-100 pb-5">
+            <h3 className="text-lg md:text-2xl font-bold text-[#36315B]">Riwayat Asesmen Okupasi</h3>
           </div>
 
           {/* Category Content */}
-          <div className="mb-10">
+          <div className="mb-10 animate-in fade-in duration-500">
             <div className="inline-block px-3 py-1 bg-[#6BB1A0]/10 text-[#6BB1A0] text-[10px] font-bold rounded-full mb-3 uppercase tracking-widest">
               Bagian {activeIdx + 1} dari {categories.length}
             </div>
             <h4 className="text-lg md:text-xl font-bold text-[#36315B] mb-8">{currentCategory.title}</h4>
 
-            <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <div>
               {currentCategory.type === "yes_only" && <YesOnlyList questions={currentCategory.questions} />}
               {currentCategory.type === "radio3" && <Radio3Table questions={currentCategory.questions} />}
               {currentCategory.type === "slider" && <SliderReadOnlyList questions={currentCategory.questions} />}
@@ -266,20 +283,20 @@ export default function DataTerapiOkupasiPageReadOnly() {
 
           {/* Navigation Buttons */}
           <div className="flex flex-col-reverse sm:flex-row justify-between mt-8 gap-4 pt-8 border-t border-gray-100">
-            <button 
-              onClick={goPrev} 
-              disabled={activeIdx === 0} 
-              className="flex items-center justify-center gap-2 px-8 py-3 rounded-xl border-2 border-gray-100 text-gray-500 font-bold hover:bg-gray-50 disabled:opacity-30 transition-all active:scale-95 text-sm md:text-base"
+            <button
+              onClick={goPrev}
+              disabled={activeIdx === 0}
+              className="flex items-center justify-center gap-2 px-8 py-3 rounded-xl border-2 border-gray-100 text-gray-500 font-bold hover:bg-gray-50 disabled:opacity-30 transition-all active:scale-95 text-sm md:text-base w-full sm:w-auto"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
               Sebelumnya
             </button>
-            <button 
-              onClick={goNext} 
-              disabled={activeIdx === lastIndex} 
-              className="flex items-center justify-center gap-2 px-10 py-3 rounded-xl bg-[#6BB1A0] text-white font-bold hover:bg-[#5aa391] disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95 shadow-lg shadow-[#6BB1A0]/20 text-sm md:text-base"
+            <button
+              onClick={goNext}
+              disabled={activeIdx === lastIndex}
+              className="flex items-center justify-center gap-2 px-10 py-3 rounded-xl bg-[#6BB1A0] text-white font-bold hover:bg-[#5aa391] disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95 shadow-lg shadow-[#6BB1A0]/20 text-sm md:text-base w-full sm:w-auto"
             >
               Lanjutkan
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

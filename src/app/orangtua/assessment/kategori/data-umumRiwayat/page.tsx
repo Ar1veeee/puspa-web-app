@@ -103,6 +103,15 @@ export default function RiwayatJawabanOrangtua() {
     })
     .map(([id, val]) => ({ question_id: id, ...val }));
 
+  const steps = [
+    "Data Umum",
+    "Data Fisioterapi",
+    "Data Terapi Okupasi",
+    "Data Terapi Wicara",
+    "Data Paedagog",
+  ];
+  const activeStep = 0;
+
   const categoryOrder = parentGeneralRanges.map((g) => g.group_key);
   const currentIndex = categoryOrder.indexOf(activeCategory);
 
@@ -201,6 +210,51 @@ export default function RiwayatJawabanOrangtua() {
 
   return (
     <ResponsiveOrangtuaLayout maxWidth="max-w-5xl">
+      {/* CLOSE BUTTON */}
+      <div className="flex justify-end mb-4 md:mb-6">
+        <button
+          onClick={() =>
+            router.push(`/orangtua/assessment/kategori?assessment_id=${assessmentId}`)
+          }
+          className="font-bold text-2xl text-[#36315B] hover:text-red-500 transition-colors p-2 cursor-pointer"
+          aria-label="Tutup"
+        >
+          ✕
+        </button>
+      </div>
+
+      {/* STEP PROGRESS - Optimized for Mobile Scrolling */}
+      <div className="mb-8 overflow-x-auto pb-4 scrollbar-hide">
+        <div className="flex items-start justify-between min-w-[600px] md:min-w-0 md:justify-center gap-2 px-2">
+          {steps.map((step, i) => {
+            const isActive = i === activeStep;
+            return (
+              <div key={i} className="flex items-start flex-1 last:flex-none gap-2">
+                <div className="flex flex-col items-center min-w-[80px]">
+                  <div
+                    className={`w-8 h-8 flex items-center justify-center rounded-full border-2 text-sm font-semibold transition-all duration-300 ${isActive
+                      ? "bg-[#6BB1A0] border-[#6BB1A0] text-white shadow-sm"
+                      : "bg-white border-gray-300 text-gray-400"
+                      }`}
+                  >
+                    {i + 1}
+                  </div>
+                  <span
+                    className={`mt-2 text-[11px] md:text-sm text-center leading-tight ${isActive ? "font-semibold text-[#36315B]" : "text-gray-400"
+                      }`}
+                  >
+                    {step}
+                  </span>
+                </div>
+                {i < steps.length - 1 && (
+                  <div className="flex-1 h-px bg-gray-300 mt-4 min-w-[20px]" />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       {/* HEADER SECTION */}
       <div className="flex justify-between items-center mb-6 md:mb-8">
         <div className="flex items-center gap-3">
@@ -214,12 +268,6 @@ export default function RiwayatJawabanOrangtua() {
             <p className="text-xs text-gray-400 font-medium">Data Umum Orang Tua</p>
           </div>
         </div>
-        <button
-          onClick={() => router.push(`/orangtua/assessment/kategori?assessment_id=${assessmentId}`)}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-red-500"
-        >
-          <X size={28} />
-        </button>
       </div>
 
       {/* IDENTITAS CARD */}
@@ -231,35 +279,74 @@ export default function RiwayatJawabanOrangtua() {
           Identitas Anak & Keluarga
         </h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6 mb-8">
           <InfoRow label="Nama Anak" value={familyInfo.child_name} icon={User} />
           <InfoRow label="Tempat, Tgl Lahir" value={familyInfo.child_birth_info} icon={MapPin} />
-          <InfoRow label="Usia / Gender" value={`${familyInfo.child_age} • ${familyInfo.child_gender}`} icon={Calendar} />
+          <InfoRow label="Usia / Gender" value={`${familyInfo.child_age} / ${familyInfo.child_gender === 'perempuan' ? 'P' : 'L'}`} icon={Calendar} />
           <InfoRow label="Agama" value={familyInfo.child_religion} icon={Users} />
           <InfoRow label="Sekolah" value={familyInfo.child_school} icon={BookOpen} />
           <div className="sm:col-span-2 lg:col-span-1">
             <InfoRow label="Alamat" value={familyInfo.child_address} icon={MapPin} />
           </div>
+        </div>
 
-          {/* Sub Headers for Parents */}
-          <div className="col-span-full pt-4 border-t border-gray-50 mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="space-y-4">
-              <h4 className="text-xs font-black text-[#6BB1A0] uppercase tracking-widest border-l-4 border-[#6BB1A0] pl-2">Data Ayah</h4>
-              <InfoRow label="Nama Ayah" value={familyInfo.father_name} />
-              <InfoRow label="NIK / Pekerjaan" value={`${familyInfo.father_identity_number || '-'} / ${familyInfo.father_occupation || '-'}`} />
-            </div>
+        <h4 className="text-xs font-black text-[#6BB1A0] uppercase tracking-widest border-l-4 border-[#6BB1A0] pl-2">Data Ayah</h4>
 
-            <div className="space-y-4">
-              <h4 className="text-xs font-black text-[#6BB1A0] uppercase tracking-widest border-l-4 border-[#6BB1A0] pl-2">Data Ibu</h4>
-              <InfoRow label="Nama Ibu" value={familyInfo.mother_name} />
-              <InfoRow label="NIK / Pekerjaan" value={`${familyInfo.mother_identity_number || '-'} / ${familyInfo.mother_occupation || '-'}`} />
-            </div>
+        {/* Sub Headers for Parents */}
+        <div className="col-span-full pt-4 border-t border-gray-50 mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+          <div className="space-y-4">
+            <InfoRow label="Nama Ayah" value={familyInfo.father_name} />
+            <InfoRow label="Pekerjaan" value={`${familyInfo.father_occupation || '-'}`} />
+          </div>
 
-            <div className="space-y-4">
-              <h4 className="text-xs font-black text-[#6BB1A0] uppercase tracking-widest border-l-4 border-[#6BB1A0] pl-2">Data Wali</h4>
-              <InfoRow label="Nama Wali" value={familyInfo.guardian_name} />
-              <InfoRow label="Hubungan" value={familyInfo.guardian_relationship} />
-            </div>
+          <div className="space-y-4">
+            <InfoRow label="Hubungan Dengan Anak" value={`${familyInfo.relationship_with_child || '-'} `} />
+            <InfoRow label="Tanggal Lahir" value={familyInfo.father_birth_date} />
+          </div>
+
+          <div className="space-y-4">
+            <InfoRow label="Nomor Telepon" value={` ${familyInfo.father_phone_number || '-'}`} />
+            <InfoRow label="NIK" value={` ${familyInfo.father_identity_number || '-'}`} />
+          </div>
+        </div>
+
+        <h4 className="text-xs font-black text-[#6BB1A0] uppercase tracking-widest border-l-4 border-[#6BB1A0] pl-2">Data Ibu</h4>
+
+        {/* Sub Headers for Parents */}
+        <div className="col-span-full pt-4 border-t border-gray-50 mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+          <div className="space-y-4">
+            <InfoRow label="Nama Ibu" value={familyInfo.mother_name} />
+            <InfoRow label="Pekerjaan" value={`${familyInfo.mother_occupation || '-'}`} />
+          </div>
+
+          <div className="space-y-4">
+            <InfoRow label="Hubungan Dengan Anak" value={`${familyInfo.relationship_with_child || '-'} `} />
+            <InfoRow label="Tanggal Lahir" value={familyInfo.mother_birth_date} />
+          </div>
+
+          <div className="space-y-4">
+            <InfoRow label="Nomor Telepon" value={` ${familyInfo.mother_phone_number || '-'}`} />
+            <InfoRow label="NIK" value={` ${familyInfo.mother_identity_number || '-'}`} />
+          </div>
+        </div>
+
+        <h4 className="text-xs font-black text-[#6BB1A0] uppercase tracking-widest border-l-4 border-[#6BB1A0] pl-2">Data Wali</h4>
+
+        {/* Sub Headers for Parents */}
+        <div className="col-span-full pt-4 border-t border-gray-50 mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+          <div className="space-y-4">
+            <InfoRow label="Nama Wali" value={familyInfo.guardian_name} />
+            <InfoRow label="Pekerjaan" value={`${familyInfo.guardian_occupation || '-'}`} />
+          </div>
+
+          <div className="space-y-4">
+            <InfoRow label="Hubungan Dengan Anak" value={`${familyInfo.relationship_with_child || '-'} `} />
+            <InfoRow label="Tanggal Lahir" value={familyInfo.guardian_birth_date} />
+          </div>
+
+          <div className="space-y-4">
+            <InfoRow label="Nomor Telepon" value={` ${familyInfo.guardian_phone_number || '-'}`} />
+            <InfoRow label="NIK" value={` ${familyInfo.guardian_identity_number || '-'}`} />
           </div>
         </div>
       </div>
@@ -335,6 +422,6 @@ export default function RiwayatJawabanOrangtua() {
           <ArrowRight size={18} />
         </button>
       </div>
-    </ResponsiveOrangtuaLayout>
+    </ResponsiveOrangtuaLayout >
   );
 }

@@ -2,26 +2,24 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import ResponsiveOrangtuaLayout from "@/components/layout/ResponsiveOrangtuaLayout";
 import { getParentAssessmentAnswers, ParentSubmitType } from "@/lib/api/asesmentTerapiOrtu";
 
 export default function DataFisioterapiRiwayatPage() {
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const assessmentId = searchParams.get("assessment_id");
 
   const steps = [
-    { label: "Data Umum", path: "/orangtua/assessment/kategori/data-umum" },
-    { label: "Data Fisioterapi", path: "/orangtua/assessment/kategori/fisioterapi" },
-    { label: "Data Terapi Okupasi", path: "/orangtua/assessment/kategori/okupasi" },
-    { label: "Data Terapi Wicara", path: "/orangtua/assessment/kategori/wicara" },
-    { label: "Data Paedagog", path: "/orangtua/assessment/kategori/paedagog" }
+    "Data Umum",
+    "Data Fisioterapi",
+    "Data Terapi Okupasi",
+    "Data Terapi Wicara",
+    "Data Paedagog",
   ];
-
-  const activeStep = steps.findIndex((step) => pathname.includes(step.path));
+  const activeStep = 1;
 
   const [dataRiwayat, setDataRiwayat] = useState({
     keluhan: "",
@@ -77,48 +75,52 @@ export default function DataFisioterapiRiwayatPage() {
 
   return (
     <ResponsiveOrangtuaLayout>
-      {/* Tombol Tutup - Konsisten dengan UI Asesmen */}
-      <div className="flex justify-end mb-4">
-        <button
-          onClick={() => router.push(`/orangtua/assessment/kategori?assessment_id=${assessmentId}`)}
-          className="text-[#36315B] hover:text-red-500 font-bold text-2xl p-2 transition-colors"
-          aria-label="Tutup"
-        >
-          ✕
-        </button>
-      </div>
-
-      {/* Step Progress - Dioptimalkan untuk scrolling pada Mobile */}
-      <div className="mb-8 md:mb-12 overflow-x-auto pb-4 scrollbar-hide">
-        <div className="flex items-start min-w-max md:justify-center px-4 md:px-0">
-          {steps.map((step, i) => (
-            <div key={i} className="flex items-center">
-              <div className="flex flex-col items-center text-center space-y-2 w-24 sm:w-32 md:w-40">
-                <div
-                  className={`w-9 h-9 flex items-center justify-center rounded-full border-2 text-sm font-semibold transition-all ${
-                    i === activeStep
-                      ? "bg-[#6BB1A0] border-[#6BB1A0] text-white shadow-md"
-                      : "bg-gray-100 border-gray-300 text-gray-500"
-                  }`}
-                >
-                  {i + 1}
-                </div>
-                <span
-                  className={`text-[10px] sm:text-xs md:text-sm font-medium leading-tight ${
-                    i === activeStep ? "text-[#36315B]" : "text-gray-500"
-                  }`}
-                >
-                  {step.label}
-                </span>
-              </div>
-              {/* Garis penghubung antar langkah */}
-              {i < steps.length - 1 && (
-                <div className="w-8 sm:w-12 md:w-16 h-px bg-gray-300 mx-1 mt-4.5" />
-              )}
-            </div>
-          ))}
+      {/* CLOSE BUTTON */}
+        <div className="flex justify-end mb-4 md:mb-6">
+          <button
+            onClick={() =>
+              router.push(`/orangtua/assessment/kategori?assessment_id=${assessmentId}`)
+            }
+            className="font-bold text-2xl text-[#36315B] hover:text-red-500 transition-colors p-2"
+            aria-label="Tutup"
+          >
+            ✕
+          </button>
         </div>
-      </div>
+
+        {/* STEP PROGRESS - Optimized for Mobile Scrolling */}
+        <div className="mb-8 overflow-x-auto pb-4 scrollbar-hide">
+          <div className="flex items-start justify-between min-w-[600px] md:min-w-0 md:justify-center gap-2 px-2">
+            {steps.map((step, i) => {
+              const isActive = i === activeStep;
+              return (
+                <div key={i} className="flex items-start flex-1 last:flex-none gap-2">
+                  <div className="flex flex-col items-center min-w-[80px]">
+                    <div
+                      className={`w-8 h-8 flex items-center justify-center rounded-full border-2 text-sm font-semibold transition-all duration-300 ${
+                        isActive
+                          ? "bg-[#6BB1A0] border-[#6BB1A0] text-white shadow-sm"
+                          : "bg-white border-gray-300 text-gray-400"
+                      }`}
+                    >
+                      {i + 1}
+                    </div>
+                    <span
+                      className={`mt-2 text-[11px] md:text-sm text-center leading-tight ${
+                        isActive ? "font-semibold text-[#36315B]" : "text-gray-400"
+                      }`}
+                    >
+                      {step}
+                    </span>
+                  </div>
+                  {i < steps.length - 1 && (
+                    <div className="flex-1 h-px bg-gray-300 mt-4 min-w-[20px]" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
 
       {/* Card utama read-only */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6 md:p-8 w-full max-w-4xl mx-auto transition-all">
