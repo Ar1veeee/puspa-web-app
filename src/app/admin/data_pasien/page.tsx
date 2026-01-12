@@ -42,7 +42,7 @@ function DetailPatient({
   return (
     <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] flex flex-col relative">
-        
+
         {/* Header (tetap) */}
         <div className="p-4 border-b border-[#81B7A9] flex justify-between items-center">
           <h2 className="text-lg font-semibold text-[#36315B]">
@@ -129,20 +129,20 @@ function DetailPatient({
 export default function PatientPage() {
   const [search, setSearch] = useState("");
   const [patients, setPatients] = useState<PatientList[]>([]);
-const [selectedPatient, setSelectedPatient] = useState<PatientDetail | null>(null);
+  const [selectedPatient, setSelectedPatient] = useState<PatientDetail | null>(null);
   const [showUbah, setShowUbah] = useState(false);
   const [showHapus, setShowHapus] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const fetchPatients = async () => {
-  try {
-    const res = await getPatients();
-    setPatients(res);
-  } catch (error) {
-    console.error("Gagal mengambil data pasien:", error);
-  }
-};
+    try {
+      const res = await getPatients();
+      setPatients(res);
+    } catch (error) {
+      console.error("Gagal mengambil data pasien:", error);
+    }
+  };
 
 
 
@@ -150,35 +150,30 @@ const [selectedPatient, setSelectedPatient] = useState<PatientDetail | null>(nul
     fetchPatients();
   }, []);
 
- const handleDetail = async (child_id: string) => {
-  try {
-    const item = await getPatientById(child_id);
-    setSelectedPatient(item);
-    setShowDetail(true);
-  } catch (error) {
-    console.error("Gagal memuat detail pasien:", error);
-  }
-};
+  const handleDetail = async (child_id: string) => {
+    try {
+      const item = await getPatientById(child_id);
+      setSelectedPatient(item);
+      setShowDetail(true);
+    } catch (error) {
+      console.error("Gagal memuat detail pasien:", error);
+    }
+  };
 
+  const handleUbah = async (data: PatientUpdatePayload) => {
+    if (!selectedPatient) return;
 
+    try {
+      await updatePatient(selectedPatient.child_id, data);
+      setShowUbah(false);
+      setSelectedPatient(null);
+      fetchPatients();
+    } catch (error: any) {
+      console.log("422 RESPONSE FULL:", error.response?.data);
+      console.log("422 ERRORS DETAIL:", error.response?.data?.errors);
+    }
 
- const handleUbah = async (data: PatientUpdatePayload) => {
-  if (!selectedPatient) return;
-
-  try {
-    await updatePatient(selectedPatient.child_id, data);
-    setShowUbah(false);
-    setSelectedPatient(null);
-    fetchPatients();
-  } catch (error: any) {
-  console.log("422 RESPONSE FULL:", error.response?.data);
-  console.log("422 ERRORS DETAIL:", error.response?.data?.errors);
-}
-
-};
-
-
-
+  };
 
   const handleHapus = async (child_id: string) => {
     try {
@@ -224,26 +219,26 @@ const [selectedPatient, setSelectedPatient] = useState<PatientDetail | null>(nul
               <thead>
                 <tr className="border-b border-[#81B7A9] text-[#36315B]">
                   <th className="p-3 text-left">No</th>
-                    <th className="p-3 text-left">Nama Anak</th>
-                    <th className="p-3 text-left">Tanggal Lahir</th>
-                    <th className="p-3 text-left">Usia</th>
-                    <th className="p-3 text-left">Jenis Kelamin</th>
-                    <th className="p-3 text-left">Asal Sekolah</th>
-                    <th className="p-3 text-center">Aksi</th>
+                  <th className="p-3 text-left">Nama Anak</th>
+                  <th className="p-3 text-left">Tanggal Lahir</th>
+                  <th className="p-3 text-left">Usia</th>
+                  <th className="p-3 text-left">Jenis Kelamin</th>
+                  <th className="p-3 text-left">Asal Sekolah</th>
+                  <th className="p-3 text-center">Aksi</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((pasien, i) => (
-                    <tr
-                      key={pasien.child_id}
-                      className="border-b border-[#81B7A9] hover:bg-gray-50"
-                    >
-                      <td className="p-3">{i + 1}</td>
-                      <td className="p-3">{pasien.child_name}</td>
-                      <td className="p-3 text-[#757575]">{pasien.child_birth_date}</td>
-                      <td className="p-3 text-[#757575]">{pasien.child_age}</td>
-                      <td className="p-3 text-[#757575]">{pasien.child_gender ?? "-"}</td>
-                      <td className="p-3 text-[#757575]">{pasien.child_school ?? "-"}</td>
+                  <tr
+                    key={pasien.child_id}
+                    className="border-b border-[#81B7A9] hover:bg-gray-50"
+                  >
+                    <td className="p-3">{i + 1}</td>
+                    <td className="p-3">{pasien.child_name}</td>
+                    <td className="p-3 text-[#757575]">{pasien.child_birth_date}</td>
+                    <td className="p-3 text-[#757575]">{pasien.child_age}</td>
+                    <td className="p-3 text-[#757575]">{pasien.child_gender ?? "-"}</td>
+                    <td className="p-3 text-[#757575]">{pasien.child_school ?? "-"}</td>
 
                     <td className="p-3 flex justify-center gap-3">
                       <button
@@ -286,19 +281,19 @@ const [selectedPatient, setSelectedPatient] = useState<PatientDetail | null>(nul
         </main>
       </div>
 
-      
+
       <FormUbahPatient
-  open={showUbah}
-  onClose={() => setShowUbah(false)}
-  onUpdate={handleUbah}
-  initialData={selectedPatient ? {
-    ...selectedPatient,
-    child_birth_date: formatDate(selectedPatient.child_birth_date),
-    father_birth_date: formatDate(selectedPatient.father_birth_date),
-    mother_birth_date: formatDate(selectedPatient.mother_birth_date),
-    guardian_birth_date: formatDate(selectedPatient.guardian_birth_date),
-  } : undefined}
-/>
+        open={showUbah}
+        onClose={() => setShowUbah(false)}
+        onUpdate={handleUbah}
+        initialData={selectedPatient ? {
+          ...selectedPatient,
+          child_birth_date: formatDate(selectedPatient.child_birth_date),
+          father_birth_date: formatDate(selectedPatient.father_birth_date),
+          mother_birth_date: formatDate(selectedPatient.mother_birth_date),
+          guardian_birth_date: formatDate(selectedPatient.guardian_birth_date),
+        } : undefined}
+      />
 
 
       <FormHapusPatient

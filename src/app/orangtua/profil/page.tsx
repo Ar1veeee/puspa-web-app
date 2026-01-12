@@ -51,7 +51,10 @@ export default function ProfileOrangtuaPage() {
           guardian_name: d.guardian_name || "",
           guardian_type: d.guardian_type || "",
           relationship_with_child: d.relationship_with_child || "",
-          guardian_birth_date: d.guardian_birth_date || "",
+          guardian_birth_date: d.guardian_birth_date
+            ? d.guardian_birth_date.split("-").reverse().join("-")
+            : "",
+
           guardian_phone: d.guardian_phone || "",
           email: d.email || "",
           guardian_occupation: d.guardian_occupation || "",
@@ -68,13 +71,23 @@ export default function ProfileOrangtuaPage() {
   };
 
   const handleUpdate = async () => {
+    const formatDateToBE = (date: string) => {
+      if (!date) return "";
+      const [y, m, d] = date.split("-");
+      return `${d}-${m}-${y}`;
+    };
+
     const fd = new FormData();
     if (selectedFile) fd.append("file", selectedFile);
 
     fd.append("guardian_name", formData.guardian_name);
     fd.append("guardian_type", formData.guardian_type);
     fd.append("relationship_with_child", formData.relationship_with_child);
-    fd.append("guardian_birth_date", formData.guardian_birth_date);
+    fd.append(
+      "guardian_birth_date",
+      formatDateToBE(formData.guardian_birth_date)
+    );
+
     fd.append("guardian_phone", formData.guardian_phone);
     fd.append("email", formData.email);
     fd.append("guardian_occupation", formData.guardian_occupation);
@@ -97,13 +110,19 @@ export default function ProfileOrangtuaPage() {
   };
 
   return (
-    <ResponsiveOrangtuaLayout maxWidth="max-w-4xl">
-      <div className="bg-[#F8F9FA] md:bg-white rounded-2xl shadow-none md:shadow-lg p-4 md:p-8">
+    <ResponsiveOrangtuaLayout maxWidth="max-w-6xl">
+      <div className="">
         {!isEditing ? (
           <div className="flex flex-col md:flex-row gap-6 lg:gap-8">
             {/* Foto profil Section */}
             <div className="flex flex-col items-center text-center p-6 shadow-sm border border-gray-100 rounded-2xl bg-white w-full md:w-1/3">
-              <div className="relative">
+              <h2 className="text-xl font-bold text-[#81B7A9] mt-4 line-clamp-1">
+                {formData.guardian_name}
+              </h2>
+              <span className="px-3 py-1 text-[#9197B3] text-xs font-medium rounded-full mt-2">
+                {formData.role}
+              </span>
+              <div className="relative mt-10">
                 {formData.profile_picture ? (
                   <img
                     src={formData.profile_picture}
@@ -116,18 +135,12 @@ export default function ProfileOrangtuaPage() {
                   </div>
                 )}
               </div>
-              <h2 className="text-xl font-bold text-[#3A6B58] mt-4 line-clamp-1">
-                {formData.guardian_name}
-              </h2>
-              <span className="px-3 py-1 bg-[#EAF4F0] text-[#4A8B73] text-xs font-medium rounded-full mt-2">
-                {formData.role}
-              </span>
             </div>
 
             {/* Info profil Section */}
             <div className="flex-1 shadow-sm border border-gray-100 rounded-2xl p-5 md:p-8 bg-white">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="font-bold text-gray-800 text-lg">Detail Profil</h3>
+                <h3 className="font-bold text-[#81B7A9] text-lg">Informasi Pribadi</h3>
                 <button
                   onClick={() => setIsEditing(true)}
                   className="flex items-center gap-2 text-white bg-[#8EC3AA] hover:bg-[#7AB399] transition-colors px-4 py-2 rounded-xl text-sm font-medium cursor-pointer"
@@ -137,9 +150,9 @@ export default function ProfileOrangtuaPage() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5 text-sm">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5 text-sm">
                 <div className="space-y-1">
-                  <p className="text-gray-400 font-medium uppercase text-[10px] tracking-wider">Nama Lengkap</p>
+                  <p className="text-gray-400 font-medium uppercase text-[10px] tracking-wider">Nama</p>
                   <p className="text-gray-700 font-semibold truncate">{formData.guardian_name}</p>
                 </div>
 
@@ -154,13 +167,18 @@ export default function ProfileOrangtuaPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <p className="text-gray-400 font-medium uppercase text-[10px] tracking-wider">Nomor Telepon</p>
+                  <p className="text-gray-400 font-medium uppercase text-[10px] tracking-wider">Telepon</p>
                   <p className="text-gray-700 font-semibold">{formData.guardian_phone}</p>
                 </div>
 
-                <div className="space-y-1 sm:col-span-2">
-                  <p className="text-gray-400 font-medium uppercase text-[10px] tracking-wider">Alamat Email</p>
+                <div className="space-y-1">
+                  <p className="text-gray-400 font-medium uppercase text-[10px] tracking-wider">Email</p>
                   <p className="text-gray-700 font-semibold">{formData.email}</p>
+                </div>
+
+                <div className="space-y-1">
+                  <p className="text-gray-400 font-medium uppercase text-[10px] tracking-wider">User Role</p>
+                  <p className="text-gray-700 font-semibold">{formData.role}</p>
                 </div>
 
                 <div className="space-y-1">
@@ -168,10 +186,6 @@ export default function ProfileOrangtuaPage() {
                   <p className="text-gray-700 font-semibold">{formData.guardian_occupation}</p>
                 </div>
 
-                <div className="space-y-1">
-                  <p className="text-gray-400 font-medium uppercase text-[10px] tracking-wider">Status User</p>
-                  <p className="text-gray-700 font-semibold">{formData.role}</p>
-                </div>
               </div>
             </div>
           </div>
