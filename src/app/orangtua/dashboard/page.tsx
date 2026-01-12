@@ -128,7 +128,7 @@ export default function DashboardOrtuPage() {
             </h3>
           </div>
 
-          <div className="h-[280px] sm:h-[320px] md:h-[350px] w-full">
+          <div className="h-70 sm:h-80 md:h-87.5 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={customChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
@@ -266,13 +266,13 @@ export default function DashboardOrtuPage() {
                   {/* Info Ahli pada Mobile */}
                   <div className="flex items-center gap-2 text-[11px] text-[#4A8B73] font-bold py-1 bg-[#EAF4F0]/50 rounded-lg px-2 w-fit">
                     <User size={12} />
-                    <span>{activeTab === "Observasi" ? `Obs: ${r.observer}` : activeTab === "Assessment" ? `Assmt: ${r.assessor}` : (r.observer || r.assessor)}</span>
+                    <span>{activeTab === "Observasi" ? `${r.observer}` : activeTab === "Assessment" ? `${r.assessor}` : (r.observer || r.assessor)}</span>
                   </div>
 
                   <div className="flex justify-between items-center pt-2 border-t border-gray-100">
                     <div className="flex items-center gap-1.5 text-[11px] text-gray-600 font-semibold">
                       <Calendar size={13} className="text-[#81B7A9]" />
-                      {activeTab === "Observasi" ? `Obs: ${r.tanggal}` : activeTab === "Assessment" ? `Assmt: ${r.tanggal}` : r.tanggal}
+                      {activeTab === "Observasi" ? `${r.tanggal}` : activeTab === "Assessment" ? `${r.tanggal}` : r.tanggal}
                     </div>
                     <div className="flex items-center gap-1.5 text-[11px] text-gray-600 font-semibold">
                       <Clock size={13} className="text-[#81B7A9]" />
