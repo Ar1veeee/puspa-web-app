@@ -11,7 +11,7 @@ import {
   Tooltip as ReTooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Search, Calendar, Clock, Activity } from "lucide-react";
+import { Search, Calendar, Clock, Activity, User } from "lucide-react";
 
 // Import Layout
 import ResponsiveOrangtuaLayout from "@/components/layout/ResponsiveOrangtuaLayout";
@@ -27,6 +27,8 @@ type ScheduleItem = {
   jenis: "observation" | "assessment";
   service_type?: string;
   nama_pasien: string;
+  observer?: string; // Tambahkan field ini
+  assessor?: string; // Tambahkan field ini
   status: string;
   tanggal: string;
   waktu: string;
@@ -50,10 +52,10 @@ export default function DashboardOrtuPage() {
   /* ================= MAPPING DATA UNTUK CHART ================= */
   const customChartData = useMemo(() => [
     { name: "", value: 25 }, 
-    { name: "Total Anak", value: stats.total_children.count || 85 },
-    { name: "Total Observasi", value: stats.total_observations.count || 78 },
-    { name: "Total Assessment", value: stats.total_assessments.count || 68 },
-    { name: " ", value: 68 }, 
+    { name: "Total Anak", value: stats.total_children.count || 0 },
+    { name: "Total Observasi", value: stats.total_observations.count || 0 },
+    { name: "Total Assessment", value: stats.total_assessments.count || 0 },
+    { name: " ", value: stats.total_assessments.count || 0 }, 
   ], [stats]);
 
   useEffect(() => {
@@ -67,15 +69,20 @@ export default function DashboardOrtuPage() {
         });
 
         const SC = (await getOrtuUpcomingSchedules("all"))?.data ?? [];
-        const mappedSchedule: ScheduleItem[] = SC.map((r: any) => ({
-          id: r.id,
-          jenis: String(r.service_type).toLowerCase().includes("assessment") ? "assessment" : "observation",
-          service_type: r.service_type,
-          nama_pasien: r.child_name ?? "-",
-          status: r.status ?? "-",
-          tanggal: r.date ?? "-",
-          waktu: r.time ?? "-",
-        }));
+        const mappedSchedule: ScheduleItem[] = SC.map((r: any) => {
+          const isAssessment = String(r.service_type).toLowerCase().includes("assessment");
+          return {
+            id: r.id,
+            jenis: isAssessment ? "assessment" : "observation",
+            service_type: r.service_type,
+            nama_pasien: r.child_name ?? "-",
+            observer: !isAssessment ? (r.therapist ?? "-") : undefined, // Mapping observer
+            assessor: isAssessment ? (r.therapist ?? "-") : undefined, // Mapping assessor
+            status: r.status ?? "-",
+            tanggal: r.date ?? "-",
+            waktu: r.time ?? "-",
+          };
+        });
         setSchedule(mappedSchedule);
       } finally {
         setLoading(false);
@@ -105,7 +112,7 @@ export default function DashboardOrtuPage() {
     <ResponsiveOrangtuaLayout maxWidth="max-w-7xl">
       <div className="space-y-6 md:space-y-10 text-[#36315B]">
 
-        {/* METRIC CARDS - Responsif Grid */}
+        {/* METRIC CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           <MetricCard title="Total Anak/Pasien" data={stats.total_children} icon="👶" color="bg-blue-50" />
           <MetricCard title="Total Observasi" data={stats.total_observations} icon="👁️" color="bg-green-50" />
@@ -163,7 +170,7 @@ export default function DashboardOrtuPage() {
           </div>
         </div>
 
-        {/* JADWAL SECTION - Responsif Layout */}
+        {/* JADWAL SECTION */}
         <div className="bg-white rounded-2xl p-5 md:p-8 shadow-sm border border-gray-100 mb-10">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 mb-8">
             <h3 className="font-bold text-gray-800 text-base md:text-lg flex items-center gap-2">
@@ -197,13 +204,17 @@ export default function DashboardOrtuPage() {
             </div>
           </div>
 
-          {/* TABLE VIEW (Tablet 754px & Desktop 1383px) */}
+          {/* TABLE VIEW (Desktop & Tablet) */}
           <div className="hidden sm:block overflow-x-auto">
             <table className="min-w-full">
               <thead>
                 <tr className="text-left text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50">
                   <th className="pb-4 px-2">Nama Pasien</th>
                   <th className="pb-4 px-2">Layanan</th>
+                  {/* Kolom Dinamis Berdasarkan Tab */}
+                  <th className={`pb-4 px-2 ${activeTab === "Semua" ? "hidden" : "block"}`}>
+                    {activeTab === "Observasi" ? "Observer" : activeTab === "Assessment" ? "Assessor" : ""}
+                  </th>
                   <th className="pb-4 px-2">Status</th>
                   <th className="pb-4 px-2">
                     {activeTab === "Observasi" ? "Tanggal Observasi" : activeTab === "Assessment" ? "Tanggal Assessment" : "Tanggal"}
@@ -213,12 +224,16 @@ export default function DashboardOrtuPage() {
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {filteredSchedule.length === 0 ? (
-                  <tr><td colSpan={5} className="py-16 text-center text-gray-400 font-medium">Belum ada jadwal yang terdaftar</td></tr>
+                  <tr><td colSpan={6} className="py-16 text-center text-gray-400 font-medium">Belum ada jadwal yang terdaftar</td></tr>
                 ) : (
                   filteredSchedule.map((r) => (
                     <tr key={r.id} className="group hover:bg-gray-50/50 transition-colors">
                       <td className="py-5 px-2 font-bold text-gray-700 group-hover:text-[#4A8B73] transition-colors">{r.nama_pasien}</td>
                       <td className="px-2 text-sm text-gray-600 font-medium">{r.service_type || "-"}</td>
+                      {/* Konten Kolom Dinamis */}
+                      <td className={`px-2 text-sm text-[#36315B] font-semibold italic ${activeTab === "Semua" ? "hidden" : "table-cell"}`}>
+                        {activeTab === "Observasi" ? r.observer : activeTab === "Assessment" ? r.assessor : (r.observer || r.assessor || "-")}
+                      </td>
                       <td className="px-2">
                         <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#EAF4F0] text-[#4A8B73]">{r.status}</span>
                       </td>
@@ -235,7 +250,7 @@ export default function DashboardOrtuPage() {
             </table>
           </div>
 
-          {/* MOBILE CARD VIEW (414px) */}
+          {/* MOBILE CARD VIEW */}
           <div className="block sm:hidden space-y-4">
             {filteredSchedule.length === 0 ? (
               <div className="py-10 text-center text-gray-400 text-sm">Belum ada jadwal</div>
@@ -247,6 +262,13 @@ export default function DashboardOrtuPage() {
                     <span className="px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase bg-[#EAF4F0] text-[#4A8B73]">{r.status}</span>
                   </div>
                   <div className="text-xs text-gray-500 font-medium">{r.service_type || "-"}</div>
+                  
+                  {/* Info Ahli pada Mobile */}
+                  <div className="flex items-center gap-2 text-[11px] text-[#4A8B73] font-bold py-1 bg-[#EAF4F0]/50 rounded-lg px-2 w-fit">
+                    <User size={12} />
+                    <span>{activeTab === "Observasi" ? `Obs: ${r.observer}` : activeTab === "Assessment" ? `Assmt: ${r.assessor}` : (r.observer || r.assessor)}</span>
+                  </div>
+
                   <div className="flex justify-between items-center pt-2 border-t border-gray-100">
                     <div className="flex items-center gap-1.5 text-[11px] text-gray-600 font-semibold">
                       <Calendar size={13} className="text-[#81B7A9]" />
@@ -264,7 +286,6 @@ export default function DashboardOrtuPage() {
         </div>
       </div>
       
-      {/* Utility Scrollbar Hide */}
       <style jsx global>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -273,7 +294,6 @@ export default function DashboardOrtuPage() {
   );
 }
 
-/* ================= METRIC CARD - Optimasi Mobile ================= */
 function MetricCard({ title, data, icon, color }: any) {
   return (
     <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100 flex justify-between items-center group hover:border-[#81B7A9] transition-all duration-300">
