@@ -300,12 +300,12 @@ export default function RiwayatJawabanOrangtua() {
           </div>
 
           <div className="space-y-4">
-            <InfoRow label="Hubungan Dengan Anak" value={`${familyInfo.relationship_with_child || '-'} `} />
+            <InfoRow label="Hubungan Dengan Anak" value={`${familyInfo.father_relationship || '-'} `} />
             <InfoRow label="Tanggal Lahir" value={familyInfo.father_birth_date} />
           </div>
 
           <div className="space-y-4">
-            <InfoRow label="Nomor Telepon" value={` ${familyInfo.father_phone_number || '-'}`} />
+            <InfoRow label="Nomor Telepon" value={` ${familyInfo.father_phone || '-'}`} />
             <InfoRow label="NIK" value={` ${familyInfo.father_identity_number || '-'}`} />
           </div>
         </div>
@@ -320,12 +320,12 @@ export default function RiwayatJawabanOrangtua() {
           </div>
 
           <div className="space-y-4">
-            <InfoRow label="Hubungan Dengan Anak" value={`${familyInfo.relationship_with_child || '-'} `} />
+            <InfoRow label="Hubungan Dengan Anak" value={`${familyInfo.mother_relationship || '-'} `} />
             <InfoRow label="Tanggal Lahir" value={familyInfo.mother_birth_date} />
           </div>
 
           <div className="space-y-4">
-            <InfoRow label="Nomor Telepon" value={` ${familyInfo.mother_phone_number || '-'}`} />
+            <InfoRow label="Nomor Telepon" value={` ${familyInfo.mother_phone || '-'}`} />
             <InfoRow label="NIK" value={` ${familyInfo.mother_identity_number || '-'}`} />
           </div>
         </div>
@@ -340,12 +340,12 @@ export default function RiwayatJawabanOrangtua() {
           </div>
 
           <div className="space-y-4">
-            <InfoRow label="Hubungan Dengan Anak" value={`${familyInfo.relationship_with_child || '-'} `} />
+            <InfoRow label="Hubungan Dengan Anak" value={`${familyInfo.guardian_relationship || '-'} `} />
             <InfoRow label="Tanggal Lahir" value={familyInfo.guardian_birth_date} />
           </div>
 
           <div className="space-y-4">
-            <InfoRow label="Nomor Telepon" value={` ${familyInfo.guardian_phone_number || '-'}`} />
+            <InfoRow label="Nomor Telepon" value={` ${familyInfo.guardian_phone || '-'}`} />
             <InfoRow label="NIK" value={` ${familyInfo.guardian_identity_number || '-'}`} />
           </div>
         </div>
