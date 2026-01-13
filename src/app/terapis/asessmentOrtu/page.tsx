@@ -123,22 +123,35 @@ export default function AssessmentPage() {
         <HeaderTerapis />
 
         <main className="p-6 flex-1">
-          {/* Search & Date */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-            <input
-              type="text"
-              placeholder="Cari nama pasien..."
-              value={searchName}
-              onChange={(e) => setSearchName(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 w-full md:w-1/3"
-            />
-            <input
-              type="date"
-              value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 w-full md:w-1/4"
-            />
-          </div>
+        {/* Search & Date */}
+<div className="flex flex-col md:flex-row md:items-center gap-2 mb-4">
+  <input
+    type="text"
+    placeholder="Cari nama pasien..."
+    value={searchName}
+    onChange={(e) => setSearchName(e.target.value)}
+    className="
+      border border-gray-300 rounded-md px-3 py-2 w-full md:w-1/3
+      shadow-sm
+      transition-all duration-300 ease-in-out
+      hover:shadow-md
+      focus:outline-none focus:ring-2 focus:ring-[#81B7A9] focus:shadow-lg
+    "
+  />
+  <input
+    type="date"
+    value={dateFilter}
+    onChange={(e) => setDateFilter(e.target.value)}
+    className="
+      border border-gray-300 rounded-md px-3 py-2 w-full md:w-1/4
+      shadow-sm
+      transition-all duration-300 ease-in-out
+      hover:shadow-md
+      focus:outline-none focus:ring-2 focus:ring-[#81B7A9] focus:shadow-lg
+    "
+  />
+</div>
+
 
           {/* Filter Status */}
           <div className="mb-4 border-b border-gray-300">
@@ -195,7 +208,28 @@ export default function AssessmentPage() {
                       <td className="px-4 py-3">{row.child_name}</td>
                       <td className="px-4 py-3">{row.guardian_name}</td>
                       <td className="px-4 py-3">{row.guardian_phone}</td>
-                      <td className="px-4 py-3">{row.types}</td>
+                      <td className="px-4 py-3 whitespace-normal align-top">
+  {Array.isArray(row.types) ? (
+    <ul className="list-disc list-inside space-y-1 text-gray-700">
+      {row.types.map((type: string, i: number) => (
+        <li key={i} className="wrap-break-word leading-relaxed">
+          {type}
+        </li>
+      ))}
+    </ul>
+  ) : typeof row.types === "string" ? (
+    <ul className="list-disc list-inside space-y-1 text-gray-700">
+      {row.types.split(",").map((type: string, i: number) => (
+        <li key={i} className="wrap-break-word leading-relaxed">
+          {type.trim()}
+        </li>
+      ))}
+    </ul>
+  ) : (
+    "-"
+  )}
+</td>
+
                       <td className="px-4 py-3">{row.admin_name}</td>
                       <td className="px-4 py-3">{row.scheduled_date}</td>
                       <td className="px-4 py-3">{row.scheduled_time}</td>
@@ -326,7 +360,7 @@ export default function AssessmentPage() {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-white rounded-lg p-6 w-[420px] relative"
+              className="bg-white rounded-lg p-6 'w-[420px]' relative"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}

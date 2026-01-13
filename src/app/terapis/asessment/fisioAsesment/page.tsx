@@ -34,8 +34,16 @@ export default function Page() {
     { key: "test_fungsi_bermain", label: "Test Fungsi Bermain" },
     { key: "diagnosa_fisioterapi", label: "Diagnosa Fisioterapi" },
   ];
+  const [selectedKhusus, setSelectedKhusus] = useState(
+  pemeriksaanKhususList[0].key
+);
 
-  const [selectedKhusus, setSelectedKhusus] = useState(pemeriksaanKhususList[0].key);
+// ✅ BARU HITUNG INDEX
+const khususIndex = pemeriksaanKhususList.findIndex(
+  (i) => i.key === selectedKhusus
+);
+
+
 
   const tabs = ["Pemeriksaan Umum", "Anamnesis Sistem", "Pemeriksaan Khusus"];
 
@@ -224,13 +232,28 @@ export default function Page() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+  <div className="flex h-screen bg-gray-50 overflow-hidden">
+
+    {/* SIDEBAR */}
+    <div className="fixed inset-y-0 left-0 w-64 z-40 bg-white">
       <SidebarTerapis />
+    </div>
 
-      <div className="flex-1">
+    {/* AREA KANAN */}
+    <div className="ml-64 flex-1">
+
+      {/* HEADER */}
+      <div className="fixed top-0 left-64 right-0 h-16 z-30 bg-white">
         <HeaderTerapis />
+      </div>
 
+      {/* CONTENT SCROLL */}
+      <div
+        className="pt-16 h-screen overflow-y-auto bg-gray-50"
+      >
         <div className="p-6">
+          {/* FRAME UTAMA */}
+          <div className="bg-white rounded-xl shadow-md border border-gray-200"></div>
           <div className="flex justify-end mb-4">
             <button
               onClick={() => (window.location.href = "/terapis/asessment")}
@@ -520,32 +543,67 @@ export default function Page() {
 
               {/* NAV BUTTON */}
               <div className="flex justify-between mt-8">
-                <button
-                  className="px-4 py-2 border rounded-lg"
-                  onClick={() => {
-                    const currentIndex = tabs.indexOf(activeTab);
-                    if (currentIndex > 0) {
-                      setActiveTab(tabs[currentIndex - 1]);
-                    }
-                  }}
-                  disabled={tabs.indexOf(activeTab) === 0}
-                >
-                  Sebelumnya
-                </button>
+               <button
+  className="px-4 py-2 border rounded-lg"
+  onClick={() => {
+    if (activeTab === "Pemeriksaan Khusus") {
+      if (khususIndex > 0) {
+        setSelectedKhusus(
+          pemeriksaanKhususList[khususIndex - 1].key
+        );
+        return;
+      }
 
-                <button
-                  className="px-6 py-2 rounded-lg bg-[#3A9C85] text-white"
-                  onClick={() => {
-                    const currentIndex = tabs.indexOf(activeTab);
-                    if (currentIndex < tabs.length - 1) {
-                      setActiveTab(tabs[currentIndex + 1]);
-                    } else {
-                      setStep(2);
-                    }
-                  }}
-                >
-                  Lanjutkan
-                </button>
+      // kalau sudah dropdown pertama, balik ke tab sebelumnya
+      setActiveTab("Anamnesis Sistem");
+      return;
+    }
+
+    const currentIndex = tabs.indexOf(activeTab);
+    if (currentIndex > 0) {
+      setActiveTab(tabs[currentIndex - 1]);
+    }
+  }}
+  disabled={activeTab === tabs[0]}
+>
+  Sebelumnya
+</button>
+
+
+               <button
+  className="px-6 py-2 rounded-lg bg-[#3A9C85] text-white"
+  onClick={() => {
+    // ===============================
+    // JIKA TAB PEMERIKSAAN KHUSUS
+    // ===============================
+    if (activeTab === "Pemeriksaan Khusus") {
+      // masih ada dropdown berikutnya
+      if (khususIndex < pemeriksaanKhususList.length - 1) {
+        setSelectedKhusus(
+          pemeriksaanKhususList[khususIndex + 1].key
+        );
+        return;
+      }
+
+      // dropdown terakhir → lanjut step
+      setStep(2);
+      return;
+    }
+
+    // ===============================
+    // TAB BIASA (UMUM / ANAMNESIS)
+    // ===============================
+    const currentIndex = tabs.indexOf(activeTab);
+    if (currentIndex < tabs.length - 1) {
+      setActiveTab(tabs[currentIndex + 1]);
+    } else {
+      setStep(2);
+    }
+  }}
+>
+  Lanjutkan
+</button>
+
               </div>
             </div>
           )}
@@ -576,5 +634,7 @@ export default function Page() {
         </div>
       </div>
     </div>
+       </div>
+
   );
 }

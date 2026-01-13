@@ -62,6 +62,12 @@ export default function Page() {
     { key: "Diagnosa Fisioterapi", label: "Diagnosa Fisioterapi" },
   ];
 
+  const tabIndex = tabs.findIndex((t) => t.key === activeTab);
+const khususIndex = pemeriksaanKhususList.findIndex(
+  (i) => i.key === selectedKhusus
+);
+
+
   /* ================== FETCH ================== */
   useEffect(() => {
     if (!assessmentId) return;
@@ -112,6 +118,42 @@ export default function Page() {
       </div>
     );
   };
+
+  const handlePrev = () => {
+  // 🔹 Jika di Pemeriksaan Khusus dan bukan item pertama
+  if (activeTab === "pemeriksaan_khusus" && khususIndex > 0) {
+    setSelectedKhusus(pemeriksaanKhususList[khususIndex - 1].key);
+    return;
+  }
+
+  // 🔹 Jika masih bisa pindah tab ke kiri
+  if (tabIndex > 0) {
+    const prevTab = tabs[tabIndex - 1].key;
+    setActiveTab(prevTab);
+
+    // reset dropdown khusus saat masuk
+    if (prevTab === "pemeriksaan_khusus") {
+      setSelectedKhusus(pemeriksaanKhususList[0].key);
+    }
+  }
+};
+
+const handleNext = () => {
+  // 🔹 Jika di Pemeriksaan Khusus dan belum terakhir
+  if (
+    activeTab === "pemeriksaan_khusus" &&
+    khususIndex < pemeriksaanKhususList.length - 1
+  ) {
+    setSelectedKhusus(pemeriksaanKhususList[khususIndex + 1].key);
+    return;
+  }
+
+  // 🔹 Pindah ke tab berikutnya
+  if (tabIndex < tabs.length - 1) {
+    setActiveTab(tabs[tabIndex + 1].key);
+  }
+};
+
 
   return (
     <div className="space-y-2">
@@ -216,14 +258,51 @@ const renderAnswer = (q: any) => {
     </div>
   );
 
+  const handlePrev = () => {
+    if (activeTab === "pemeriksaan_khusus" && khususIndex > 0) {
+      setSelectedKhusus(pemeriksaanKhususList[khususIndex - 1].key);
+      return;
+    }
+    if (tabIndex > 0) setActiveTab(tabs[tabIndex - 1].key);
+  };
+
+  const handleNext = () => {
+    if (
+      activeTab === "pemeriksaan_khusus" &&
+      khususIndex < pemeriksaanKhususList.length - 1
+    ) {
+      setSelectedKhusus(pemeriksaanKhususList[khususIndex + 1].key);
+      return;
+    }
+    if (tabIndex < tabs.length - 1) setActiveTab(tabs[tabIndex + 1].key);
+  };
+
+
   if (loading) return <div className="p-10">Memuat...</div>;
 
-  return (
-    <div className="flex min-h-screen bg-gray-50">
-      <SidebarTerapis />
-      <div className="flex-1">
-        <HeaderTerapis />
-        <div className="p-6 bg-white rounded-xl shadow">
+   return (
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
+  
+      {/* SIDEBAR */}
+      <div className="fixed inset-y-0 left-0 w-64 z-40 bg-white">
+        <SidebarTerapis />
+      </div>
+  
+      {/* AREA KANAN */}
+      <div className="ml-64 flex-1">
+  
+        {/* HEADER */}
+        <div className="fixed top-0 left-64 right-0 h-16 z-30 bg-white">
+          <HeaderTerapis />
+        </div>
+  
+        {/* CONTENT SCROLL */}
+        <div
+          className="pt-16 h-screen overflow-y-auto bg-gray-50"
+        >
+          <div className="p-6">
+            {/* FRAME UTAMA */}
+            <div className="bg-white rounded-xl shadow-md border border-gray-200"></div>
           <div className="flex justify-end mb-4">
             <button
               onClick={() => (window.location.href = "/terapis/asessment")}
@@ -281,8 +360,25 @@ const renderAnswer = (q: any) => {
               </div>
             ))
           )}
+          {/* TOMBOL NAVIGASI */}
+            <div className="flex justify-between mt-10 pt-4 border-t">
+              <button
+                onClick={handlePrev}
+                className="px-6 py-2 rounded border text-gray-600 hover:bg-gray-100"
+              >
+                Sebelumnya
+              </button>
+              <button
+                onClick={handleNext}
+                className="px-6 py-2 rounded bg-[#3A9C85] text-white hover:opacity-90"
+              >
+                Lanjutkan
+              </button>
+
         </div>
       </div>
+    </div>
+    </div>
     </div>
     </div>
   );
