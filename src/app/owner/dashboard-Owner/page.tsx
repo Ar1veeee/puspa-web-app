@@ -50,6 +50,7 @@ export default function DashboardOwnerPage() {
           ? d.patient_categories.map((c: any) => ({
               name: c.type ?? "-",
               value: Number(c.percentage ?? 0),
+              count: Number(c.count),
             }))
           : []
       );

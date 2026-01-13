@@ -152,48 +152,67 @@ function AssessmentContent() {
       <div className="flex-1 flex flex-col">
         <HeaderTerapis />
 
-        <main className="p-6 flex-1 flex flex-col text-[#36315B]">
-          {/* TAB TERAPI */}
-          <div className="flex gap-4 mb-4">
-            {(
-              [
-                "PLB (Paedagog)",
-                "Terapi Okupasi",
-                "Terapi Wicara",
-                "Fisioterapi",
-              ] as TerapiTab[]
-            ).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-5 py-2 rounded-full text-md font-semibold transition-all ${
-                  activeTab === tab
-                    ? "border border-[#81B7A9] bg-white shadow-sm"
-                    : "text-[#36315B]/70 hover:text-[#36315B]"
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
+       <main className="p-6 flex-1 flex flex-col text-[#36315B]">
+  {/* TAB TERAPI */}
+  <div className="flex gap-4 mb-4">
+    {(
+      [
+        "PLB (Paedagog)",
+        "Terapi Okupasi",
+        "Terapi Wicara",
+        "Fisioterapi",
+      ] as TerapiTab[]
+    ).map((tab) => (
+      <button
+        key={tab}
+        onClick={() => setActiveTab(tab)}
+        className={`
+          px-5 py-2 rounded-full text-md font-semibold
+          transition-all duration-300 ease-in-out
+          ${
+            activeTab === tab
+              ? "border border-[#81B7A9] bg-[#d2f3e7] shadow-lg"
+              : "text-[#36315B]/70 hover:text-[#36315B] hover:shadow-md hover:bg-white"
+          }
+        `}
+      >
+        {tab}
+      </button>
+    ))}
+  </div>
 
-          {/* FILTERS */}
-          <div className="flex flex-wrap sm:flex-row justify-end gap-3 mb-6">
-            <input
-              type="date"
-              value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value)}
-              className="border px-3 py-2 rounded-lg text-sm shadow-sm"
-            />
 
-            <input
-              type="text"
-              placeholder="Cari nama anak..."
-              value={searchName}
-              onChange={(e) => setSearchName(e.target.value)}
-              className="border px-3 py-2 rounded-lg text-sm shadow-sm w-60"
-            />
-          </div>
+
+         {/* FILTERS */}
+<div className="flex flex-wrap sm:flex-row justify-end gap-3 mb-6">
+  <input
+    type="date"
+    value={dateFilter}
+    onChange={(e) => setDateFilter(e.target.value)}
+    className="
+      border border-gray-300
+   px-3 py-2 rounded-lg text-sm shadow-sm
+      transition-all duration-300 ease-in-out
+      hover:shadow-md
+      focus:outline-none focus:ring-2 focus:ring-[#81B7A9] focus:shadow-lg
+    "
+  />
+
+  <input
+    type="text"
+    placeholder="Cari nama anak..."
+    value={searchName}
+    onChange={(e) => setSearchName(e.target.value)}
+    className="
+      border border-gray-300
+ px-3 py-2 rounded-lg text-sm shadow-sm w-60
+      transition-all duration-300 ease-in-out
+      hover:shadow-md
+      focus:outline-none focus:ring-2 focus:ring-[#81B7A9] focus:shadow-lg
+    "
+  />
+</div>
+
 
           {/* STATUS FILTER */}
           <div className="mb-4 border-b border-gray-200">

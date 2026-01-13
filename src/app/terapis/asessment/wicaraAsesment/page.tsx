@@ -237,13 +237,27 @@ function AsesmenWicaraContent() {
 
 
   /* ================= RENDER ================= */
-  return (
-    <div className="flex min-h-screen bg-gray-50">
+ return (
+  <div className="flex min-h-screen bg-gray-50">
+    {/* ================= SIDEBAR ================= */}
+    <div className="fixed inset-y-0 left-0 w-64 z-40 bg-white">
       <SidebarTerapis />
-      <div className="flex-1">
-        <HeaderTerapis />
+    </div>
 
+    {/* ================= AREA KANAN ================= */}
+    <div className="ml-64 flex flex-col flex-1">
+      {/* ================= HEADER ================= */}
+      <div className="fixed top-0 left-64 right-0 h-16 z-30 bg-white shadow">
+        <HeaderTerapis />
+      </div>
+
+      {/* ================= KONTEN (SCROLL) ================= */}
+      <div
+        className="pt-16 overflow-y-auto"
+        style={{ height: "calc(100vh - 4rem)" }} // 4rem = h-16
+      >
         <div className="p-6">
+
           <div className="flex justify-end mb-4">
             <button
               onClick={() => (window.location.href = "/terapis/asessment")}
@@ -374,5 +388,7 @@ function AsesmenWicaraContent() {
         </div>
       </div>
     </div>
+      </div>
+
   );
 }

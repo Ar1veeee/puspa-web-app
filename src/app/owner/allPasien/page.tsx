@@ -49,14 +49,21 @@ const DataAnakListPage: React.FC = () => {
   );
 
   return (
-    <div className="flex min-h-screen bg-[#F7F7F7] text-[#36315B]">
-      <Sidebar />
+    <div className="min-h-screen bg-[#F7F7F7] text-[#36315B]">
+     {/* SIDEBAR */}
+<div className="fixed inset-y-0 left-0 w-64 z-40 bg-white">
+  <Sidebar />
+</div>
 
-      <div className="flex-1 flex flex-col">
-        <Header />
+{/* HEADER */}
+<div className="fixed top-0 left-64 right-0 h-16 z-30 bg-white shadow">
+  <Header />
+</div>
 
-        <main className="p-10">
-          <section className="bg-white rounded-xl shadow-md p-6">
+{/* CONTENT (INI YANG SCROLL) */}
+<div className="ml-64 pt-16 h-screen overflow-y-auto bg-[#F7F7F7]">
+  <main className="p-10">
+    <section className="bg-white rounded-xl shadow-md p-6">
             <h1 className="text-2xl font-bold mb-6 pb-2 border-b-2 border-[#81B7A9]">
               Data Pasien / Anak
             </h1>

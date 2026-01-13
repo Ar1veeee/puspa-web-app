@@ -73,6 +73,7 @@ export default function DashboardPage() {
           (d.patient_categories ?? []).map((c: any) => ({
             name: c.type,
             value: Number(c.percentage),
+            count: Number(c.count), 
           }))
         );
 
@@ -214,41 +215,76 @@ export default function DashboardPage() {
           <div className="bg-white rounded-xl p-6 shadow">
             <h3 className="font-semibold mb-6">Jadwal Mendatang</h3>
 
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b">
-                  <th className="py-3 text-left">Nama Pasien</th>
-                  <th className="py-3 text-left">Jenis Layanan</th>
-                  <th className="py-3 text-left">Status</th>
-                  <th className="py-3 text-left">Tanggal</th>
-                  <th className="py-3 text-left">Waktu</th>
-                </tr>
-              </thead>
+            <table className="w-full text-sm table-fixed">
+  <thead>
+  <tr className="border-b text-gray-500 align-top">
+    <th className="py-3 text-left w-[25%] align-top">
+      Nama Pasien
+    </th>
 
-              <tbody>
-                {schedule.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="text-center py-6 text-gray-400">
-                      Tidak ada jadwal
-                    </td>
-                  </tr>
-                )}
+    <th className="py-3 text-left w-[25%] align-top leading-relaxed">
+      Jenis Layanan
+    </th>
 
-                {schedule.map((s: any, index: number) => (
-                  <tr
-                    key={`${s.id}-${s.date}-${s.time}-${index}`}
-                    className="border-b"
-                  >
-                    <td className="py-3">{s.child_name}</td>
-                    <td className="py-3">
-                      {Array.isArray(s.types) ? s.types.join(", ") : "-"}
-                    </td>
-                    <td className="py-3 text-emerald-500">{s.status}</td>
-                    <td className="py-3">{s.date}</td>
-                    <td className="py-3">{s.time}</td>
-                  </tr>
-                ))}
-              </tbody>
+    <th className="py-3 text-center w-[15%] align-top">
+      Status
+    </th>
+
+    <th className="py-3 text-center w-[20%] align-top">
+      Tanggal
+    </th>
+
+    <th className="py-3 text-center w-[15%] align-top">
+      Waktu
+    </th>
+  </tr>
+</thead>
+
+
+             <tbody>
+  {schedule.length === 0 && (
+    <tr>
+      <td colSpan={5} className="text-center py-6 text-gray-400">
+        Tidak ada jadwal
+      </td>
+    </tr>
+  )}
+
+  {schedule.map((s: any, index: number) => (
+    <tr
+      key={`${s.id}-${s.date}-${s.time}-${index}`}
+      className="border-b align-top"
+    >
+      <td className="py-3">{s.child_name}</td>
+
+      {/* 🔥 JENIS LAYANAN → LIST KE BAWAH */}
+      <td className="py-3 whitespace-normal align-top">
+        {Array.isArray(s.types) && s.types.length > 0 ? (
+          <ul className="list-disc list-inside space-y-1 text-gray-700">
+            {s.types.map((type: string, i: number) => (
+              <li key={i} className="wreak-break-words leading-relaxed">
+                {type}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          "-"
+        )}
+      </td>
+
+      <td className="py-3 text-center">
+        <span className="px-2 py-1 text-xs rounded-full bg-emerald-100 text-emerald-600">
+          {s.status}
+        </span>
+      </td>
+
+      <td className="py-3 text-center">{s.date}</td>
+      <td className="py-3 text-center">{s.time}</td>
+    </tr>
+  ))}
+</tbody>
+
+
             </table>
           </div>
         </main>

@@ -6,6 +6,7 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 type CategoryItem = {
   name: string;
   value: number;
+  count?: number; //
 };
 
 export default function PasienChart({ apiData }: { apiData: CategoryItem[] }) {
@@ -19,32 +20,33 @@ export default function PasienChart({ apiData }: { apiData: CategoryItem[] }) {
 
   // Fungsi untuk format label di luar: hanya persentase
   const renderCustomizedLabel = ({
-    cx,
-    cy,
-    midAngle,
-    innerRadius,
-    outerRadius,
-    percent,
-  }: any) => {
-    const RADIAN = Math.PI / 180;
-    const radius = outerRadius + 20; // jarak label dari pie
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  cx,
+  cy,
+  midAngle,
+  outerRadius,
+  percent,
+  payload,
+}: any) => {
+  const RADIAN = Math.PI / 180;
+  const radius = outerRadius + 22;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-    return (
-      <text
-        x={x}
-        y={y}
-        fill="#36315B"
-        textAnchor={x > cx ? "start" : "end"}
-        dominantBaseline="central"
-        fontSize={12}
-        fontWeight={500}
-      >
-        {`${(percent * 100).toFixed(1)}%`}
-      </text>
-    );
-  };
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="#36315B"
+      textAnchor={x > cx ? "start" : "end"}
+      dominantBaseline="central"
+      fontSize={12}
+      fontWeight={500}
+    >
+      {(percent * 100).toFixed(0)}% ({payload?.count ?? 0})
+    </text>
+  );
+};
+
 
   return (
     <div className="bg-white rounded-lg shadow-md shadow-[#ADADAD] p-4 text-[#36315B]">
@@ -77,12 +79,17 @@ export default function PasienChart({ apiData }: { apiData: CategoryItem[] }) {
             </Pie>
 
             <Tooltip
-              contentStyle={{
-                fontFamily: "Playpen Sans, sans-serif",
-                color: "#36315B",
-                borderRadius: "8px",
-              }}
-            />
+  formatter={(value: any, name: any, props: any) => [
+    `${value}% (${props.payload.count} pasien)`,
+    name,
+  ]}
+  contentStyle={{
+    fontFamily: "Playpen Sans, sans-serif",
+    color: "#36315B",
+    borderRadius: "8px",
+  }}
+/>
+
           </PieChart>
         </ResponsiveContainer>
       </div>

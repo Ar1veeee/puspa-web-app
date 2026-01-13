@@ -215,44 +215,65 @@ export default function ObservasiPage() {
 
           {/* Filter & Search */}
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-4">
-            <input
-              type="date"
-              value={filterDate}
-              onChange={(e) => setFilterDate(e.target.value)}
-              className="border border-[#81B7A9] rounded px-2 py-1 text-sm"
-              placeholder="Filter Tanggal"
-            />
-            <input
-              type="text"
-              value={searchName}
-              onChange={(e) => setSearchName(e.target.value)}
-              className="border border-[#81B7A9] rounded px-2 py-1 text-sm max-w-[200px]"
-              placeholder="Cari Nama Anak atau Wali"
-            />
-          </div>
+  <input
+    type="date"
+    value={filterDate}
+    onChange={(e) => setFilterDate(e.target.value)}
+    placeholder="Filter Tanggal"
+    className="
+      border border-[#81B7A9] rounded px-3 py-1.5 text-sm
+      shadow-sm
+      transition-all duration-300 ease-in-out
+      hover:shadow-md
+      focus:outline-none focus:ring-2 focus:ring-[#81B7A9] focus:shadow-lg
+    "
+  />
+
+  <input
+  type="text"
+  value={searchName}
+  onChange={(e) => setSearchName(e.target.value)}
+  placeholder="Cari Nama Anak atau Wali"
+  className="
+    border border-[#81B7A9] rounded px-3 py-1.5 text-sm max-w-[280px]
+    shadow-lg
+    transition-all duration-300 ease-in-out
+    hover:shadow-xl
+    focus:outline-none focus:ring-2 focus:ring-[#81B7A9] focus:shadow-2xl
+  "
+
+  />
+</div>
+
 
           {/* Tabs kategori usia */}
-          <div className="relative flex flex-wrap border-b border-gray-300 mb-4">
-            {kategori.map((kat, idx) => (
-              <button
-                key={idx}
-                onClick={() => setActiveKategori(idx)}
-                className={`relative px-3 sm:px-4 py-2 text-sm sm:text-base font-medium transition-colors ${
-                  activeKategori === idx
-                    ? "text-[#36315B]"
-                    : "text-gray-500 hover:text-[#36315B]"
-                }`}
-              >
-                {kat.title}
-                {activeKategori === idx && (
-                  <motion.div
-                    layoutId="underline"
-                    className="absolute left-0 right-0 -bottom-[1px] h-[2px] bg-[#81B7A9]"
-                  />
-                )}
-              </button>
-            ))}
-          </div>
+<div className="relative flex flex-wrap border-b border-gray-300 mb-4">
+  {kategori.map((kat, idx) => (
+    <button
+      key={idx}
+      onClick={() => setActiveKategori(idx)}
+      className={`
+        relative px-3 sm:px-4 py-2 text-sm sm:text-base font-medium transition-all duration-300
+        rounded-md
+        ${
+          activeKategori === idx
+            ? "text-[#36315B] shadow-md bg-[#ddfaf2]"
+            : "text-gray-500 hover:text-[#36315B] hover:shadow-sm hover:bg-[#e8f0ed]"
+        }
+      `}
+    >
+      {kat.title}
+      {activeKategori === idx && (
+        <motion.div
+          layoutId="underline"
+          className="absolute left-0 right-0 bottom-[1px] h-[2px] bg-[#81B7A9]"
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+        />
+      )}
+    </button>
+  ))}
+</div>
+
 
           {/* Tabel anak */}
           <AnimatePresence mode="wait">
@@ -274,7 +295,7 @@ export default function ObservasiPage() {
                 </p>
               ) : (
                 <>
-                  <table className="w-full text-xs sm:text-sm table-auto border-collapse min-w-[700px]">
+                  <table className="w-full text-xs sm:text-sm table-auto border-collapse 'min-w-[700px]'">
                     <thead>
                       <tr className="border-b border-[#81B7A9] bg-gray-100">
                         <th className="py-2 px-4 text-center">Nama Anak</th>
