@@ -2,8 +2,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Sidebar from "@/components/layout/sidebar";
-import Header from "@/components/layout/header";
 import {
   Search as SearchIcon,
   Settings,
@@ -21,7 +19,6 @@ import { getAssessmentsAdmin } from "@/lib/api/jadwal_asessment";
 import { updateAsessmentSchedule } from "@/lib/api/jadwal_asessment";
 import { getAssessmentDetail } from "@/lib/api/jadwal_asessment";
 import FormDetailAsesment from "@/components/form/FormDetailAsesment";
-
 
 // =======================
 // Interface Jadwal
@@ -198,9 +195,9 @@ export default function JadwalAsesmenPage() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
+
       <div className="flex flex-col flex-1 relative">
-        <Header />
+
 
         <main className="p-6 space-y-6 relative">
           <h1 className="text-2xl font-semibold text-[#36315B] mb-2">
@@ -260,13 +257,14 @@ export default function JadwalAsesmenPage() {
                     placeholder="Cari Pasien"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="border rounded-full pl-3 pr-9 py-2 text-sm"
+                    className="w-full border rounded-full pl-4 pr-10 py-2 text-sm outline-none focus:ring-2 focus:ring-[#81B7A9]"
                   />
                   <SearchIcon
                     size={16}
-                    className="absolute right-3 top-2.5 text-gray-400"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
                   />
                 </div>
+
               </div>
             ) : (
               <div className="relative w-64">
@@ -510,16 +508,16 @@ export default function JadwalAsesmenPage() {
           title={tab === "terjadwal" ? "Edit Asesmen" : "Atur Asesmen"}
           pasienName={selectedPasien.nama}
           initialDate={
-  selectedPasien.tanggalObservasi && selectedPasien.tanggalObservasi !== "-"
-    ? selectedPasien.tanggalObservasi
-    : undefined
-}
+            selectedPasien.tanggalObservasi && selectedPasien.tanggalObservasi !== "-"
+              ? selectedPasien.tanggalObservasi
+              : undefined
+          }
 
           initialTime={
-  selectedPasien.waktu && selectedPasien.waktu !== "-"
-    ? selectedPasien.waktu
-    : undefined
-}
+            selectedPasien.waktu && selectedPasien.waktu !== "-"
+              ? selectedPasien.waktu
+              : undefined
+          }
           onClose={() => {
             setOpenAsesmen(false);
             setSelectedPasien(null);

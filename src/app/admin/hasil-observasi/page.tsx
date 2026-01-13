@@ -3,8 +3,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import Sidebar from "@/components/layout/sidebar";
-import Header from "@/components/layout/header";
+
 import {
   getObservationDetail,
   getObservations,
@@ -86,9 +85,9 @@ function HasilObservasiContent() {
 
   return (
     <div className="flex h-screen text-[#36315B] font-playpen">
-      <Sidebar />
+      
       <div className="flex flex-col flex-1 bg-gray-50">
-        <Header />
+      
 
         <main className="p-10 bg-white m-4 rounded-xl shadow-md overflow-auto">
           <div className="flex justify-end mb-4">

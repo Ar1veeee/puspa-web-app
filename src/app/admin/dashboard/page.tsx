@@ -3,15 +3,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Sidebar from "@/components/layout/sidebar";
-import Header from "@/components/layout/header";
 import CardInfo from "@/components/dashboard/card_info";
 import JadwalTable from "@/components/dashboard/jadwal_table";
 import PasienChartAdmin from "@/components/dashboard/pasien_chart_admin";
 import FormTambahAdmin from "@/components/form/FormTambahAdmin";
 import FormTambahTerapis from "@/components/form/FormTambahTerapis";
 import { Menu, X } from "lucide-react";
-import api from "@/lib/axios";
 import { addAdmin } from "@/lib/api/data_admin";
 import { addTerapis } from "@/lib/api/data_terapis";
 import {
@@ -97,15 +94,7 @@ export default function AdminDashboard() {
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside
-        className={`
-          fixed md:static z-20 inset-y-0 left-0 w-64 max-w-full bg-white shadow-md
-          transform transition-transform duration-300 ease-in-out
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-        `}
-      >
-        <Sidebar />
-      </aside>
+      
 
       {/* Overlay untuk mobile */}
       {sidebarOpen && (
@@ -124,7 +113,7 @@ export default function AdminDashboard() {
       </button>
 
       <main className="flex-1 flex flex-col overflow-x-hidden">
-        <Header />
+    
 
         <div className="p-6 flex flex-col gap-6">
           {/* Card Info + Buttons */}

@@ -4,8 +4,6 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import Sidebar from "@/components/layout/sidebar";
-import Header from "@/components/layout/header";
 import { getAssessmentAnswers } from "@/lib/api/asesment";
 
 /* =======================
@@ -96,9 +94,9 @@ export default function RiwayatJawabanOkupasiPage() {
   ======================= */
   return (
     <div className="flex min-h-screen bg-gray-50 text-[#36315B]">
-      <Sidebar />
+    
       <div className="flex-1 flex flex-col">
-        <Header />
+      
 
         <div className="p-6 overflow-auto">
           {/* CLOSE */}

@@ -3,8 +3,7 @@
 import React, { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSearchParams, useRouter } from "next/navigation";
-import Sidebar from "@/components/layout/sidebar";
-import Header from "@/components/layout/header";
+
 import { uploadAssessmentReport } from "@/lib/api/asesmentReport";
 
 export default function UploadFilePage() {
@@ -12,7 +11,8 @@ export default function UploadFilePage() {
   const searchParams = useSearchParams();
 
   // ⬇️ SESUAI handleOrtuRoute → ?id=jadwalId
-  const jadwalId = Number(searchParams.get("id"));
+// ✅ BENAR
+const jadwalId = Number(searchParams.get("assessment_id"));
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -52,9 +52,7 @@ export default function UploadFilePage() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
       <div className="flex-1 flex flex-col">
-        <Header />
 
         <main className="flex-1 flex justify-center items-center p-6">
           <AnimatePresence>

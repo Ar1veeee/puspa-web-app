@@ -5,8 +5,6 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 
-import Sidebar from "@/components/layout/sidebar";
-import Header from "@/components/layout/header";
 import { getAssessmentAnswers } from "@/lib/api/asesment";
 
 /* ======================
@@ -152,10 +150,10 @@ function RiwayatJawabanPaedagogContent() {
   ====================== */
   return (
     <div className="flex h-screen font-playpen text-[#36315B]">
-      <Sidebar />
+     
 
       <div className="flex flex-1 flex-col bg-gray-50">
-        <Header />
+      
 
         <main className="overflow-y-auto p-6">
           {/* CLOSE */}

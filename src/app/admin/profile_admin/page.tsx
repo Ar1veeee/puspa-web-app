@@ -4,8 +4,6 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import Image from "next/image";
 import { User } from "lucide-react";
-import Sidebar from "@/components/layout/sidebar";
-import Header from "@/components/layout/header";
 import { updateProfileWithPhoto } from "@/lib/api/ProfileAdmin";
 import { useAdminProfile } from "@/context/ProfileAdminContext";
 
@@ -128,10 +126,10 @@ export default function ProfilePage() {
   // =====================================
   return (
     <div className="flex min-h-screen bg-gray-100 text-[#36315B]">
-      <Sidebar />
+     
 
       <div className="flex-1">
-        <Header />
+        
 
         <main className="p-10 flex flex-col items-center">
           {!isEditing ? (

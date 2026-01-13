@@ -3,8 +3,6 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import Sidebar from "@/components/layout/sidebar";
-import Header from "@/components/layout/header";
 import {
     getObservationDetail,
     getObservationQuestions,
@@ -143,9 +141,7 @@ export default function RiwayatJawabanPage() {
 
     return (
         <div className="flex h-screen text-[#36315B] font-playpen">
-            <Sidebar />
             <div className="flex flex-col flex-1 bg-gray-50">
-                <Header />
                 <main className="p-6 overflow-y-auto">
                     <div className="flex justify-end mb-4">
                         <button

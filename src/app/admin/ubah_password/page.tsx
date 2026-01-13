@@ -2,8 +2,6 @@
 "use client";
 
 import { useState } from "react";
-import Sidebar from "@/components/layout/sidebar";
-import Header from "@/components/layout/header";
 import { Eye, EyeOff, Lock } from "lucide-react";
 import api from "@/lib/axios";
 import toast, { Toaster } from "react-hot-toast";
@@ -50,9 +48,9 @@ export default function UbahPasswordAdmin() {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f9fc]">
-      <Sidebar />
+    
       <div className="flex-1 flex flex-col items-center">
-        <Header />
+       
         <Toaster position="top-right" />
         <div className="bg-white rounded-xl p-6 shadow-md mt-6 w-full max-w-md">
           <h2 className="text-xl font-semibold text-[#2D2A55] text-center">

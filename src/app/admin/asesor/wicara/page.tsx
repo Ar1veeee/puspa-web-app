@@ -7,8 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
-import Sidebar from "@/components/layout/sidebar";
-import Header from "@/components/layout/header";
+
 import { getAssessmentAnswers } from "@/lib/api/asesment";
 
 /* ================== SUB GROUP LIDAH ================== */
@@ -116,9 +115,9 @@ export default function RiwayatWicaraPage() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
+     
       <div className="flex-1">
-        <Header />
+     
 
         <div className="p-6">
            <div className="flex justify-end mb-4">

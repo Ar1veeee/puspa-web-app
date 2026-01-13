@@ -3,8 +3,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Sidebar from "@/components/layout/sidebar";
-import Header from "@/components/layout/header";
+
 import { getUmumParentAnswer } from "@/lib/api/riwayatAsesmentOrtu";
 
 /* ===================== TYPES ===================== */
@@ -146,10 +145,10 @@ export default function RiwayatJawabanUmum() {
 
   return (
     <div className="flex min-h-screen bg-gray-50 text-[#36315B]">
-      <Sidebar />
+     
 
       <div className="flex-1 flex flex-col ml-2">
-        <Header pageTitle="Assessment" />
+
 
         <main className="p-8 flex-1 overflow-y-auto">
           <div className="flex justify-end mb-4">

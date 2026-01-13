@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Sidebar from "@/components/layout/sidebar";
-import Header from "@/components/layout/header";
 import { Pencil, Trash2, Plus, Search, Eye } from "lucide-react";
 
 import FormUbahPatient from "@/components/form/FormUbahPatient";
@@ -134,6 +132,8 @@ export default function PatientPage() {
   const [showHapus, setShowHapus] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const fetchPatients = async () => {
     try {
@@ -149,6 +149,10 @@ export default function PatientPage() {
   useEffect(() => {
     fetchPatients();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
 
   const handleDetail = async (child_id: string) => {
     try {
@@ -190,12 +194,17 @@ export default function PatientPage() {
     (a) =>
       (a.child_name ?? "").toLowerCase().includes(search.toLowerCase())
   );
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
 
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  const paginatedPatients = filtered.slice(startIndex, endIndex);
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
+
       <div className="flex flex-col flex-1">
-        <Header />
+
         <main className="p-6 space-y-6">
           <div className="flex justify-between items-center">
 
@@ -228,12 +237,12 @@ export default function PatientPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((pasien, i) => (
+                {paginatedPatients.map((pasien, i) => (
                   <tr
                     key={pasien.child_id}
                     className="border-b border-[#81B7A9] hover:bg-gray-50"
                   >
-                    <td className="p-3">{i + 1}</td>
+                    <td className="p-3">{startIndex + i + 1}</td>
                     <td className="p-3">{pasien.child_name}</td>
                     <td className="p-3 text-[#757575]">{pasien.child_birth_date}</td>
                     <td className="p-3 text-[#757575]">{pasien.child_age}</td>
@@ -277,6 +286,36 @@ export default function PatientPage() {
 
 
             </table>
+            <div className="flex justify-center mt-6">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 rounded-md border ${currentPage === 1
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-white hover:bg-gray-100"
+                    }`}
+                >
+                  Previous
+                </button>
+
+                <span className="text-sm font-medium text-[#36315B]">
+                  Page {currentPage} of {totalPages || 1}
+                </span>
+
+                <button
+                  onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  className={`px-4 py-2 rounded-md border ${currentPage === totalPages || totalPages === 0
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-white hover:bg-gray-100"
+                    }`}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+
           </div>
         </main>
       </div>

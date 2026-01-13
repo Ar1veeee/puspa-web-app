@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Sidebar from "@/components/layout/sidebar";
-import Header from "@/components/layout/header";
 import { Pencil, Trash2, Plus, Search, Eye } from "lucide-react";
 
 import FormTambahAdmin from "@/components/form/FormTambahAdmin";
@@ -66,6 +64,8 @@ export default function AdminPage() {
   const [showHapus, setShowHapus] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const fetchAdmins = async () => {
     try {
@@ -80,6 +80,10 @@ export default function AdminPage() {
   useEffect(() => {
     fetchAdmins();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
 
   const handleDetail = async (admin_id: string) => {
     try {
@@ -141,11 +145,18 @@ export default function AdminPage() {
       (a.username ?? "").toLowerCase().includes(search.toLowerCase())
   );
 
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  const paginatedAdmins = filtered.slice(startIndex, endIndex);
+
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
+
       <div className="flex flex-col flex-1">
-        <Header />
+
         <main className="p-6 space-y-6">
           <div className="flex justify-between items-center">
             <button
@@ -185,9 +196,9 @@ export default function AdminPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((admin, i) => (
+                {paginatedAdmins.map((admin, i) => (
                   <tr key={admin.admin_id} className="border-b border-[#81B7A9] hover:bg-gray-50">
-                    <td className="p-3">{i + 1}</td>
+                    <td className="p-3">{startIndex + i + 1}</td>
                     <td className="p-3">{admin.admin_name}</td>
                     <td className="p-3 font-medium text-[#757575]">{admin.username}</td>
                     <td className="p-3 font-medium text-[#757575]">{admin.email}</td>
@@ -228,6 +239,36 @@ export default function AdminPage() {
 
 
             </table>
+            <div className="flex justify-center mt-6">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 rounded-md border ${currentPage === 1
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-white hover:bg-gray-100"
+                    }`}
+                >
+                  Previous
+                </button>
+
+                <span className="text-sm font-medium text-[#36315B]">
+                  Page {currentPage} of {totalPages || 1}
+                </span>
+
+                <button
+                  onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  className={`px-4 py-2 rounded-md border ${currentPage === totalPages || totalPages === 0
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-white hover:bg-gray-100"
+                    }`}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+
           </div>
         </main>
       </div>

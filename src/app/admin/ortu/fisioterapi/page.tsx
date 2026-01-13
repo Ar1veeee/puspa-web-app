@@ -3,8 +3,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import Sidebar from "@/components/layout/sidebar";
-import Header from "@/components/layout/header";
+
 
 // 🔹 API
 import { getFisioParentAnswer } from "@/lib/api/riwayatAsesmentOrtu";
@@ -116,10 +115,10 @@ export default function DataFisioterapiPage() {
   /* ======================= UI ======================= */
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
+     
 
       <div className="flex-1 flex flex-col ml-1">
-        <Header pageTitle="Assessment" />
+       
 
         <main className="flex-1 overflow-y-auto p-6">
           {/* Close */}

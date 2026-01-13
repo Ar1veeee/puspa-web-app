@@ -3,8 +3,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Sidebar from "@/components/layout/sidebar";
-import Header from "@/components/layout/header";
 import { Pencil, Trash2, Plus, Search, Eye } from "lucide-react";
 
 import FormTambahTerapis from "@/components/form/FormTambahTerapis";
@@ -71,10 +69,16 @@ export default function DataTerapisPage() {
   const [showHapus, setShowHapus] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDetail, setShowDetail] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchTerapis();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
 
   const fetchTerapis = async () => {
     try {
@@ -98,7 +102,7 @@ export default function DataTerapisPage() {
       if (res.data.success) {
         alert("Terapis berhasil ditambahkan!");
         setShowTambah(false);
-        fetchTerapis(); 
+        fetchTerapis();
       } else {
         alert("Gagal menambah terapis");
       }
@@ -137,7 +141,7 @@ export default function DataTerapisPage() {
       if (res.data.success) {
         alert("🗑️ Terapis berhasil dihapus!");
         setShowHapus(false);
-        fetchTerapis(); 
+        fetchTerapis();
       } else {
         alert(" Gagal menghapus terapis");
       }
@@ -166,15 +170,20 @@ export default function DataTerapisPage() {
       (t.username?.toLowerCase() || "").includes(search.toLowerCase()) ||
       (t.bidang?.toLowerCase() || "").includes(search.toLowerCase())
   );
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
 
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  const paginatedTerapis = filtered.slice(startIndex, endIndex);
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
+
       <div className="flex flex-col flex-1">
-        <Header />
+
 
         <main className="p-6 space-y-6">
-          
+
           <div className="flex justify-between items-center">
             <button
               onClick={() => setShowTambah(true)}
@@ -215,12 +224,12 @@ export default function DataTerapisPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((terapis, i) => (
+                {paginatedTerapis.map((terapis, i) => (
                   <tr
                     key={terapis.id}
                     className="border-b border-[#81B7A9] hover:bg-gray-50"
                   >
-                    <td className="p-3">{i + 1}</td>
+                    <td className="p-3">{(currentPage - 1) * itemsPerPage + i + 1}</td>
                     <td className="p-3">{terapis.nama}</td>
                     <td className="p-3 text-[#757575]">{terapis.bidang}</td>
                     <td className="p-3 text-[#757575]">{terapis.username}</td>
@@ -260,6 +269,36 @@ export default function DataTerapisPage() {
                 ))}
               </tbody>
             </table>
+            <div className="flex justify-center mt-6">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 rounded-md border ${currentPage === 1
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-white hover:bg-gray-100"
+                    }`}
+                >
+                  Previous
+                </button>
+
+                <span className="text-sm font-medium text-[#36315B]">
+                  Page {currentPage} of {totalPages || 1}
+                </span>
+
+                <button
+                  onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  className={`px-4 py-2 rounded-md border ${currentPage === totalPages || totalPages === 0
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-white hover:bg-gray-100"
+                    }`}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+            
           </div>
         </main>
       </div>

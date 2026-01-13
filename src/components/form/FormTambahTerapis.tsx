@@ -1,8 +1,25 @@
 "use client";
+
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-const bidangOptions = ["Fisioterapi", "Okupasi Terapi", "Terapi Wicara", "Paedagog"];
+const bidangOptions = [
+  "Fisioterapi",
+  "Okupasi Terapi",
+  "Terapi Wicara",
+  "Paedagog",
+];
+
+type FormState = {
+  nama: string;
+  bidang: string;
+  username: string;
+  email: string;
+  telepon: string;
+  password: string;
+};
+
+type FormErrors = Partial<Record<keyof FormState, string>>;
 
 export default function FormTambahTerapis({
   open,
@@ -11,16 +28,9 @@ export default function FormTambahTerapis({
 }: {
   open: boolean;
   onClose: () => void;
-  onSave: (data: {
-    nama: string;
-    bidang: string;
-    username: string;
-    email: string;
-    telepon: string;
-    password: string;
-  }) => void;
+  onSave: (data: FormState) => void;
 }) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormState>({
     nama: "",
     bidang: "",
     username: "",
@@ -29,33 +39,74 @@ export default function FormTambahTerapis({
     password: "",
   });
 
+  const [errors, setErrors] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
 
   if (!open) return null;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // ================= VALIDASI =================
+  const validate = (): FormErrors => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.nama.trim()) {
+      newErrors.nama = "Nama wajib diisi";
+    }
+
+    if (!formData.bidang) {
+      newErrors.bidang = "Bidang wajib dipilih";
+    }
+
+    if (!formData.username.trim()) {
+      newErrors.username = "Nama pengguna wajib diisi";
+    } else if (/\s/.test(formData.username)) {
+      newErrors.username = "Nama pengguna tidak boleh mengandung spasi";
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email wajib diisi";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Format email tidak valid";
+    }
+
+    if (!formData.telepon.trim()) {
+      newErrors.telepon = "Nomor telepon wajib diisi";
+    } else if (!/^[0-9]+$/.test(formData.telepon)) {
+      newErrors.telepon = "Nomor telepon hanya boleh angka";
+    } else if (formData.telepon.length < 8) {
+      newErrors.telepon = "Nomor telepon minimal 8 digit";
+    }
+
+    if (!formData.password.trim()) {
+      newErrors.password = "Password wajib diisi";
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password minimal 8 karakter";
+    } else if (!/[A-Z]/.test(formData.password)) {
+      newErrors.password = "Password harus mengandung 1 huruf kapital";
+    } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(formData.password)) {
+      newErrors.password = "Password harus mengandung 1 simbol";
+    }
+
+    return newErrors;
+  };
+
+  // ================= SUBMIT =================
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Validasi sederhana
-    if (
-      !formData.nama ||
-      !formData.bidang ||
-      !formData.username ||
-      !formData.email ||
-      !formData.telepon ||
-      !formData.password
-    ) {
-      alert("Semua field wajib diisi!");
-      return;
-    }
+
+    const validationErrors = validate();
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) return;
 
     onSave(formData);
 
-    // Reset form setelah submit
     setFormData({
       nama: "",
       bidang: "",
@@ -64,10 +115,12 @@ export default function FormTambahTerapis({
       telepon: "",
       password: "",
     });
+    setErrors({});
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-transparent z-50">
+<div className="fixed inset-0 z-50 overflow-y-auto">
+  <div className="flex min-h-screen items-center justify-center px-4">
       <div className="bg-white rounded-lg shadow-lg w-[400px] p-6 relative">
         <button
           onClick={onClose}
@@ -76,9 +129,12 @@ export default function FormTambahTerapis({
           ✕
         </button>
 
-        <h2 className="text-xl font-semibold text-[#36315B] mb-4">Tambah Data Terapis</h2>
+        <h2 className="text-xl font-semibold text-[#36315B] mb-4">
+          Tambah Data Terapis
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-3">
+          {/* Nama */}
           <div>
             <label className="block text-sm text-[#36315B] mb-1">Nama</label>
             <input
@@ -89,8 +145,12 @@ export default function FormTambahTerapis({
               onChange={handleChange}
               className="w-full border rounded p-2"
             />
+            {errors.nama && (
+              <p className="text-xs text-red-500 mt-1">{errors.nama}</p>
+            )}
           </div>
 
+          {/* Bidang */}
           <div>
             <label className="block text-sm text-[#36315B] mb-1">Bidang</label>
             <select
@@ -106,10 +166,16 @@ export default function FormTambahTerapis({
                 </option>
               ))}
             </select>
+            {errors.bidang && (
+              <p className="text-xs text-red-500 mt-1">{errors.bidang}</p>
+            )}
           </div>
 
+          {/* Username */}
           <div>
-            <label className="block text-sm text-[#36315B] mb-1">Nama Pengguna</label>
+            <label className="block text-sm text-[#36315B] mb-1">
+              Nama Pengguna
+            </label>
             <input
               type="text"
               name="username"
@@ -118,8 +184,14 @@ export default function FormTambahTerapis({
               onChange={handleChange}
               className="w-full border rounded p-2"
             />
+            {errors.username && (
+              <p className="text-xs text-red-500 mt-1">
+                {errors.username}
+              </p>
+            )}
           </div>
 
+          {/* Email */}
           <div>
             <label className="block text-sm text-[#36315B] mb-1">Email</label>
             <input
@@ -130,8 +202,12 @@ export default function FormTambahTerapis({
               onChange={handleChange}
               className="w-full border rounded p-2"
             />
+            {errors.email && (
+              <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+            )}
           </div>
 
+          {/* Telepon */}
           <div>
             <label className="block text-sm text-[#36315B] mb-1">Telepon</label>
             <input
@@ -142,10 +218,18 @@ export default function FormTambahTerapis({
               onChange={handleChange}
               className="w-full border rounded p-2"
             />
+            {errors.telepon && (
+              <p className="text-xs text-red-500 mt-1">
+                {errors.telepon}
+              </p>
+            )}
           </div>
 
+          {/* Password */}
           <div>
-            <label className="block text-sm text-[#36315B] mb-1">Password</label>
+            <label className="block text-sm text-[#36315B] mb-1">
+              Password
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -163,8 +247,14 @@ export default function FormTambahTerapis({
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
+            {errors.password && (
+              <p className="text-xs text-red-500 mt-1">
+                {errors.password}
+              </p>
+            )}
           </div>
 
+          {/* Action */}
           <div className="flex justify-end gap-2 pt-2">
             <button
               type="button"
@@ -183,5 +273,6 @@ export default function FormTambahTerapis({
         </form>
       </div>
     </div>
+</div>
   );
 }

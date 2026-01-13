@@ -3,8 +3,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Sidebar from "@/components/layout/sidebar";
-import Header from "@/components/layout/header";
 import { useSearchParams } from "next/navigation";
 import { getAssessmentAnswers } from "@/lib/api/asesment";
 
@@ -221,9 +219,9 @@ const renderAnswer = (q: any) => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
+     
       <div className="flex-1">
-        <Header />
+        
         <div className="p-6 bg-white rounded-xl shadow">
           <div className="flex justify-end mb-4">
             <button
