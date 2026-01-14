@@ -120,7 +120,8 @@ export default function DashboardOrtuPage() {
         </div>
 
         {/* CUSTOM CHART SECTION */}
-        <div className="bg-white rounded-2xl p-5 md:p-8 shadow-sm border border-gray-100">
+        <div className="bg-white rounded-2xl p-5 md:p-8 border border-gray-100 transition-all duration-300 ease-out shadow-[0_8px_20px_-5px_rgba(16,185,129,0.20)] hover:shadow-[0_18px_36px_-8px_rgba(16,185,129,0.35)] hover:-translate-y-1">
+
           <div className="flex items-center justify-between mb-8">
             <h3 className="font-bold text-gray-800 text-base md:text-lg flex items-center gap-2">
               <Activity size={20} className="text-[#81B7A9]" />
@@ -171,7 +172,8 @@ export default function DashboardOrtuPage() {
         </div>
 
         {/* JADWAL SECTION */}
-        <div className="bg-white rounded-2xl p-5 md:p-8 shadow-sm border border-gray-100 mb-10">
+        <div className="bg-white rounded-2xl p-5 md:p-8 mb-10 border border-gray-100 transition-all duration-300 ease-out shadow-[0_8px_20px_-5px_rgba(16,185,129,0.20)] hover:shadow-[0_18px_36px_-8px_rgba(16,185,129,0.35)] hover:-translate-y-1">
+
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 mb-8">
             <h3 className="font-bold text-gray-800 text-base md:text-lg flex items-center gap-2">
               <Calendar size={20} className="text-[#81B7A9]" />
@@ -296,16 +298,45 @@ export default function DashboardOrtuPage() {
 
 function MetricCard({ title, data, icon, color }: any) {
   return (
-    <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100 flex justify-between items-center group hover:border-[#81B7A9] transition-all duration-300">
+    <div
+      className="
+        bg-white rounded-2xl p-5 sm:p-6
+        border border-gray-100
+        flex justify-between items-center
+        transition-all duration-300 ease-out
+        shadow-[0_8px_20px_-5px_rgba(16,185,129,0.20)]
+        hover:shadow-[0_16px_32px_-8px_rgba(16,185,129,0.35)]
+        hover:-translate-y-1 hover:scale-[1.02]
+        group
+      "
+    >
       <div className="space-y-1">
-        <p className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest leading-tight">{title}</p>
+        <p className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest leading-tight">
+          {title}
+        </p>
         <div className="flex items-baseline gap-2">
-          <h4 className="text-2xl md:text-3xl font-black text-[#36315B]">{data.count}</h4>
-          <span className="text-[10px] sm:text-xs font-bold text-gray-400">Total</span>
+          <h4 className="text-2xl md:text-3xl font-black text-[#36315B]">
+            {data.count}
+          </h4>
+          <span className="text-[10px] sm:text-xs font-bold text-gray-400">
+            Total
+          </span>
         </div>
       </div>
-      <div className={`text-xl sm:text-2xl md:text-3xl ${color} w-12 h-12 md:w-16 md:h-16 flex items-center justify-center rounded-2xl shadow-inner group-hover:scale-110 transition-transform duration-300`}>
-        {icon}
+
+      <div
+        className={`
+          ${color}
+          w-12 h-12 md:w-16 md:h-16
+          flex items-center justify-center
+          rounded-2xl
+          shadow-inner
+          transition-all duration-300
+          group-hover:scale-110
+          group-hover:rotate-3
+        `}
+      >
+        <span className="text-xl sm:text-2xl md:text-3xl">{icon}</span>
       </div>
     </div>
   );

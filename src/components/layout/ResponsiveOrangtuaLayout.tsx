@@ -36,7 +36,7 @@ export default function ResponsiveOrangtuaLayout({
       {/* CONTENT */}
       <div className="flex-1 flex flex-col ml-0 md:ml-64 min-w-0 transition-all duration-300">
         {/* HEADER + HAMBURGER MOBILE */}
-        <div className="sticky top-0 z-30 flex items-center justify-between bg-white shadow-sm px-4 md:px-8 py-3 md:py-4">
+        <div className="fixed top-0 right-0 left-0 md:left-64 z-30 flex items-center justify-between bg-white shadow-sm px-4 md:px-8 py-1">
           {/* Hamburger mobile - Perbesar area tekan */}
           <button
             className="md:hidden p-2 -ml-2 rounded-md text-gray-600 hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#409E86] transition-colors"
@@ -60,9 +60,11 @@ export default function ResponsiveOrangtuaLayout({
 
           <HeaderOrangtua />
         </div>
+        <div className="h-18" />
 
         {/* MAIN CONTENT */}
-        <main className="flex-1 p-4 sm:p-6 md:p-8">
+        <main className="flex-1 pt-24 p-4 sm:p-6 md:p-8">
+
           {/* Tambahkan w-full untuk memastikan konten melebar penuh pada mobile */}
           <div className={`mx-auto w-full ${maxWidth}`}>{children}</div>
         </main>

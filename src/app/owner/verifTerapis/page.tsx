@@ -69,11 +69,19 @@ const VerifikasiTerapisPage: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50 text-[#36315B]">
+        <div className="min-h-screen bg-[#F7F7F7] text-[#36315B]">
+         {/* SIDEBAR */}
+    <div className="fixed inset-y-0 left-0 w-64 z-40 bg-white">
       <Sidebar />
-
-      <div className="flex-1 flex flex-col">
-        <Header />
+    </div>
+    
+    {/* HEADER */}
+    <div className="fixed top-0 left-64 right-0 h-16 z-30 bg-white shadow">
+      <Header />
+    </div>
+    
+    {/* CONTENT (INI YANG SCROLL) */}
+    <div className="ml-64 pt-16 h-screen overflow-y-auto bg-[#F7F7F7]">
 
         <main className="p-8">
           <section className="bg-white rounded-xl shadow-lg p-6">
