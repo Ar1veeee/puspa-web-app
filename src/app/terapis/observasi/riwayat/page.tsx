@@ -95,12 +95,10 @@ export default function RiwayatObservasiPage() {
     }
   };
 
-  useEffect(() => {
-    fetchObservasi();
-    const handleClick = () => setOpenDropdown(null);
-    window.addEventListener("click", handleClick);
-    return () => window.removeEventListener("click", handleClick);
-  }, []);
+ useEffect(() => {
+  fetchObservasi();
+}, []);
+
 
   // ==================== Filtering ====================
   const filtered = useMemo(() => {
@@ -129,7 +127,7 @@ export default function RiwayatObservasiPage() {
 
   // ==================== UI ====================
   return (
-      <div className="flex h-screen bg-gray-50 text-[#36315B] overflow-hidden">
+      <div className="flex h-screen bg-gray-50 text-[#36315B] ">
     
         {/* SIDEBAR FIXED */}
         <div className="fixed inset-y-0 left-0 w-64 z-40 bg-white">
@@ -232,21 +230,13 @@ export default function RiwayatObservasiPage() {
             </div>
           ) : (
             <AnimatePresence mode="wait">
-                   <motion.div
-                key={String(activeKategori) + "|" + filterDate + "|" + searchName + "|" + page}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
-                whileHover={{ y: -2 }}
-                className="
-                 bg-white rounded-2xl p-5 md:p-8
-                  border border-gray-100
-                  transition-all duration-300 ease-out
-                  shadow-[0_8px_20px_-5px_rgba(16,185,129,0.20)]
-                  hover:shadow-[0_18px_36px_-8px_rgba(16,185,129,0.35)]
-                  hover:-translate-y-1
-                "
+                   <div
+  className="
+    bg-white rounded-2xl p-5 md:p-8
+    border border-gray-100
+    shadow-[0_8px_20px_-5px_rgba(16,185,129,0.20)]
+  "
+
               >
                 <table className="w-full text-xs sm:text-sm table-auto border-collapse min-w-[850px]">
                   <thead>
@@ -294,13 +284,17 @@ export default function RiwayatObservasiPage() {
                             </button>
 
                             {openDropdown === d.observation_id && dropdownPosition && (
-                              <div
-                                className="fixed z-50 mt-2 w-48 origin-top-right rounded-md bg-white shadow-md border border-[#80C2B0]"
-                                style={{
-                                  top: dropdownPosition.top,
-                                  left: dropdownPosition.left,
-                                }}
-                              >
+  <div
+    onClick={(e) => e.stopPropagation()} // 🔥 FIX WAJIB
+  className="fixed z-[9999] mt-2 w-48 rounded-md bg-white shadow-xl border border-[#80C2B0]"
+  style={{
+    top: dropdownPosition.top,
+    left: dropdownPosition.left,
+  }}
+>
+
+  
+
                                 <div className="py-1 text-[#5F52BF]">
                                   <button
                                     onClick={() => handleRiwayatJawaban(d.observation_id)}
@@ -365,7 +359,7 @@ export default function RiwayatObservasiPage() {
                     </button>
                   </div>
                 )}
-              </motion.div>
+             </div>
             </AnimatePresence>
           )}
         </main>
