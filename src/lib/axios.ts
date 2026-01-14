@@ -19,12 +19,16 @@ axiosInstance.interceptors.request.use(
       if (token) {
         config.headers = config.headers || {};
         config.headers.Authorization = `${tokenType} ${token}`;
-        console.log("[Axios] Inject token:", config.headers.Authorization);
+        
+        if (process.env.NODE_ENV === "development") {
+          console.log("[Axios] Inject token:", config.headers.Authorization);
+        }
       }
     }
     return config;
   },
   (error) => Promise.reject(error)
 );
+
 
 export default axiosInstance;

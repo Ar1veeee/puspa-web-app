@@ -193,40 +193,47 @@ export default function FormUbahPasien({
 
 
     const payload = {
-      child_name: formData.child_name,
-      child_birth_place: formData.child_birth_place, // 🔥 FIX UTAMA
-      child_birth_date: formData.child_birth_date,
-      child_age: formData.child_age,
-      child_gender: formData.child_gender,
-      child_religion: formData.child_religion,
-      child_school: formData.child_school,
-      child_address: formData.child_address,
-      child_complaint: formData.child_complaint,
-      child_service_choice: formData.child_service_choice,
+  // === CHILD ===
+  child_name: formData.child_name,
+  child_birth_place: formData.child_birth_place,
+  child_birth_date: formData.child_birth_date,
+  child_age: formData.child_age,
+  child_gender: formData.child_gender,
+  child_religion: formData.child_religion,
+  child_school: formData.child_school,
+  child_address: formData.child_address,
+  child_complaint: formData.child_complaint,
+  child_service_choice: formData.child_service_choice,
 
-      father_identity_number: formData.father_identity_number,
-      father_name: formData.father_name,
-      father_phone: formData.father_phone,
-      father_birth_date: formData.father_birth_date,
-      father_occupation: formData.father_occupation,
-      father_relationship: formData.father_relationship,
+  // === AYAH ===
+  father_identity_number:
+    formData.father_identity_number?.trim() || null,
+  father_name: formData.father_name,
+  father_phone: formData.father_phone,
+  father_birth_date: formData.father_birth_date || null,
+  father_occupation: formData.father_occupation,
+  father_relationship: formData.father_relationship,
 
-      mother_identity_number: formData.mother_identity_number,
-      mother_name: formData.mother_name,
-      mother_phone: formData.mother_phone,
-      mother_birth_date: formData.mother_birth_date,
-      mother_occupation: formData.mother_occupation,
-      mother_relationship: formData.mother_relationship,
+  // === IBU ===
+  mother_identity_number:
+    formData.mother_identity_number?.trim() || null,
+  mother_name: formData.mother_name,
+  mother_phone: formData.mother_phone,
+  mother_birth_date: formData.mother_birth_date || null,
+  mother_occupation: formData.mother_occupation,
+  mother_relationship: formData.mother_relationship,
 
-      guardian_identity_number: formData.guardian_identity_number || null,
-      guardian_name: formData.guardian_name || null,
-      guardian_phone: formData.guardian_phone || null,
-      guardian_birth_date: formData.guardian_birth_date || null,
-      guardian_occupation: formData.guardian_occupation || null,
-      guardian_relationship: formData.guardian_relationship || null,
+  // === WALI ===
+  guardian_identity_number:
+    formData.guardian_identity_number?.trim() || null,
+  guardian_name: formData.guardian_name || null,
+  guardian_phone: formData.guardian_phone || null,
+  guardian_birth_date: formData.guardian_birth_date || null,
+  guardian_occupation: formData.guardian_occupation || null,
+  guardian_relationship: formData.guardian_relationship || null,
 
-      _method: "PUT",
-    };
+  _method: "PUT",
+};
 
     onUpdate(payload);
   };
