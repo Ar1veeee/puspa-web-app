@@ -12,6 +12,8 @@ interface BackendDetailAnak {
   child_age: string;
   child_gender: string;
   child_religion?: string | null;
+  child_birth_place?: string | null;
+  child_birth_date?: string | null;
   child_school?: string | null;
   child_address?: string | null;
 
@@ -41,11 +43,34 @@ interface BackendDetailAnak {
 }
 
 const toLocalISODate = (value?: string | null) => {
-  if (!value || value === "-") return "";
+  if (!value || value === "-" || value === "0000-00-00") return "";
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return value;
+  }
+
+  const monthMap: { [key: string]: string } = {
+    januari: "01", pebruari: "02", februari: "02", maret: "03", april: "04",
+    mei: "05", juni: "06", juli: "07", agustus: "08",
+    september: "09", oktober: "10", november: "11", desember: "12",
+    january: "01", february: "02", march: "03", may: "05",
+    june: "06", july: "07", august: "08", october: "10", december: "12"
+  };
+
+  const parts = value.split(" ");
+  if (parts.length === 3) {
+    const day = parts[0].padStart(2, "0");
+    const monthStr = parts[1].toLowerCase();
+    const year = parts[2];
+
+    if (monthMap[monthStr]) {
+      return `${year}-${monthMap[monthStr]}-${day}`;
+    }
+  }
+
   const d = new Date(value);
   if (isNaN(d.getTime())) return "";
 
-  // ambil tanggal lokal (bukan UTC)
   const year = d.getFullYear();
   const month = (d.getMonth() + 1).toString().padStart(2, "0");
   const day = d.getDate().toString().padStart(2, "0");
@@ -84,6 +109,8 @@ export default function FormUbahPasien({
     child_name: "",
     child_age: "",
     child_religion: "",
+    child_birth_place: "",
+    child_birth_date: "",
     child_gender: "",
     child_school: "",
     child_address: "",
@@ -118,8 +145,8 @@ export default function FormUbahPasien({
 
     setFormData({
       child_name: initialData.child_name || "",
-      birth_place: parsed.place,
-      birth_date: parsed.date,
+      child_birth_place: initialData.child_birth_place || "",
+      child_birth_date: toLocalISODate(initialData.child_birth_date),
       child_age: initialData.child_age || "",
       child_religion: initialData.child_religion || "",
       child_gender: initialData.child_gender || "",
@@ -167,8 +194,8 @@ export default function FormUbahPasien({
 
     const payload = {
       child_name: formData.child_name,
-      child_birth_place: formData.birth_place, // 🔥 FIX UTAMA
-      child_birth_date: formData.birth_date,
+      child_birth_place: formData.child_birth_place, // 🔥 FIX UTAMA
+      child_birth_date: formData.child_birth_date,
       child_age: formData.child_age,
       child_gender: formData.child_gender,
       child_religion: formData.child_religion,
