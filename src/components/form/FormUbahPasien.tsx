@@ -40,11 +40,19 @@ interface BackendDetailAnak {
   child_service_choice?: string | null;
 }
 
-const toISODate = (value?: string | null) => {
+const toLocalISODate = (value?: string | null) => {
   if (!value || value === "-") return "";
   const d = new Date(value);
-  return isNaN(d.getTime()) ? "" : d.toISOString().slice(0, 10);
+  if (isNaN(d.getTime())) return "";
+
+  // ambil tanggal lokal (bukan UTC)
+  const year = d.getFullYear();
+  const month = (d.getMonth() + 1).toString().padStart(2, "0");
+  const day = d.getDate().toString().padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 };
+
 
 
 interface FormProps {
@@ -61,7 +69,7 @@ const parseBirthInfo = (info?: string) => {
 
   return {
     place: place || "",
-    date: dateText ? toISODate(dateText) : "",
+    date: dateText ? toLocalISODate(dateText) : "",
   };
 };
 
@@ -124,21 +132,21 @@ useEffect(() => {
     child_service_choice: initialData.child_service_choice || "",
 
     father_name: initialData.father_name || "",
-    father_birth_date: toISODate(initialData.father_birth_date),
+    father_birth_date: toLocalISODate(initialData.father_birth_date),
     father_occupation: initialData.father_occupation || "",
     father_phone: initialData.father_phone || "",
     father_relationship: initialData.father_relationship || "Ayah",
     father_identity_number: initialData.father_identity_number || "",
 
     mother_name: initialData.mother_name || "",
-    mother_birth_date: toISODate(initialData.mother_birth_date),
+    mother_birth_date: toLocalISODate(initialData.mother_birth_date),
     mother_occupation: initialData.mother_occupation || "",
     mother_phone: initialData.mother_phone || "",
     mother_relationship: initialData.mother_relationship || "Ibu",
     mother_identity_number: initialData.mother_identity_number || "",
 
     guardian_name: initialData.guardian_name || "",
-    guardian_birth_date: toISODate(initialData.guardian_birth_date),
+    guardian_birth_date: toLocalISODate(initialData.guardian_birth_date),
     guardian_occupation: initialData.guardian_occupation || "",
     guardian_phone: initialData.guardian_phone || "",
     guardian_relationship: initialData.guardian_relationship || "",

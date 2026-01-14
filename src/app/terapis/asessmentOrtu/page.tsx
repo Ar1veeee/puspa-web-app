@@ -137,7 +137,6 @@ export default function AssessmentPage() {
             className="pt-16 h-screen overflow-y-auto"
           >
             <div className="p-6">
-              <div className="bg-white rounded-xl shadow-md border border-gray-200"></div>
   
 
         <main className="p-6 flex-1">
@@ -196,13 +195,14 @@ export default function AssessmentPage() {
 
           {!loading && (
             <div className="bg-white rounded-xl p-4 border border-gray-100 transition-all duration-300 ease-out will-change-transform shadow-[0_8px_20px_-5px_rgba(16,185,129,0.20)] hover:shadow-[0_18px_36px_-8px_rgba(16,185,129,0.35)] hover:-translate-y-1">
-              <table className="min-w-full text-sm">
+              <table className="min-w-full text-xs table-auto">
+
                 <thead className="bg-gray-100">
                   <tr className="text-left text-[#36315B]">
                     <th className="px-4 py-3">Nama Pasien</th>
                     <th className="px-4 py-3">Nama Orangtua</th>
                     <th className="px-4 py-3">Telepon</th>
-                    <th className="px-4 py-3">Tipe Assessment</th>
+                    <th className="px-4 py-3 min-w-[220px]">Tipe Assessment</th>
                     <th className="px-4 py-3">Administrator</th>
                     <th className="px-4 py-3">Tanggal</th>
                     <th className="px-4 py-3">Waktu</th>
@@ -226,28 +226,23 @@ export default function AssessmentPage() {
                       <td className="px-4 py-3">{row.child_name}</td>
                       <td className="px-4 py-3">{row.guardian_name}</td>
                       <td className="px-4 py-3">{row.guardian_phone}</td>
-                      <td className="px-4 py-3 whitespace-normal align-top">
-  {Array.isArray(row.types) ? (
-    <ul className="list-disc list-inside space-y-1 text-gray-700">
-      {row.types.map((type: string, i: number) => (
-        <li key={i} className="wrap-break-word leading-relaxed">
-          {type}
-        </li>
-      ))}
-    </ul>
-  ) : typeof row.types === "string" ? (
-    <ul className="list-disc list-inside space-y-1 text-gray-700">
-      {row.types.split(",").map((type: string, i: number) => (
-        <li key={i} className="wrap-break-word leading-relaxed">
-          {type.trim()}
-        </li>
-      ))}
-    </ul>
-  ) : (
-    "-"
-  )}
-</td>
-
+                      <td className="px-4 py-3 whitespace-pre-line align-top">
+        {Array.isArray(row.types) ? (
+          row.types.map((type: string, i: number) => (
+            <div key={i} className="leading-relaxed">
+              • {type}
+            </div>
+          ))
+        ) : typeof row.types === "string" ? (
+          row.types.split(",").map((type: string, i: number) => (
+            <div key={i} className="leading-relaxed">
+              • {type.trim()}
+            </div>
+          ))
+        ) : (
+          "-"
+        )}
+      </td>
                       <td className="px-4 py-3">{row.admin_name}</td>
                       <td className="px-4 py-3">{row.scheduled_date}</td>
                       <td className="px-4 py-3">{row.scheduled_time}</td>

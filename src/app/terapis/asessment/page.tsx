@@ -166,7 +166,7 @@ function AssessmentContent() {
           className="pt-16 h-screen overflow-y-auto"
         >
           <div className="p-6">
-            <div className="bg-white rounded-xl shadow-md border border-gray-200"></div>
+           
 
        <main className="p-6 flex-1 flex flex-col text-[#36315B]">
   {/* TAB TERAPI */}

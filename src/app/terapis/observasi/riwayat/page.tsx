@@ -149,7 +149,7 @@ export default function RiwayatObservasiPage() {
             className="pt-16 h-screen overflow-y-auto"
           >
             <div className="p-6">
-              <div className="bg-white rounded-xl shadow-md border border-gray-200"></div>
+             
 
         <main className="p-4 sm:p-6 overflow-y-auto">
           <button
