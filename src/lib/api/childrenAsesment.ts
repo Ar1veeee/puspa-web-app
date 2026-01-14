@@ -19,6 +19,7 @@ export interface ChildDetail {
 
   child_name: string;
   child_birth_date: string;
+  child_birth_place: string;
   child_birth_info: string;
   child_age: string;
   child_gender: string;
@@ -186,37 +187,42 @@ export async function getChildDetail(childId: string | number): Promise<ChildDet
 // =======================
 export const updateChild = async (childId: string, data: any) => {
   try {
-    const token = localStorage.getItem("token");
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
     if (!childId) {
-      console.error("❌ childId tidak ada!");
-      throw new Error("Child ID undefined");
+      throw new Error("Child ID is required for update");
     }
 
-    // Backend kamu memakai ULID → selalu UPPERCASE
-    const fixedId = String(childId).toUpperCase();
-
-    console.log("➡️ Mengirim update ke:", `/my/children/${fixedId}`);
+    // Logging data sebelum dikirim untuk debug
+    console.log("➡️ Mengirim update ke:", `/my/children/${childId}`);
+    console.log("📦 Payload:", data);
 
     const finalData = {
       ...data,
-      _method: "PUT",
+      _method: "PUT", // Penting untuk Laravel jika menggunakan route PUT
     };
 
     const response = await axiosInstance.post(
-      `/my/children/${fixedId}`,
+      `/my/children/${childId}`,
       finalData,
       {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "Accept": "application/json",
         },
       }
     );
 
-    console.log("Update anak sukses:", response.data);
     return response.data;
   } catch (error: any) {
-    console.error("❌ Gagal update anak:", error.response?.data || error);
+    // PERBAIKAN: Logging agar detail error 422 (validation errors) terlihat
+    if (error.response && error.response.status === 422) {
+      console.error("❌ Validasi Gagal (422):", error.response.data.errors);
+      // Melempar error agar ditangkap oleh catch di page.tsx
+      throw error.response.data; 
+    }
+    console.error("❌ Gagal update anak:", error.response?.data || error.message);
     throw error;
   }
 };

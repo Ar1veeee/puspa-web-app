@@ -8,7 +8,7 @@ import { X } from "lucide-react";
 interface BackendDetailAnak {
   child_id?: string;
   child_name: string;
-  child_birth_info?: string;
+
   child_age: string;
   child_gender: string;
   child_religion?: string | null;
@@ -82,8 +82,6 @@ export default function FormUbahPasien({
 }: FormProps) {
   const [formData, setFormData] = useState({
     child_name: "",
-    birth_place: "",
-    birth_date: "",
     child_age: "",
     child_religion: "",
     child_gender: "",
@@ -114,45 +112,44 @@ export default function FormUbahPasien({
     guardian_identity_number: "",
   });
 
-useEffect(() => {
-  if (!initialData) return;
+  useEffect(() => {
+    if (!initialData) return;
 
-  const parsed = parseBirthInfo(initialData.child_birth_info);
 
-  setFormData({
-    child_name: initialData.child_name || "",
-    birth_place: parsed.place,
-    birth_date: parsed.date,
-    child_age: initialData.child_age || "",
-    child_religion: initialData.child_religion || "",
-    child_gender: initialData.child_gender || "",
-    child_school: initialData.child_school || "",
-    child_address: initialData.child_address || "",
-    child_complaint: initialData.child_complaint || "",
-    child_service_choice: initialData.child_service_choice || "",
+    setFormData({
+      child_name: initialData.child_name || "",
+      birth_place: parsed.place,
+      birth_date: parsed.date,
+      child_age: initialData.child_age || "",
+      child_religion: initialData.child_religion || "",
+      child_gender: initialData.child_gender || "",
+      child_school: initialData.child_school || "",
+      child_address: initialData.child_address || "",
+      child_complaint: initialData.child_complaint || "",
+      child_service_choice: initialData.child_service_choice || "",
 
-    father_name: initialData.father_name || "",
-    father_birth_date: toLocalISODate(initialData.father_birth_date),
-    father_occupation: initialData.father_occupation || "",
-    father_phone: initialData.father_phone || "",
-    father_relationship: initialData.father_relationship || "Ayah",
-    father_identity_number: initialData.father_identity_number || "",
+      father_name: initialData.father_name || "",
+      father_birth_date: toLocalISODate(initialData.father_birth_date),
+      father_occupation: initialData.father_occupation || "",
+      father_phone: initialData.father_phone || "",
+      father_relationship: initialData.father_relationship || "Ayah",
+      father_identity_number: initialData.father_identity_number || "",
 
-    mother_name: initialData.mother_name || "",
-    mother_birth_date: toLocalISODate(initialData.mother_birth_date),
-    mother_occupation: initialData.mother_occupation || "",
-    mother_phone: initialData.mother_phone || "",
-    mother_relationship: initialData.mother_relationship || "Ibu",
-    mother_identity_number: initialData.mother_identity_number || "",
+      mother_name: initialData.mother_name || "",
+      mother_birth_date: toLocalISODate(initialData.mother_birth_date),
+      mother_occupation: initialData.mother_occupation || "",
+      mother_phone: initialData.mother_phone || "",
+      mother_relationship: initialData.mother_relationship || "Ibu",
+      mother_identity_number: initialData.mother_identity_number || "",
 
-    guardian_name: initialData.guardian_name || "",
-    guardian_birth_date: toLocalISODate(initialData.guardian_birth_date),
-    guardian_occupation: initialData.guardian_occupation || "",
-    guardian_phone: initialData.guardian_phone || "",
-    guardian_relationship: initialData.guardian_relationship || "",
-    guardian_identity_number: initialData.guardian_identity_number || "",
-  });
-}, [initialData, open]);
+      guardian_name: initialData.guardian_name || "",
+      guardian_birth_date: toLocalISODate(initialData.guardian_birth_date),
+      guardian_occupation: initialData.guardian_occupation || "",
+      guardian_phone: initialData.guardian_phone || "",
+      guardian_relationship: initialData.guardian_relationship || "",
+      guardian_identity_number: initialData.guardian_identity_number || "",
+    });
+  }, [initialData, open]);
 
 
   if (!open) return null;
@@ -164,48 +161,48 @@ useEffect(() => {
     }));
   };
 
- const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
 
-  
-  const payload = {
-    child_name: formData.child_name,
-    child_birth_place: formData.birth_place, // 🔥 FIX UTAMA
-    child_birth_date: formData.birth_date,
-    child_age: formData.child_age,
-    child_gender: formData.child_gender,
-    child_religion: formData.child_religion,
-    child_school: formData.child_school,
-    child_address: formData.child_address,
-    child_complaint: formData.child_complaint,
-    child_service_choice: formData.child_service_choice,
 
-    father_identity_number: formData.father_identity_number,
-    father_name: formData.father_name,
-    father_phone: formData.father_phone,
-    father_birth_date: formData.father_birth_date,
-    father_occupation: formData.father_occupation,
-    father_relationship: formData.father_relationship,
+    const payload = {
+      child_name: formData.child_name,
+      child_birth_place: formData.birth_place, // 🔥 FIX UTAMA
+      child_birth_date: formData.birth_date,
+      child_age: formData.child_age,
+      child_gender: formData.child_gender,
+      child_religion: formData.child_religion,
+      child_school: formData.child_school,
+      child_address: formData.child_address,
+      child_complaint: formData.child_complaint,
+      child_service_choice: formData.child_service_choice,
 
-    mother_identity_number: formData.mother_identity_number,
-    mother_name: formData.mother_name,
-    mother_phone: formData.mother_phone,
-    mother_birth_date: formData.mother_birth_date,
-    mother_occupation: formData.mother_occupation,
-    mother_relationship: formData.mother_relationship,
+      father_identity_number: formData.father_identity_number,
+      father_name: formData.father_name,
+      father_phone: formData.father_phone,
+      father_birth_date: formData.father_birth_date,
+      father_occupation: formData.father_occupation,
+      father_relationship: formData.father_relationship,
 
-    guardian_identity_number: formData.guardian_identity_number || null,
-    guardian_name: formData.guardian_name || null,
-    guardian_phone: formData.guardian_phone || null,
-    guardian_birth_date: formData.guardian_birth_date || null,
-    guardian_occupation: formData.guardian_occupation || null,
-    guardian_relationship: formData.guardian_relationship || null,
+      mother_identity_number: formData.mother_identity_number,
+      mother_name: formData.mother_name,
+      mother_phone: formData.mother_phone,
+      mother_birth_date: formData.mother_birth_date,
+      mother_occupation: formData.mother_occupation,
+      mother_relationship: formData.mother_relationship,
 
-    _method: "PUT",
+      guardian_identity_number: formData.guardian_identity_number || null,
+      guardian_name: formData.guardian_name || null,
+      guardian_phone: formData.guardian_phone || null,
+      guardian_birth_date: formData.guardian_birth_date || null,
+      guardian_occupation: formData.guardian_occupation || null,
+      guardian_relationship: formData.guardian_relationship || null,
+
+      _method: "PUT",
+    };
+
+    onUpdate(payload);
   };
-
-  onUpdate(payload);
-};
 
   const inputClass = "w-full border border-gray-300 rounded-lg p-2.5 mt-1 text-xs md:text-sm focus:ring-2 focus:ring-[#409E86] focus:border-transparent outline-none transition-all";
   const labelClass = "block text-[10px] md:text-xs font-semibold text-gray-500 uppercase tracking-wider";
@@ -213,7 +210,7 @@ useEffect(() => {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4 transition-all">
       <div className="bg-white w-full h-full sm:h-auto sm:max-w-4xl rounded-none sm:rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-screen sm:max-h-[95vh] animate-in zoom-in-95 duration-200">
-        
+
         {/* HEADER */}
         <div className="p-5 md:p-8 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10">
           <h2 className="text-xl md:text-2xl font-bold text-[#36315B]">Ubah Data Anak</h2>
@@ -224,7 +221,7 @@ useEffect(() => {
 
         {/* BODY */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5 md:p-8 space-y-10 custom-scrollbar">
-          
+
           {/* SECTION 1: INFORMASI ANAK */}
           <div className="space-y-6">
             <h3 className="text-sm md:text-base font-bold text-[#36315B] border-l-4 border-[#409E86] pl-3">Informasi Anak</h3>
@@ -239,11 +236,11 @@ useEffect(() => {
               </div>
               <div>
                 <label className={labelClass}>Tempat Lahir</label>
-                <input name="birth_place" value={formData.birth_place} onChange={handleChange} className={inputClass} />
+                <input name="child_birth_place" value={formData.child_birth_place} onChange={handleChange} className={inputClass} />
               </div>
               <div>
                 <label className={labelClass}>Tanggal Lahir</label>
-                <input type="date" name="birth_date" value={formData.birth_date} onChange={handleChange} className={inputClass} />
+                <input type="date" name="child_birth_date" value={formData.child_birth_date} onChange={handleChange} className={inputClass} />
               </div>
               <div>
                 <label className={labelClass}>Usia</label>
@@ -267,7 +264,7 @@ useEffect(() => {
           {/* SECTION 2: INFORMASI ORANGTUA */}
           <div className="space-y-6">
             <h3 className="text-sm md:text-base font-bold text-[#36315B] border-l-4 border-[#409E86] pl-3">Informasi Orangtua / Wali</h3>
-            
+
             {/* AYAH */}
             <div className="p-4 md:p-6 border border-gray-100 rounded-2xl bg-gray-50/30 space-y-5">
               <h4 className="text-xs md:text-sm font-bold text-[#36315B] flex items-center gap-2">Ayah</h4>
