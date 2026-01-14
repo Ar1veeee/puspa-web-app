@@ -146,11 +146,27 @@ function AssessmentContent() {
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <SidebarTerapis />
-
-      <div className="flex-1 flex flex-col">
-        <HeaderTerapis />
+    <div className="flex h-screen bg-gray-50 text-[#36315B] overflow-hidden">
+  
+      {/* SIDEBAR FIXED */}
+      <div className="fixed inset-y-0 left-0 w-64 z-40 bg-white">
+        <SidebarTerapis />
+      </div>
+  
+      {/* AREA KANAN */}
+      <div className="ml-64 flex-1 flex flex-col">
+  
+        {/* HEADER FIXED */}
+        <div className="fixed top-0 left-64 right-0 h-16 z-30 bg-white border-b border-gray-200">
+          <HeaderTerapis />
+        </div>
+  
+        {/* FRAME UTAMA (SCROLL DI SINI) */}
+        <div
+          className="pt-16 h-screen overflow-y-auto"
+        >
+          <div className="p-6">
+            <div className="bg-white rounded-xl shadow-md border border-gray-200"></div>
 
        <main className="p-6 flex-1 flex flex-col text-[#36315B]">
   {/* TAB TERAPI */}
@@ -234,7 +250,8 @@ function AssessmentContent() {
           </div>
 
           {/* TABLE */}
-          <div className="bg-white shadow-md rounded-xl p-4">
+          {/* TABLE */}
+<div className="bg-white rounded-xl p-4 border border-gray-100 transition-all duration-300 ease-out will-change-transform shadow-[0_8px_20px_-5px_rgba(16,185,129,0.20)] hover:shadow-[0_18px_36px_-8px_rgba(16,185,129,0.35)] hover:-translate-y-1">
             {loading ? (
               <p className="text-center py-4 text-gray-500">Memuat data…</p>
             ) : assessments.length === 0 ? (
@@ -386,6 +403,8 @@ function AssessmentContent() {
           </div>
         </main>
       </div>
+    </div>
+    </div>
     </div>
   );
 }

@@ -129,10 +129,27 @@ export default function RiwayatObservasiPage() {
 
   // ==================== UI ====================
   return (
-    <div className="flex h-screen text-[#36315B] font-playpen">
-      <SidebarTerapis />
-      <div className="flex flex-col flex-1 bg-gray-50">
-        <HeaderTerapis />
+      <div className="flex h-screen bg-gray-50 text-[#36315B] overflow-hidden">
+    
+        {/* SIDEBAR FIXED */}
+        <div className="fixed inset-y-0 left-0 w-64 z-40 bg-white">
+          <SidebarTerapis />
+        </div>
+    
+        {/* AREA KANAN */}
+        <div className="ml-64 flex-1 flex flex-col">
+    
+          {/* HEADER FIXED */}
+          <div className="fixed top-0 left-64 right-0 h-16 z-30 bg-white border-b border-gray-200">
+            <HeaderTerapis />
+          </div>
+    
+          {/* FRAME UTAMA (SCROLL DI SINI) */}
+          <div
+            className="pt-16 h-screen overflow-y-auto"
+          >
+            <div className="p-6">
+              <div className="bg-white rounded-xl shadow-md border border-gray-200"></div>
 
         <main className="p-4 sm:p-6 overflow-y-auto">
           <button
@@ -215,13 +232,21 @@ export default function RiwayatObservasiPage() {
             </div>
           ) : (
             <AnimatePresence mode="wait">
-              <motion.div
-                key={activeKategori + searchName + filterDate + page}
-                initial={{ opacity: 0, y: 10 }}
+                   <motion.div
+                key={String(activeKategori) + "|" + filterDate + "|" + searchName + "|" + page}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                className="bg-white shadow-md rounded-lg p-3 sm:p-4 border border-[#E4E4E4] overflow-x-auto"
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                whileHover={{ y: -2 }}
+                className="
+                 bg-white rounded-2xl p-5 md:p-8
+                  border border-gray-100
+                  transition-all duration-300 ease-out
+                  shadow-[0_8px_20px_-5px_rgba(16,185,129,0.20)]
+                  hover:shadow-[0_18px_36px_-8px_rgba(16,185,129,0.35)]
+                  hover:-translate-y-1
+                "
               >
                 <table className="w-full text-xs sm:text-sm table-auto border-collapse min-w-[850px]">
                   <thead>
@@ -345,6 +370,8 @@ export default function RiwayatObservasiPage() {
           )}
         </main>
       </div>
+    </div>
+    </div>
     </div>
   );
 }

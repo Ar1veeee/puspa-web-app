@@ -177,12 +177,15 @@ export default function ObservasiPage() {
           onClick={() => setSidebarOpen(false)}
         />
       )}
+<div
+  className={`
+    fixed inset-y-0 left-0 z-40 w-64 bg-white
+    shadow-lg transform transition-transform duration-300
+    ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+    sm:translate-x-0
+  `}
+>
 
-      <div
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } sm:translate-x-0 sm:static sm:shadow-md`}
-      >
         <SidebarTerapis
           activePage="observasi"
           isMobile={true}
@@ -191,7 +194,10 @@ export default function ObservasiPage() {
       </div>
 
       <div className="flex flex-col flex-1 bg-gray-50">
-        <HeaderTerapis />
+        <div className="fixed top-0 left-0 sm:left-64 right-0 z-30 bg-white shadow-sm">
+  <HeaderTerapis />
+</div>
+
 
         <div className="sm:hidden p-2">
           <button
@@ -202,7 +208,7 @@ export default function ObservasiPage() {
           </button>
         </div>
 
-        <main className="p-4 sm:p-6 overflow-y-auto">
+        <main className="pt-20 sm:pt-24 pl-0 sm:pl-[18rem] p-4 sm:p-6 overflow-y-auto">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-3">
             <h2 className="text-lg sm:text-2xl font-bold">Pilih Anak Untuk Observasi</h2>
             <button
@@ -278,13 +284,22 @@ export default function ObservasiPage() {
           {/* Tabel anak */}
           <AnimatePresence mode="wait">
             <motion.div
-              key={String(activeKategori) + "|" + filterDate + "|" + searchName + "|" + page}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-              className="bg-white shadow-md rounded-lg p-3 sm:p-4 border border-[#E4E4E4] overflow-x-auto"
-            >
+  key={String(activeKategori) + "|" + filterDate + "|" + searchName + "|" + page}
+  initial={{ opacity: 0, y: 12 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, y: -12 }}
+  transition={{ duration: 0.35, ease: "easeOut" }}
+  whileHover={{ y: -2 }}
+  className="
+   bg-white rounded-2xl p-5 md:p-8
+    border border-gray-100
+    transition-all duration-300 ease-out
+    shadow-[0_8px_20px_-5px_rgba(16,185,129,0.20)]
+    hover:shadow-[0_18px_36px_-8px_rgba(16,185,129,0.35)]
+    hover:-translate-y-1
+  "
+>
+
               {isLoading ? (
                 <p className="text-center py-4">Memuat data...</p>
               ) : isError ? (

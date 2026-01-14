@@ -8,7 +8,7 @@ import { X } from "lucide-react";
 interface BackendDetailAnak {
   child_id?: string;
   child_name: string;
-  child_birth_date: string;
+  child_birth_info?: string;
   child_age: string;
   child_gender: string;
   child_religion?: string | null;
@@ -46,12 +46,25 @@ const toISODate = (value?: string | null) => {
   return isNaN(d.getTime()) ? "" : d.toISOString().slice(0, 10);
 };
 
+
 interface FormProps {
   open: boolean;
   onClose: () => void;
   onUpdate: (data: any) => void;
   initialData?: BackendDetailAnak;
 }
+
+const parseBirthInfo = (info?: string) => {
+  if (!info) return { place: "", date: "" };
+
+  const [place, dateText] = info.split(",").map((s) => s.trim());
+
+  return {
+    place: place || "",
+    date: dateText ? toISODate(dateText) : "",
+  };
+};
+
 
 export default function FormUbahPasien({
   open,
@@ -61,7 +74,7 @@ export default function FormUbahPasien({
 }: FormProps) {
   const [formData, setFormData] = useState({
     child_name: "",
-    birth_place: "Surakarta",
+    birth_place: "",
     birth_date: "",
     child_age: "",
     child_religion: "",
@@ -93,43 +106,46 @@ export default function FormUbahPasien({
     guardian_identity_number: "",
   });
 
-  useEffect(() => {
-    if (!initialData) return;
+useEffect(() => {
+  if (!initialData) return;
 
-    setFormData({
-      child_name: initialData.child_name || "",
-      birth_place: "Surakarta",
-      birth_date: toISODate(initialData.child_birth_date),
-      child_age: initialData.child_age || "",
-      child_religion: initialData.child_religion || "",
-      child_gender: initialData.child_gender || "",
-      child_school: initialData.child_school || "",
-      child_address: initialData.child_address || "",
-      child_complaint: initialData.child_complaint || "",
-      child_service_choice: initialData.child_service_choice || "",
+  const parsed = parseBirthInfo(initialData.child_birth_info);
 
-      father_name: initialData.father_name || "",
-      father_birth_date: toISODate(initialData.father_birth_date),
-      father_occupation: initialData.father_occupation || "",
-      father_phone: initialData.father_phone || "",
-      father_relationship: initialData.father_relationship || "Ayah",
-      father_identity_number: initialData.father_identity_number || "",
+  setFormData({
+    child_name: initialData.child_name || "",
+    birth_place: parsed.place,
+    birth_date: parsed.date,
+    child_age: initialData.child_age || "",
+    child_religion: initialData.child_religion || "",
+    child_gender: initialData.child_gender || "",
+    child_school: initialData.child_school || "",
+    child_address: initialData.child_address || "",
+    child_complaint: initialData.child_complaint || "",
+    child_service_choice: initialData.child_service_choice || "",
 
-      mother_name: initialData.mother_name || "",
-      mother_birth_date: toISODate(initialData.mother_birth_date),
-      mother_occupation: initialData.mother_occupation || "",
-      mother_phone: initialData.mother_phone || "",
-      mother_relationship: initialData.mother_relationship || "Ibu",
-      mother_identity_number: initialData.mother_identity_number || "",
+    father_name: initialData.father_name || "",
+    father_birth_date: toISODate(initialData.father_birth_date),
+    father_occupation: initialData.father_occupation || "",
+    father_phone: initialData.father_phone || "",
+    father_relationship: initialData.father_relationship || "Ayah",
+    father_identity_number: initialData.father_identity_number || "",
 
-      guardian_name: initialData.guardian_name || "",
-      guardian_birth_date: toISODate(initialData.guardian_birth_date),
-      guardian_occupation: initialData.guardian_occupation || "",
-      guardian_phone: initialData.guardian_phone || "",
-      guardian_relationship: initialData.guardian_relationship || "",
-      guardian_identity_number: initialData.guardian_identity_number || "",
-    });
-  }, [initialData, open]);
+    mother_name: initialData.mother_name || "",
+    mother_birth_date: toISODate(initialData.mother_birth_date),
+    mother_occupation: initialData.mother_occupation || "",
+    mother_phone: initialData.mother_phone || "",
+    mother_relationship: initialData.mother_relationship || "Ibu",
+    mother_identity_number: initialData.mother_identity_number || "",
+
+    guardian_name: initialData.guardian_name || "",
+    guardian_birth_date: toISODate(initialData.guardian_birth_date),
+    guardian_occupation: initialData.guardian_occupation || "",
+    guardian_phone: initialData.guardian_phone || "",
+    guardian_relationship: initialData.guardian_relationship || "",
+    guardian_identity_number: initialData.guardian_identity_number || "",
+  });
+}, [initialData, open]);
+
 
   if (!open) return null;
 
@@ -140,10 +156,48 @@ export default function FormUbahPasien({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onUpdate({ ...formData, _method: "PUT" });
+ const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+
+  
+  const payload = {
+    child_name: formData.child_name,
+    child_birth_place: formData.birth_place, // 🔥 FIX UTAMA
+    child_birth_date: formData.birth_date,
+    child_age: formData.child_age,
+    child_gender: formData.child_gender,
+    child_religion: formData.child_religion,
+    child_school: formData.child_school,
+    child_address: formData.child_address,
+    child_complaint: formData.child_complaint,
+    child_service_choice: formData.child_service_choice,
+
+    father_identity_number: formData.father_identity_number,
+    father_name: formData.father_name,
+    father_phone: formData.father_phone,
+    father_birth_date: formData.father_birth_date,
+    father_occupation: formData.father_occupation,
+    father_relationship: formData.father_relationship,
+
+    mother_identity_number: formData.mother_identity_number,
+    mother_name: formData.mother_name,
+    mother_phone: formData.mother_phone,
+    mother_birth_date: formData.mother_birth_date,
+    mother_occupation: formData.mother_occupation,
+    mother_relationship: formData.mother_relationship,
+
+    guardian_identity_number: formData.guardian_identity_number || null,
+    guardian_name: formData.guardian_name || null,
+    guardian_phone: formData.guardian_phone || null,
+    guardian_birth_date: formData.guardian_birth_date || null,
+    guardian_occupation: formData.guardian_occupation || null,
+    guardian_relationship: formData.guardian_relationship || null,
+
+    _method: "PUT",
   };
+
+  onUpdate(payload);
+};
 
   const inputClass = "w-full border border-gray-300 rounded-lg p-2.5 mt-1 text-xs md:text-sm focus:ring-2 focus:ring-[#409E86] focus:border-transparent outline-none transition-all";
   const labelClass = "block text-[10px] md:text-xs font-semibold text-gray-500 uppercase tracking-wider";

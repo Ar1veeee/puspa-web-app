@@ -120,12 +120,20 @@ export default function ChildList() {
   };
 
   const handleUbah = async (payload: Partial<ChildDetail>) => {
-    if (!selectedChild?.child_id) return;
-    await updateChild(selectedChild.child_id, payload);
-    const refreshed = await getChildren();
-    setChildren(refreshed.data || []);
-    setOpenEdit(false);
-  };
+  if (!selectedChild?.child_id) return;
+
+  await updateChild(selectedChild.child_id, payload);
+
+  // 🔥 FETCH DETAIL LAGI
+  const updatedDetail = await getChildDetail(selectedChild.child_id);
+  setSelectedChild(updatedDetail);
+
+  const refreshed = await getChildren();
+  setChildren(refreshed.data || []);
+
+  setOpenEdit(false);
+};
+
 
   async function handleTambah() {
     const payload = {
