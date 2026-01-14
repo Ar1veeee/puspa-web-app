@@ -328,20 +328,63 @@ export default function JadwalPage() {
                       <td className="p-3">{j.tanggalObservasi || "-"}</td>
                       <td className="p-3">{j.waktu || "-"}</td>
                       <td className="p-3">{j.assessment_status || "-"}</td>
-                      <td className="p-3 text-center">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedPasien(j);
-                            setOpenDropdown(j.observation_id);
-                          }}
-                          className="px-3 py-1 border border-[#80C2B0] text-[#5F52BF] rounded hover:bg-[#E9F4F1] text-xs inline-flex items-center"
-                        >
-                          <Settings size={14} className="mr-1" />
-                          Aksi
-                          <ChevronDown size={12} className="ml-1" />
-                        </button>
-                      </td>
+<td className="p-3 text-center relative">
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      setSelectedPasien(j);
+      setOpenDropdown(
+        openDropdown === j.observation_id ? null : j.observation_id
+      );
+    }}
+    className="px-3 py-1 border border-[#80C2B0] text-[#5F52BF] rounded
+               hover:bg-[#E9F4F1] text-xs inline-flex items-center"
+  >
+    <Settings size={14} className="mr-1" />
+    Aksi
+    <ChevronDown size={12} className="ml-1" />
+  </button>
+
+  {/* DROPDOWN */}
+  {openDropdown === j.observation_id && (
+    <div
+      className="absolute top-full mt-2 right-0 w-56 bg-white
+                 border border-[#80C2B0] rounded-lg shadow-lg z-50"
+    >
+      <div className="divide-y divide-gray-200 text-left">
+
+        {tab === "selesai" && (
+          <>
+            <button
+              onClick={() => handleAturAsesmen(j)}
+              className="flex items-center w-full px-4 py-3 text-sm hover:bg-[#E9F4F1]"
+            >
+              <Settings size={16} className="mr-2" />
+              Atur Asesmen
+            </button>
+
+            <button
+              onClick={() => handleRiwayatJawaban(j.observation_id)}
+              className="flex items-center w-full px-4 py-3 text-sm hover:bg-[#E9F4F1]"
+            >
+              <Clock3 size={16} className="mr-2" />
+              Riwayat Jawaban
+            </button>
+
+            <button
+              onClick={() => handleLihatHasil(j.observation_id)}
+              className="flex items-center w-full px-4 py-3 text-sm hover:bg-[#E9F4F1]"
+            >
+              <Eye size={16} className="mr-2" />
+              Lihat Hasil
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  )}
+</td>
+
                     </tr>
                   ))}
                 </tbody>
@@ -399,31 +442,78 @@ export default function JadwalPage() {
                       )}
 
                       <td className="p-3 text-center relative">
-                        {tab === "terjadwal" ? (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedPasien(j);
-                              setOpenDropdown(openDropdown === j.observation_id ? null : j.observation_id);
-                            }}
-                            className="px-3 py-1 border border-[#80C2B0] text-[#5F52BF] rounded hover:bg-[#E9F4F1] text-xs inline-flex items-center"
-                          >
-                            <Settings size={14} className="mr-1" />
-                            Aksi
-                            <ChevronDown size={12} className="ml-1" />
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => {
-                              setSelectedPasien(j);
-                              setOpenAsesmen(true);
-                            }}
-                            className="px-4 py-1 text-sm rounded bg-[#81B7A9] hover:bg-[#36315B] text-white transition"
-                          >
-                            {tab === "menunggu" ? "Atur Jadwal" : "Atur Asesmen"}
-                          </button>
-                        )}
-                      </td>
+  {tab === "terjadwal" ? (
+    <>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          setSelectedPasien(j);
+          setOpenDropdown(
+            openDropdown === j.observation_id ? null : j.observation_id
+          );
+        }}
+        className="px-3 py-1 border border-[#80C2B0] text-[#5F52BF] rounded
+                   hover:bg-[#E9F4F1] text-xs inline-flex items-center"
+      >
+        <Settings size={14} className="mr-1" />
+        Aksi
+        <ChevronDown size={12} className="ml-1" />
+      </button>
+
+      {/* DROPDOWN INLINE KHUSUS TAB TERJADWAL */}
+      {openDropdown === j.observation_id && (
+        <div
+          className="absolute top-full mt-2 right-0 w-56 bg-white
+                     border border-[#80C2B0] rounded-lg shadow-lg z-50"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="divide-y divide-gray-200 text-left">
+            <button
+              onClick={() => handleAturAsesmen(j)}
+              className="flex items-center w-full px-4 py-3 text-sm hover:bg-[#E9F4F1]"
+            >
+              <Settings size={16} className="mr-2" />
+              Edit Jadwal
+            </button>
+
+            <button
+              onClick={async () => {
+                try {
+                  const token = localStorage.getItem("token");
+                  const res = await fetch(
+                    `/api/observations/${j.observation_id}/detail?type=scheduled`,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                  );
+                  const data = await res.json();
+                  setSelectedObservation(data.data);
+                  setOpenDetail(true);
+                  setOpenDropdown(null);
+                } catch {
+                  alert("Gagal memuat detail observasi");
+                }
+              }}
+              className="flex items-center w-full px-4 py-3 text-sm hover:bg-[#E9F4F1]"
+            >
+              <Eye size={16} className="mr-2" />
+              Detail
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  ) : (
+    <button
+      onClick={() => {
+        setSelectedPasien(j);
+        setOpenAsesmen(true);
+      }}
+      className="px-4 py-1 text-sm rounded bg-[#81B7A9] hover:bg-[#36315B] text-white transition"
+    >
+      {tab === "menunggu" ? "Atur Jadwal" : "Atur Asesmen"}
+    </button>
+  )}
+</td>
+
                     </tr>
                   ))}
                 </tbody>
@@ -433,84 +523,7 @@ export default function JadwalPage() {
 
           {/* DROPDOWN AKSI */}
           {/* DROPDOWN AKSI */}
-          {openDropdown && selectedPasien && (
-            <div
-              className="fixed inset-0 z-40"
-              onClick={() => setOpenDropdown(null)}
-            >
-              <div
-                className="absolute right-10 top-32 w-56 bg-white border border-[#80C2B0] rounded-lg shadow-lg"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="divide-y divide-gray-200 text-left">
-
-                  {/* ================= TAB SELESAI ================= */}
-                  {tab === "selesai" && (
-                    <>
-                      <button
-                        onClick={() => handleAturAsesmen(selectedPasien)}
-                        className="flex items-center w-full px-4 py-3 text-sm text-[#5F52BF] hover:bg-[#E9F4F1]"
-                      >
-                        <Settings size={16} className="mr-2" />
-                        Atur Asesmen
-                      </button>
-
-                      <button
-                        onClick={() => handleRiwayatJawaban(selectedPasien.observation_id)}
-                        className="flex items-center w-full px-4 py-3 text-sm text-[#5F52BF] hover:bg-[#E9F4F1]"
-                      >
-                        <Clock3 size={16} className="mr-2" />
-                        Riwayat Jawaban
-                      </button>
-
-                      <button
-                        onClick={() => handleLihatHasil(selectedPasien.observation_id)}
-                        className="flex items-center w-full px-4 py-3 text-sm text-[#5F52BF] hover:bg-[#E9F4F1]"
-                      >
-                        <Eye size={16} className="mr-2" />
-                        Lihat Hasil
-                      </button>
-                    </>
-                  )}
-
-                  {/* ================= TAB TERJADWAL ================= */}
-                  {tab === "terjadwal" && (
-                    <>
-                      <button
-                        onClick={() => handleAturAsesmen(selectedPasien)}
-                        className="flex items-center w-full px-4 py-3 text-sm hover:bg-[#E9F4F1]"
-                      >
-                        <Settings size={16} className="mr-2" />
-                        Edit Jadwal
-                      </button>
-
-                      <button
-                        onClick={async () => {
-                          try {
-                            const token = localStorage.getItem("token");
-                            const res = await fetch(
-                              `/api/observations/${selectedPasien.observation_id}/detail?type=scheduled`,
-                              { headers: { Authorization: `Bearer ${token}` } }
-                            );
-                            const data = await res.json();
-                            setSelectedObservation(data.data);
-                            setOpenDetail(true);
-                            setOpenDropdown(null);
-                          } catch {
-                            alert("Gagal memuat detail observasi");
-                          }
-                        }}
-                        className="flex items-center w-full px-4 py-3 text-sm hover:bg-[#E9F4F1]"
-                      >
-                        <Eye size={16} className="mr-2" />
-                        Detail
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
+          
 
         </main>
       </div>

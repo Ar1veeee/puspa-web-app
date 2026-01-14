@@ -8,6 +8,13 @@ import {
   ChevronDown,
   Eye,
   Clock3,
+  User,
+  Stethoscope,
+  FileText,
+  Upload,
+  Activity,
+  Speech,
+  GraduationCap,
 } from "lucide-react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -19,6 +26,8 @@ import { getAssessmentsAdmin } from "@/lib/api/jadwal_asessment";
 import { updateAsessmentSchedule } from "@/lib/api/jadwal_asessment";
 import { getAssessmentDetail } from "@/lib/api/jadwal_asessment";
 import FormDetailAsesment from "@/components/form/FormDetailAsesment";
+
+
 
 // =======================
 // Interface Jadwal
@@ -56,6 +65,21 @@ const ASESSOR_ACTIONS = [
   { key: "paedagog", label: "Data Paedagog" },
 ];
 
+const ORTU_ICONS: Record<string, any> = {
+  umum: User,
+  fisio: Activity,
+  okupasi: Stethoscope,
+  wicara: Speech,
+  paedagog: GraduationCap,
+  upload: Upload,
+};
+
+const ASESSOR_ICONS: Record<string, any> = {
+  fisio: Activity,
+  okupasi: Stethoscope,
+  wicara: Speech,
+  paedagog: GraduationCap,
+};
 
 
 
@@ -329,75 +353,105 @@ export default function JadwalAsesmenPage() {
                             onClick={(e) => {
                               e.stopPropagation();
                               setOpenDropdown(
-                                openDropdown?.assessment_id === j.assessment_id && openDropdown?.role === "ortu"
+                                openDropdown?.assessment_id === j.assessment_id &&
+                                  openDropdown?.role === "ortu"
                                   ? null
                                   : { assessment_id: j.assessment_id, role: "ortu" }
                               );
                             }}
-                            className="px-3 py-1 border border-[#80C2B0] text-[#5F52BF] rounded hover:bg-[#E9F4F1] text-xs inline-flex items-center"
+                            className="flex items-center gap-2 px-4 py-2 rounded-full
+             bg-[#81B7A9] text-white text-xs font-medium
+             hover:bg-[#6aaea0] transition"
                           >
+                            <User size={14} />
                             Ortu
-                            <ChevronDown size={12} className="ml-1" />
+                            <ChevronDown size={12} />
                           </button>
+
 
                           {/* BUTTON ASESSOR */}
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               setOpenDropdown(
-                                openDropdown?.assessment_id === j.assessment_id && openDropdown?.role === "asessor"
+                                openDropdown?.assessment_id === j.assessment_id &&
+                                  openDropdown?.role === "asessor"
                                   ? null
                                   : { assessment_id: j.assessment_id, role: "asessor" }
                               );
                             }}
-                            className="px-3 py-1 border border-[#80C2B0] text-[#5F52BF] rounded hover:bg-[#E9F4F1] text-xs inline-flex items-center"
+                            className="flex items-center gap-2 px-4 py-2 rounded-full
+             bg-[#81B7A9] text-white text-xs font-medium
+             hover:bg-[#6aaea0] transition"
                           >
-                            Asessor
-                            <ChevronDown size={12} className="ml-1" />
+                            <Stethoscope size={14} />
+                            Asesor
+                            <ChevronDown size={12} />
                           </button>
+
                         </div>
 
                         {/* DROPDOWN ORTU */}
-                        {openDropdown?.assessment_id === j.assessment_id && openDropdown?.role === "ortu" && (
-                          <div
-                            className="absolute right-0 mt-2 z-50 bg-white border border-[#80C2B0] shadow-xl rounded-lg w-64"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {ORTU_ACTIONS.map((item) => (
-                              <button
-                                key={item.key}
-                                onClick={() => {
-                                  handleOrtuRoute(item.key, j.assessment_id);
-                                  setOpenDropdown(null);
-                                }}
-                                className="w-full text-left px-4 py-3 text-sm hover:bg-[#E9F4F1]"
-                              >
-                                {item.label}
-                              </button>
-                            ))}
-                          </div>
-                        )}
+                        {openDropdown?.assessment_id === j.assessment_id &&
+                          openDropdown?.role === "ortu" && (
+                            <div
+                              className="absolute right-0 mt-2 z-50
+                 bg-white border border-[#80C2B0]
+                 shadow-xl rounded-lg w-64"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {ORTU_ACTIONS.map((item) => {
+                                const Icon = ORTU_ICONS[item.key];
+                                return (
+                                  <button
+                                    key={item.key}
+                                    onClick={() => {
+                                      handleOrtuRoute(item.key, j.assessment_id);
+                                      setOpenDropdown(null);
+                                    }}
+                                    className="flex items-center gap-3 w-full
+                       px-4 py-3 text-sm text-[#5F52BF]
+                       hover:bg-[#E9F4F1] transition"
+                                  >
+                                    <Icon size={16} className="text-[#81B7A9]" />
+                                    <span>{item.label}</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          )}
+
 
                         {/* DROPDOWN ASESSOR */}
-                        {openDropdown?.assessment_id === j.assessment_id && openDropdown?.role === "asessor" && (
-                          <div
-                            className="absolute right-0 mt-2 z-50 bg-white border border-[#80C2B0] shadow-xl rounded-lg w-64"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {ASESSOR_ACTIONS.map((item) => (
-                              <button
-                                key={item.key}
-                                onClick={() => {
-                                  handleAsessorRoute(item.key, j.assessment_id);
-                                  setOpenDropdown(null);
-                                }}
-                                className="w-full text-left px-4 py-3 text-sm hover:bg-[#E9F4F1]"
-                              >
-                                {item.label}
-                              </button>
-                            ))}
-                          </div>
-                        )}
+                        {openDropdown?.assessment_id === j.assessment_id &&
+                          openDropdown?.role === "asessor" && (
+                            <div
+                              className="absolute right-0 mt-2 z-50
+                 bg-white border border-[#80C2B0]
+                 shadow-xl rounded-lg w-64"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {ASESSOR_ACTIONS.map((item) => {
+                                const Icon = ASESSOR_ICONS[item.key];
+                                return (
+                                  <button
+                                    key={item.key}
+                                    onClick={() => {
+                                      handleAsessorRoute(item.key, j.assessment_id);
+                                      setOpenDropdown(null);
+                                    }}
+                                    className="flex items-center gap-3 w-full
+                       px-4 py-3 text-sm text-[#5F52BF]
+                       hover:bg-[#E9F4F1] transition"
+                                  >
+                                    <Icon size={16} className="text-[#81B7A9]" />
+                                    <span>{item.label}</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          )}
+
                       </td>
 
                     </tr>

@@ -70,14 +70,14 @@ export default function FormUbahPatient({ open, onClose, onUpdate, initialData }
         father_phone: "",
         father_birth_date: "",
         father_occupation: "",
-        father_relationship: "Ayah",
+        father_relationship: "",
 
         mother_identity_number: "",
         mother_name: "",
         mother_phone: "",
         mother_birth_date: "",
         mother_occupation: "",
-        mother_relationship: "Ibu",
+        mother_relationship: "",
 
         guardian_identity_number: "",
         guardian_name: "",
@@ -108,14 +108,14 @@ export default function FormUbahPatient({ open, onClose, onUpdate, initialData }
             father_phone: initialData.father_phone ?? "",
             father_birth_date: toISODate(initialData.father_birth_date),
             father_occupation: initialData.father_occupation ?? "",
-            father_relationship: "Ayah",
+            father_relationship: initialData.father_relationship ?? "",
 
             mother_identity_number: initialData.mother_identity_number ?? "",
             mother_name: initialData.mother_name ?? "",
             mother_phone: initialData.mother_phone ?? "",
             mother_birth_date: toISODate(initialData.mother_birth_date),
             mother_occupation: initialData.mother_occupation ?? "",
-            mother_relationship: "Ibu",
+            mother_relationship: initialData.mother_relationship ?? "",
 
             guardian_identity_number: initialData.guardian_identity_number ?? "",
             guardian_name: initialData.guardian_name ?? "",
@@ -133,49 +133,55 @@ export default function FormUbahPatient({ open, onClose, onUpdate, initialData }
 
     if (!open) return null;
 
+
+    const emptyToNull = (v?: string) => {
+        if (!v) return null;
+        const trimmed = v.trim();
+        if (trimmed === "" || trimmed === "-") return null;
+        return trimmed;
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!form.child_birth_date || form.child_birth_date.trim() === "") {
+        if (!form.child_birth_date.trim()) {
             alert("Tanggal lahir anak wajib diisi");
             return;
         }
 
-        const emptyToString = (v?: string | null) => v ?? "";
-
         onUpdate({
-            child_name: form.child_name,
+            child_name: form.child_name.trim(),
             child_birth_date: form.child_birth_date,
-            child_gender: form.child_gender || null,
-            child_school: form.child_school || "",
-            child_address: form.child_address || "",
+            child_gender: emptyToNull(form.child_gender),
+            child_school: emptyToNull(form.child_school) ?? "",
+            child_address: emptyToNull(form.child_address) ?? "",
 
-            father_identity_number: emptyToString(form.father_identity_number),
-            father_name: emptyToString(form.father_name),
-            father_phone: emptyToString(form.father_phone),
-            father_birth_date: form.father_birth_date || null,
-            father_occupation: emptyToString(form.father_occupation),
-            father_relationship: form.father_relationship || "Ayah",
+            father_identity_number: emptyToNull(form.father_identity_number),
+            father_name: emptyToNull(form.father_name),
+            father_phone: emptyToNull(form.father_phone),
+            father_birth_date: emptyToNull(form.father_birth_date),
+            father_occupation: emptyToNull(form.father_occupation),
+            father_relationship: emptyToNull(form.father_relationship),
 
-            mother_identity_number: emptyToString(form.mother_identity_number),
-            mother_name: emptyToString(form.mother_name),
-            mother_phone: emptyToString(form.mother_phone),
-            mother_birth_date: form.mother_birth_date || null,
-            mother_occupation: emptyToString(form.mother_occupation),
-            mother_relationship: form.mother_relationship || "Ibu",
+            mother_identity_number: emptyToNull(form.mother_identity_number),
+            mother_name: emptyToNull(form.mother_name),
+            mother_phone: emptyToNull(form.mother_phone),
+            mother_birth_date: emptyToNull(form.mother_birth_date),
+            mother_occupation: emptyToNull(form.mother_occupation),
+            mother_relationship: emptyToNull(form.mother_relationship),
 
-            guardian_identity_number: form.guardian_identity_number || null,
-            guardian_name: form.guardian_name || null,
-            guardian_phone: form.guardian_phone || null,
-            guardian_birth_date: form.guardian_birth_date || null,
-            guardian_occupation: form.guardian_occupation || null,
-            guardian_relationship: form.guardian_relationship || null,
+            guardian_identity_number: emptyToNull(form.guardian_identity_number),
+            guardian_name: emptyToNull(form.guardian_name),
+            guardian_phone: emptyToNull(form.guardian_phone),
+            guardian_birth_date: emptyToNull(form.guardian_birth_date),
+            guardian_occupation: emptyToNull(form.guardian_occupation),
+            guardian_relationship: emptyToNull(form.guardian_relationship),
 
-            child_complaint: form.child_complaint || "",
-            child_service_choice: form.child_service_choice || "",
+            child_complaint: emptyToNull(form.child_complaint) ?? "",
+            child_service_choice: form.child_service_choice ?? "",
         });
-
     };
+
 
 
 
@@ -289,9 +295,12 @@ export default function FormUbahPatient({ open, onClose, onUpdate, initialData }
 
                             <label className="block text-sm font-medium text-[#36315B] mb-1">Hubungan</label>
                             <input
-                                readOnly
-                                value="Ayah"
-                                className="w-full border rounded-lg p-2 bg-gray-100 mb-3"
+                                name="father_relationship"
+                                value={form.father_relationship}
+                                onChange={(e) =>
+                                    setForm({ ...form, father_relationship: e.target.value })
+                                }
+                                className="w-full border rounded-lg p-2 mb-3"
                             />
 
                             <div className="grid grid-cols-2 gap-4">
@@ -353,9 +362,12 @@ export default function FormUbahPatient({ open, onClose, onUpdate, initialData }
 
                             <label className="block text-sm font-medium text-[#36315B] mb-1">Hubungan</label>
                             <input
-                                readOnly
-                                value="Ibu"
-                                className="w-full border rounded-lg p-2 bg-gray-100 mb-3"
+                                name="mother_relationship"
+                                value={form.mother_relationship}
+                                onChange={(e) =>
+                                    setForm({ ...form, mother_relationship: e.target.value })
+                                }
+                                className="w-full border rounded-lg p-2 mb-3"
                             />
 
                             <div className="grid grid-cols-2 gap-4">
