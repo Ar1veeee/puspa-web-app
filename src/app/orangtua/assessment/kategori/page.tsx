@@ -238,7 +238,10 @@ export default function AssessmentPage() {
               <Info className="w-5 h-5 text-[#68B2A0]" />
             </div>
             <div>
-              <p className="font-bold text-[#36315B] text-base md:text-lg">File Baru Telah Diunggah</p>
+              <p className="font-bold text-[#36315B] text-base md:text-lg">
+                {hasNewFile
+                  ? "File baru telah diunggah."
+                  : "File belum diunggah."}</p>
               <p className="text-xs md:text-sm text-gray-500 mt-0.5">
                 {hasNewFile
                   ? "Asesor telah mengunggah laporan perkembangan terbaru anak Anda."
