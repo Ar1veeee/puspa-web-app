@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarDays, User, ChevronRight, ClipboardList, Baby, Mars } from "lucide-react";
+import { CalendarDays, User, ChevronRight, ClipboardList, Baby, Mars, SquarePen, Clock4 } from "lucide-react";
 
 import ResponsiveOrangtuaLayout from "@/components/layout/ResponsiveOrangtuaLayout";
 import {
@@ -107,23 +107,26 @@ export default function DataUmumPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <div className="flex items-center text-sm text-gray-500 font-medium gap-2">
-                      <div className="w-8 flex justify-center">
+                    <div className="grid grid-cols-2 items-center text-sm text-gray-500 font-medium gap-2">
+                      <div className="flex items-center gap-1">
                         <User className="w-4 h-4 text-[#409E86]" />
+                        <span>{item.child_age}</span>
                       </div>
-                      <span>{item.child_age}</span>
-                      <div className="mx-1 text-gray-300">
+                      <div className="flex items-center gap-1">
                         <Mars className="w-4 h-4 text-[#409E86]" />
-                      </div> <span className="capitalize">{item.child_gender}</span>
-                    </div>
-
-                    <div className="flex items-center text-sm text-gray-500 font-medium">
-                      <div className="w-8 flex justify-center">
-                        <CalendarDays className="w-4 h-4 text-[#409E86]" />
+                        <span className="capitalize">{item.child_gender}</span>
                       </div>
-                      <div className="flex flex-col">
-                        <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Jadwal Assessment</span>
-                        <span className="text-[#36315B] font-semibold">{item.scheduled_date}</span>
+                      <div className="flex items-center gap-1">
+                        <CalendarDays className="w-4 h-4 text-[#409E86]" />
+                        <span className="">{item.scheduled_date}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <SquarePen className="w-4 h-4 text-[#409E86]" />
+                        <span className="">{item.status === 'scheduled' ? 'Terjadwal' : 'Selesai'}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Clock4 className="w-4 h-4 text-[#409E86]" />
+                        <span className="">{item.scheduled_time}</span>
                       </div>
                     </div>
                   </div>

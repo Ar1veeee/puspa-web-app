@@ -68,6 +68,7 @@ export interface AssessmentItem {
   child_gender: string;
   child_school: string;
   scheduled_date: string;
+  scheduled_time: string;
   status: string;
   created_at: string;
   updated_at: string;
