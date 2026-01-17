@@ -232,7 +232,7 @@ export default function AssessmentPage() {
         </div>
 
         {/* Bottom Section: Unduh Laporan */}
-        <div className={`${hasNewFile ? "opacity-0" : "opacity-50"} bg-white border-2 border-[#68B2A0] p-5 md:p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm`}>
+        <div className={`${hasNewFile ? "opacity-0" : "opacity-5g0"} bg-white border-2 border-[#68B2A0] p-5 md:p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm`}>
           <div className="flex items-start gap-4">
             <div className="bg-[#EAF4F0] p-2 rounded-lg mt-1">
               <Info className="w-5 h-5 text-[#68B2A0]" />
