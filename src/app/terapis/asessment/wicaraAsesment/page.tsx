@@ -175,12 +175,14 @@ function AsesmenWicaraContent() {
           }
         } else {
           // Bahasa
-          if (responses[k] !== undefined) {
-            answers.push({
-              question_id: q.id,
-              answer: { value: Boolean(responses[k]) },
-            });
-          }
+          // ===== BAHASA (FIX) =====
+if (responses[k] === true) {
+  answers.push({
+    question_id: q.id,
+    answer: { value: true },
+  });
+}
+
         }
       });
     });
