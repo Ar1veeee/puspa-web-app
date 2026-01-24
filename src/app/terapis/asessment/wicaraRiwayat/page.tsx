@@ -46,7 +46,7 @@ const BAHASA_GROUP_MAP = [
   { title: "Usia 3–4 Tahun", range: [252, 273] },
   { title: "Usia 4–5 Tahun", range: [274, 291] },
   { title: "Usia 5–6 Tahun", range: [292, 305] },
-  { title: "Usia 6–7 Tahun", range: [206, 315] },
+  { title: "Usia 6–7 Tahun", range: [306, 315] },
 ];
 
 export default function RiwayatWicaraPage() {
