@@ -13,7 +13,8 @@ interface AssessmentDetail {
   assessment_detail_id: number;
   type: string;
   status: string;
-  parent_completed_status: string;
+  parent_completed_status: string; // global
+  is_filled: boolean; // 🔥 PER TERAPI
 }
 
 export default function AssessmentPage() {
@@ -29,8 +30,13 @@ export default function AssessmentPage() {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const [completionStatus, setCompletionStatus] = useState<
-    Record<string, string>
-  >({});
+  Record<string, string>
+>({});
+
+const [filledStatus, setFilledStatus] = useState<
+  Record<string, boolean>
+>({});
+
 
   useEffect(() => {
     async function fetchDetail() {
@@ -41,11 +47,17 @@ export default function AssessmentPage() {
 
         setTypes(res.details.map((d: AssessmentDetail) => d.type));
 
-        const map: Record<string, string> = {};
-        res.details.forEach((d: AssessmentDetail) => {
-          map[d.type] = d.parent_completed_status;
-        });
-        setCompletionStatus(map);
+        const mapCompleted: Record<string, string> = {};
+const mapFilled: Record<string, boolean> = {};
+
+res.details.forEach((d: AssessmentDetail) => {
+  mapCompleted[d.type] = d.parent_completed_status;
+  mapFilled[d.type] = d.is_filled; // 🔥 AMBIL DARI BE
+});
+
+setCompletionStatus(mapCompleted);
+setFilledStatus(mapFilled);
+
 
         setHasNewFile(Boolean(res.report?.available));
       } catch (err) {
@@ -162,7 +174,11 @@ export default function AssessmentPage() {
 
           <div className="space-y-8">
             {filteredKategori.map((item, index) => {
-              const isCompleted = completionStatus[item.code] === "completed";
+              const isFilled = filledStatus[item.code] === true;
+
+const canStart = !isFilled;
+const canViewHistory = isFilled;
+
 
               return (
                 <div
@@ -199,32 +215,41 @@ export default function AssessmentPage() {
   <div className="absolute right-0 z-50 mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200">
     
     <button
-      disabled={isCompleted}
-      onClick={() => {
-        handleAction("mulai", item);
-        setActiveId(null);
-      }}
-      className={`flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold border-b border-gray-50 transition-colors
-        ${
-          isCompleted
-            ? "text-gray-300 cursor-not-allowed"
-            : "text-[#68B2A0] hover:bg-gray-50 cursor-pointer"
-        }`}
-    >
-      <Play className="w-4 h-4 fill-current" />
-      Mulai
-    </button>
+  disabled={!canStart}
+  onClick={() => {
+    handleAction("mulai", item);
+    setActiveId(null);
+  }}
+  className={`flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold border-b border-gray-50 transition-colors
+    ${
+      canStart
+        ? "text-[#68B2A0] hover:bg-gray-50 cursor-pointer"
+        : "text-gray-300 cursor-not-allowed"
+    }`}
+>
+  <Play className="w-4 h-4 fill-current" />
+  Mulai
+</button>
+
 
     <button
-      onClick={() => {
-        handleAction("riwayat", item);
-        setActiveId(null);
-      }}
-      className="flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold text-[#68B2A0] hover:bg-gray-50 transition-colors cursor-pointer"
-    >
-      <History className="w-4 h-4" />
-      Riwayat Jawaban
-    </button>
+  disabled={!canViewHistory}
+  onClick={() => {
+    if (!canViewHistory) return;
+    handleAction("riwayat", item);
+    setActiveId(null);
+  }}
+  className={`flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold transition-colors
+    ${
+      canViewHistory
+        ? "text-[#68B2A0] hover:bg-gray-50 cursor-pointer"
+        : "text-gray-300 cursor-not-allowed"
+    }`}
+>
+  <History className="w-4 h-4" />
+  Riwayat Jawaban
+</button>
+
 
   </div>
 )}

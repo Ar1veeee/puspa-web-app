@@ -15,7 +15,11 @@ export interface AssessmentDetail {
   parent_completed_at: string | null;
   therapist_id: string | null;
   admin_id: string;
+
+  // 🔥 TAMBAHAN DARI BE
+  is_filled: boolean;
 }
+
 
 export interface AssessmentReport {
   available: boolean;
