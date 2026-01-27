@@ -195,38 +195,32 @@ export default function AssessmentPage() {
                       <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeId === item.code ? 'rotate-180' : ''}`} />
                     </button>
 
-                    {activeId === item.code && (
+                   {activeId === item.code && (
   <div className="absolute right-0 z-50 mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200">
-
-    {/* MULAI */}
+    
     <button
       disabled={isCompleted}
       onClick={() => {
         handleAction("mulai", item);
         setActiveId(null);
       }}
-      className={`flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold border-b border-gray-50 transition-colors ${
-        isCompleted
-          ? "text-gray-300 cursor-not-allowed bg-gray-50"
-          : "text-[#68B2A0] hover:bg-gray-50 cursor-pointer"
-      }`}
+      className={`flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold border-b border-gray-50 transition-colors
+        ${
+          isCompleted
+            ? "text-gray-300 cursor-not-allowed"
+            : "text-[#68B2A0] hover:bg-gray-50 cursor-pointer"
+        }`}
     >
       <Play className="w-4 h-4 fill-current" />
       Mulai
     </button>
 
-    {/* RIWAYAT JAWABAN */}
     <button
-      disabled={!isCompleted}
       onClick={() => {
         handleAction("riwayat", item);
         setActiveId(null);
       }}
-      className={`flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold transition-colors ${
-        !isCompleted
-          ? "text-gray-300 cursor-not-allowed bg-gray-50"
-          : "text-[#68B2A0] hover:bg-gray-50 cursor-pointer"
-      }`}
+      className="flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold text-[#68B2A0] hover:bg-gray-50 transition-colors cursor-pointer"
     >
       <History className="w-4 h-4" />
       Riwayat Jawaban
@@ -234,6 +228,7 @@ export default function AssessmentPage() {
 
   </div>
 )}
+
 
               
                   </div>
