@@ -13,18 +13,17 @@ import { uploadAssessmentReport } from "@/lib/api/asesmentReport";
 type StatusFilter = "Terjadwal" | "Selesai";
 
 interface Patient {
-  id: number;
   assessment_id: number;
   child_name: string;
   guardian_name: string;
   guardian_phone: string;
-  types: string;
+  types: string[] | string;
   admin_name: string;
   scheduled_date?: string;
   scheduled_time?: string;
-  parent_completed_at: string | null;
-  status: string;
+  parent_completed_time?: string; // 🔥 DARI BE
 }
+
 
 export default function AssessmentPage() {
   const router = useRouter();
@@ -245,7 +244,12 @@ export default function AssessmentPage() {
       </td>
                       <td className="px-4 py-3">{row.admin_name}</td>
                       <td className="px-4 py-3">{row.scheduled_date}</td>
-                      <td className="px-4 py-3">{row.scheduled_time}</td>
+                      <td className="px-4 py-3">
+  {activeFilter === "Selesai"
+    ? row.parent_completed_time ?? "-"
+    : row.scheduled_time ?? "-"}
+</td>
+
 
                       <td
                         className={`px-4 py-3 relative ${activeFilter === "Terjadwal" ? "hidden" : ""}`}

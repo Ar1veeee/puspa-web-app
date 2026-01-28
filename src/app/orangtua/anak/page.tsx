@@ -120,11 +120,36 @@ export default function ChildList() {
   };
 
   const handleUbah = async (payload: Partial<ChildDetail>) => {
-  if (!selectedChild?.child_id) return;
+  if (!selectedChild) return;
 
-  await updateChild(selectedChild.child_id, payload);
+  const cleanPayload: any = { ...payload };
 
-  // 🔥 FETCH DETAIL LAGI
+  const guardianFields = [
+    "guardian_identity_number",
+    "guardian_name",
+    "guardian_phone",
+    "guardian_birth_date",
+    "guardian_occupation",
+    "guardian_relationship",
+  ];
+
+  guardianFields.forEach((field) => {
+    const newValue = cleanPayload[field as keyof ChildDetail];
+    const oldValue = selectedChild[field as keyof ChildDetail];
+
+    // ✅ kalau kosong → null
+    if (newValue === "") {
+      cleanPayload[field] = null;
+    }
+
+    // ✅ kalau TIDAK berubah → HAPUS dari payload
+    if (newValue === oldValue) {
+      delete cleanPayload[field];
+    }
+  });
+
+  await updateChild(selectedChild.child_id, cleanPayload);
+
   const updatedDetail = await getChildDetail(selectedChild.child_id);
   setSelectedChild(updatedDetail);
 
@@ -134,17 +159,51 @@ export default function ChildList() {
   setOpenEdit(false);
 };
 
+async function handleTambah() {
+  const payload: any = {
+    ...formAdd,
+    child_service_choice: formAdd.child_service_choice.join(", "),
+  };
 
-  async function handleTambah() {
-    const payload = {
-      ...formAdd,
-      child_service_choice: formAdd.child_service_choice.join(", ")
-    };
-    await createChild(payload as any);
+  const guardianFields = [
+    "guardian_identity_number",
+    "guardian_name",
+    "guardian_phone",
+    "guardian_birth_date",
+    "guardian_occupation",
+    "guardian_relationship",
+  ];
+
+  guardianFields.forEach((field) => {
+    if (!payload[field] || payload[field].trim() === "") {
+      payload[field] = null;
+    }
+  });
+
+  try {
+    await createChild(payload);
+
     const refreshed = await getChildren();
     setChildren(refreshed.data || []);
     setOpenAdd(false);
+  } catch (err: any) {
+    if (err.response?.status === 422) {
+     const errors = err.response?.data?.errors as Record<string, string[]> | undefined;
+
+const firstError = errors
+  ? Object.values(errors)[0]?.[0]
+  : null;
+
+alert(firstError || "Validasi gagal");
+
+      alert(firstError || "Validasi gagal");
+      return;
+    }
+    alert("Terjadi kesalahan server");
   }
+}
+
+
 
   return (
     <ResponsiveOrangtuaLayout maxWidth="max-w-7xl">
