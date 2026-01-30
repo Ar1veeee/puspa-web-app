@@ -66,12 +66,18 @@ export default function RegisterPage() {
   });
 
   const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault();
-    setServerError(null);
-    if (!isFilled || emailError || usernameError) return;
-    if (!validations.every((rule) => rule.valid)) return;
-    mutation.mutate({ username, email, password });
-  };
+  e.preventDefault();
+  setServerError(null);
+
+  if (!isFilled || emailError || usernameError) return;
+  if (!validations.every((rule) => rule.valid)) return;
+
+  // simpan email untuk halaman verifikasi
+  localStorage.setItem("registered_email", email);
+
+  mutation.mutate({ username, email, password });
+};
+
 
   return (
     <main className="layout-main min-h-screen bg-[#B8E8DB] flex flex-col">

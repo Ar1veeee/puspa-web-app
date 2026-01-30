@@ -48,6 +48,10 @@ function OkupasiAssessmentContent() {
   const search = useSearchParams();
   const assessmentId = search.get("assessment_id");
 
+    const storageKey = assessmentId
+    ? `okupasi_parent_answers_${assessmentId}`
+    : null;
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [answers, setAnswers] = useState<Record<number, any>>({});
@@ -85,14 +89,21 @@ function OkupasiAssessmentContent() {
   }, []);
 
   // LOAD & SAVE LOCAL STORAGE
-  useEffect(() => {
-    const saved = localStorage.getItem("okupasi_parent_answers");
-    if (saved) setAnswers(JSON.parse(saved));
-  }, []);
+ useEffect(() => {
+  if (!storageKey) return;
 
-  useEffect(() => {
-    localStorage.setItem("okupasi_parent_answers", JSON.stringify(answers));
-  }, [answers]);
+  const saved = localStorage.getItem(storageKey);
+  if (saved) {
+    setAnswers(JSON.parse(saved));
+  } else {
+    setAnswers({});
+  }
+}, [storageKey]);
+
+useEffect(() => {
+  if (!storageKey) return;
+  localStorage.setItem(storageKey, JSON.stringify(answers));
+}, [answers, storageKey]);
 
   const currentCategory = categories[activeIdx];
 
@@ -157,8 +168,15 @@ function OkupasiAssessmentContent() {
 
     try {
       await submitParentAssessment(assessmentId, "okupasi_parent", payload);
-      alert("Jawaban berhasil dikirim!");
-      router.push(`/orangtua/assessment/kategori?assessment_id=${assessmentId}`);
+
+// HAPUS cache lokal
+if (storageKey) {
+  localStorage.removeItem(storageKey);
+}
+
+alert("Jawaban berhasil dikirim!");
+router.push(`/orangtua/assessment/kategori?assessment_id=${assessmentId}`);
+
     } catch (e) {
       console.error("Error submit okupasi:", e);
       alert("Gagal mengirim jawaban.");

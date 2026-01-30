@@ -14,15 +14,27 @@ function EmailVerifyContent() {
   const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
+    // ✅ 1. Ambil dari REGISTER (localStorage)
+    const storedEmail = localStorage.getItem("registered_email");
+    if (storedEmail) {
+      setEmail(storedEmail);
+    }
+
+    // ✅ 2. Kalau ada token, coba verify ke BE
     if (!token) return;
 
     axios
       .get(`https://puspa.sinus.ac.id/api/v1/auth/verify-email?token=${token}`)
       .then((res) => {
-        setEmail(res.data.email);
+        if (res.data?.email) {
+          setEmail(res.data.email);
+
+          // optional: sync ulang
+          localStorage.setItem("registered_email", res.data.email);
+        }
       })
       .catch(() => {
-        setEmail(null);
+        // ❌ tidak apa-apa, fallback tetap jalan
       });
   }, [token]);
 
