@@ -98,6 +98,17 @@ export default function DashboardPage() {
 
     load();
   }, []);
+const filteredSchedule = schedule.filter((s: any) => {
+    if (role === "terapis") {
+      if (Array.isArray(s.types)) {
+        return !s.types.some((t: string) =>
+          t.toLowerCase().includes("assessment")
+        );
+      }
+      return true;
+    }
+    return true;
+  });
 
   if (loading || !role) {
     return (
@@ -260,8 +271,9 @@ export default function DashboardPage() {
 </thead>
 
 
-             <tbody>
-  {schedule.length === 0 && (
+     <tbody>
+  {/* EMPTY STATE */}
+  {filteredSchedule.length === 0 && (
     <tr>
       <td colSpan={5} className="text-center py-6 text-gray-400">
         Tidak ada jadwal
@@ -269,7 +281,9 @@ export default function DashboardPage() {
     </tr>
   )}
 
-  {schedule.map((s: any, index: number) => (
+
+  {filteredSchedule.map((s: any, index: number) => (
+
     <tr
       key={`${s.id}-${s.date}-${s.time}-${index}`}
       className="border-b align-top"

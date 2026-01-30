@@ -1,17 +1,19 @@
 "use client";
 
-
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 export default function EmailVerifedPage() {
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
+
   return (
     <main className="min-h-screen flex flex-col bg-[#C9EAE0]">
       <header className="flex items-start p-6">
         <Image src="/logo.png" alt="Logo Puspa" width={160} height={50} priority />
       </header>
-
 
       <div className="flex flex-col items-center justify-center flex-1 px-4">
         <motion.div
@@ -20,7 +22,6 @@ export default function EmailVerifedPage() {
           transition={{ duration: 0.6 }}
           className="flex flex-col items-center"
         >
-
           <Image
             src="/password.png"
             alt="Ilustrasi Email Verified"
@@ -29,20 +30,19 @@ export default function EmailVerifedPage() {
             priority
           />
 
-        
           <h2 className="text-[20px] font-extrabold text-[#36315B] text-center mt-6 mb-2">
             Email Telah Terverifikasi
           </h2>
 
-        
           <p className="text-[14px] text-[#36315B] text-center mb-6">
             Akun anda sudah sukses dibuat dengan email{" "}
-            <span className="font-bold">puspa@puspa.com</span>.
+            <span className="font-bold">
+              {email ?? "email anda"}
+            </span>.
             <br />
             Silahkan klik tombol dibawah untuk melakukan login.
           </p>
 
-       
           <Link href="/auth/login">
             <button className="w-[160px] h-[45px] rounded-lg font-medium text-white bg-[#81B7A9] shadow-md transition-colors hover:bg-[#6EA092]">
               Log-In
