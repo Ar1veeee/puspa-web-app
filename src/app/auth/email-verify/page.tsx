@@ -1,14 +1,30 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { useEffect, useState, Suspense } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import axios from "axios";
 
-export default function EmailVerifedPage() {
+function EmailVerifyContent() {
   const searchParams = useSearchParams();
-  const email = searchParams.get("email");
+  const token = searchParams.get("token");
+
+  const [email, setEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!token) return;
+
+    axios
+      .get(`https://puspa.sinus.ac.id/api/v1/auth/verify-email?token=${token}`)
+      .then((res) => {
+        setEmail(res.data.email);
+      })
+      .catch(() => {
+        setEmail(null);
+      });
+  }, [token]);
 
   return (
     <main className="min-h-screen flex flex-col bg-[#C9EAE0]">
@@ -45,12 +61,20 @@ export default function EmailVerifedPage() {
           </p>
 
           <Link href="/auth/login">
-            <button className="w-[160px] h-[45px] rounded-lg font-medium text-white bg-[#81B7A9] shadow-md transition-colors hover:bg-[#6EA092]">
+            <button className="w-[160px] h-[45px] rounded-lg font-medium text-white bg-[#81B7A9] shadow-md hover:bg-[#6EA092]">
               Log-In
             </button>
           </Link>
         </motion.div>
       </div>
     </main>
+  );
+}
+
+export default function EmailVerifiedPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <EmailVerifyContent />
+    </Suspense>
   );
 }

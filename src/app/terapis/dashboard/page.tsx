@@ -295,7 +295,7 @@ const filteredSchedule = schedule.filter((s: any) => {
         {Array.isArray(s.types) && s.types.length > 0 ? (
           <ul className="list-disc list-inside space-y-1 text-gray-700">
             {s.types.map((type: string, i: number) => (
-              <li key={i} className="wreak-break-words leading-relaxed">
+              <li key={i} className="break-words leading-relaxed">
                 {type}
               </li>
             ))}
