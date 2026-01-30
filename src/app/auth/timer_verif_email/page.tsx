@@ -28,12 +28,21 @@ function TimerVerifEmailContent() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
   const [error, setError] = useState("");
+  const [email, setEmail] = useState<string | null>(null);
+
 
   const searchParams = useSearchParams();
   const userId = searchParams.get("user_id");
 
   useEffect(() => {
     setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    const storedEmail = localStorage.getItem("registered_email");
+    if (storedEmail) {
+      setEmail(storedEmail);
+    }
   }, []);
 
   useEffect(() => {
@@ -46,14 +55,13 @@ function TimerVerifEmailContent() {
 
       try {
         const res = await resendVerification(userId);
-
         if (res?.success) {
-          setMsg("Email verifikasi telah dikirim ke email Anda!");
+          setMsg("Email verifikasi telah dikirim!");
         } else {
-          setError(res?.message || "Gagal mengirim email verifikasi. Coba lagi nanti.");
+          setError(res?.message || "Gagal mengirim email.");
         }
-      } catch (err) {
-        setError("Terjadi kesalahan koneksi. Periksa jaringan Anda.");
+      } catch {
+        setError("Terjadi kesalahan koneksi.");
       } finally {
         setLoading(false);
       }
@@ -95,9 +103,14 @@ function TimerVerifEmailContent() {
           </h2>
 
           <p className="text-[12px] text-[#36315B] text-center mb-6">
-            Kami telah mengirimkan email verifikasi ke akun Anda. 
-            Silakan periksa inbox atau folder spam Anda.
-          </p>
+  Kami telah mengirimkan email verifikasi ke{" "}
+  <span className="font-semibold">
+    {email ?? "email Anda"}
+  </span>.
+  <br />
+  Silakan periksa inbox atau folder spam Anda.
+</p>
+
 
           {!canResend ? (
             <p className="text-[#8D8D8D] text-sm text-center mb-4">

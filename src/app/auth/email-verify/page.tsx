@@ -14,29 +14,23 @@ function EmailVerifyContent() {
   const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    // ✅ 1. Ambil dari REGISTER (localStorage)
-    const storedEmail = localStorage.getItem("registered_email");
-    if (storedEmail) {
-      setEmail(storedEmail);
-    }
+  if (!token) return;
 
-    // ✅ 2. Kalau ada token, coba verify ke BE
-    if (!token) return;
+  axios
+    .get(`https://puspa.sinus.ac.id/api/v1/auth/verify-email?token=${token}`)
+    .then((res) => {
+      if (res.data?.email) {
+        setEmail(res.data.email);
 
-    axios
-      .get(`https://puspa.sinus.ac.id/api/v1/auth/verify-email?token=${token}`)
-      .then((res) => {
-        if (res.data?.email) {
-          setEmail(res.data.email);
+        // bersihkan email register (optional tapi bagus)
+        localStorage.removeItem("registered_email");
+      }
+    })
+    .catch(() => {
+      // optional: set error state
+    });
+}, [token]);
 
-          // optional: sync ulang
-          localStorage.setItem("registered_email", res.data.email);
-        }
-      })
-      .catch(() => {
-        // ❌ tidak apa-apa, fallback tetap jalan
-      });
-  }, [token]);
 
   return (
     <main className="min-h-screen flex flex-col bg-[#C9EAE0]">
