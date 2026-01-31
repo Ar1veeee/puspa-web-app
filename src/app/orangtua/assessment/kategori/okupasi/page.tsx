@@ -48,9 +48,6 @@ function OkupasiAssessmentContent() {
   const search = useSearchParams();
   const assessmentId = search.get("assessment_id");
 
-    const storageKey = assessmentId
-    ? `okupasi_parent_answers_${assessmentId}`
-    : null;
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -89,21 +86,7 @@ function OkupasiAssessmentContent() {
   }, []);
 
   // LOAD & SAVE LOCAL STORAGE
- useEffect(() => {
-  if (!storageKey) return;
 
-  const saved = localStorage.getItem(storageKey);
-  if (saved) {
-    setAnswers(JSON.parse(saved));
-  } else {
-    setAnswers({});
-  }
-}, [storageKey]);
-
-useEffect(() => {
-  if (!storageKey) return;
-  localStorage.setItem(storageKey, JSON.stringify(answers));
-}, [answers, storageKey]);
 
   const currentCategory = categories[activeIdx];
 
@@ -169,10 +152,7 @@ useEffect(() => {
     try {
       await submitParentAssessment(assessmentId, "okupasi_parent", payload);
 
-// HAPUS cache lokal
-if (storageKey) {
-  localStorage.removeItem(storageKey);
-}
+
 
 alert("Jawaban berhasil dikirim!");
 router.push(`/orangtua/assessment/kategori?assessment_id=${assessmentId}`);

@@ -139,7 +139,7 @@ export default function DashboardOwnerPage() {
           <div className="grid grid-cols-4 gap-6">
             {metrics && (
               <>
-                <MetricCard label="Total Observasi" current={metrics.total_observations?.current ?? 0} change={metrics.total_observations?.formatted_change ?? "0%"} />
+                <MetricCard label="Total Pendaftaran" current={metrics.total_observations?.current ?? 0} change={metrics.total_observations?.formatted_change ?? "0%"} />
                 <MetricCard label="Total Assessment" current={metrics.total_assessments?.current ?? 0} change={metrics.total_assessments?.formatted_change ?? "0%"} />
                 <MetricCard label="Tingkat Penyelesaian" current={`${metrics.completion_rate?.current ?? 0}%`} change={metrics.completion_rate?.formatted_change ?? "0%"} />
                 <MetricCard label="Pertanyaan Yang Belum Terjawab" current={`${metrics.unanswered_questions?.current ?? 0}%`} change={metrics.unanswered_questions?.formatted_change ?? "0%"} />
