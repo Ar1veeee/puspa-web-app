@@ -122,32 +122,39 @@ function OkupasiAssessmentContent() {
     }
 
     const payload = {
-      answers: categories
-        .flatMap((cat) =>
-          cat.questions.map((q) => {
-            const val = answers[q.id];
-            if (
-              val === undefined ||
-              val === null ||
-              (Array.isArray(val) && val.length === 0)
-            )
-              return null;
+  answers: categories
+    .flatMap((cat) =>
+      cat.questions.map((q) => {
+        // 🔑 Ambil value, khusus slider pakai default 1
+        const val =
+          q.answer_type === "slider"
+            ? answers[q.id] ?? 1
+            : answers[q.id];
 
-            return {
-              question_id: Number(q.id),
-              answer: {
-                value:
-                  q.answer_type === "checkbox"
-                    ? val
-                    : q.answer_type === "slider"
-                    ? Number(val)
-                    : val,
-              },
-            };
-          })
+        // ❌ Jangan buang slider bernilai 1
+        if (
+          val === undefined ||
+          val === null ||
+          (Array.isArray(val) && val.length === 0)
         )
-        .filter(Boolean),
-    };
+          return null;
+
+        return {
+          question_id: Number(q.id),
+          answer: {
+            value:
+              q.answer_type === "checkbox"
+                ? val
+                : q.answer_type === "slider"
+                ? Number(val)
+                : val,
+          },
+        };
+      })
+    )
+    .filter(Boolean),
+};
+
 
     try {
       await submitParentAssessment(assessmentId, "okupasi_parent", payload);

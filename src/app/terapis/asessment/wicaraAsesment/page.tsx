@@ -149,31 +149,39 @@ function AsesmenWicaraContent() {
     sections.forEach((s) => {
       // ===== LIDAH ASPEK =====
       s.aspek?.forEach((a: any) =>
-        a.questions.forEach((q: any) => {
-          const k = `${s.group_key}-${q.id}`;
-          if (responses[k] !== undefined && responses[k] !== null) {
-            answers.push({
-              question_id: q.id,
-              answer: { value: responses[k] },
-              note: notes[k] || "",
-            });
-          }
-        })
-      );
+  a.questions.forEach((q: any) => {
+    const k = `${s.group_key}-${q.id}`;
+
+    const hasAnswer = responses[k] !== undefined && responses[k] !== null;
+    const hasNote = notes[k] && notes[k].trim() !== "";
+
+    if (hasAnswer || hasNote) {
+      answers.push({
+        question_id: q.id,
+        answer: { value: hasAnswer ? responses[k] : null },
+        note: hasNote ? notes[k] : "",
+      });
+    }
+  })
+);
+
 
       // ===== GROUP NORMAL =====
-      s.questions?.forEach((q: any) => {
-        const k = `${s.group_key}-${q.id}`;
+     s.questions?.forEach((q: any) => {
+  const k = `${s.group_key}-${q.id}`;
 
-        if (activeTab === "Oral Fasial") {
-          if (responses[k] !== undefined && responses[k] !== null) {
-            answers.push({
-              question_id: q.id,
-              answer: { value: responses[k] },
-              note: notes[k] || "",
-            });
-          }
-        } else {
+  if (activeTab === "Oral Fasial") {
+    const hasAnswer = responses[k] !== undefined && responses[k] !== null;
+    const hasNote = notes[k] && notes[k].trim() !== "";
+
+    if (hasAnswer || hasNote) {
+      answers.push({
+        question_id: q.id,
+        answer: { value: hasAnswer ? responses[k] : null },
+        note: hasNote ? notes[k] : "",
+      });
+    }
+  } else {
           // Bahasa
           // ===== BAHASA (FIX) =====
 if (responses[k] === true) {

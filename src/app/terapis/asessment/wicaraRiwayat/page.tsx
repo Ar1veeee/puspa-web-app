@@ -8,7 +8,11 @@ import { useSearchParams } from "next/navigation";
 
 import SidebarTerapis from "@/components/layout/sidebar_terapis";
 import HeaderTerapis from "@/components/layout/header_terapis";
-import { getAssessmentAnswers } from "@/lib/api/asesment";
+import { 
+  getAssessmentAnswers,
+  getAssessmentQuestions
+} from "@/lib/api/asesment";
+
 
 /* ================== SUB GROUP LIDAH ================== */
 const LIDAH_ASPEK = [
@@ -29,10 +33,10 @@ const ORAL_GROUP_MAP = [
   { title: "Observasi Gigi", ids: [122, 123, 124, 125, 126, 127] },
   { title: "Evaluasi Bibir", ids: [128, 129, 130, 131, 132, 133, 134] },
   { title: "Evaluasi Lidah", ids: [] },
-  { title: "Evaluasi Faring", ids: [164, 165] },
+  { title: "Evaluasi Faring", ids: [164, 165,166] },
   {
     title: "Evaluasi Langit-langit Keras dan Lunak",
-    ids: [166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178],
+    ids: [ 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178,179,180],
   },
 ];
 
@@ -62,52 +66,88 @@ export default function RiwayatWicaraPage() {
   const assessmentId = params.get("assessment_id") || "";
 
   useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      const res = await getAssessmentAnswers(assessmentId, "wicara");
-      const list = Array.isArray(res) ? res : res?.data ?? [];
+  const load = async () => {
+    setLoading(true);
 
-      /* ===== ORAL ===== */
-      const oral = ORAL_GROUP_MAP.map((g) => {
-        if (g.title === "Evaluasi Lidah") {
-          return {
-            title: g.title,
-            aspek: LIDAH_ASPEK.map((a) => ({
-              title: a.title,
-              questions: list.filter((q: any) => {
-                const id = Number(q.question_id);
-                return id >= a.range[0] && id <= a.range[1];
-              }),
-            })).filter((a) => a.questions.length > 0),
-          };
-        }
+    // 1. Ambil jawaban
+    const answers = await getAssessmentAnswers(assessmentId, "wicara");
+
+    // 2. Ambil questions
+    const oralQ = await getAssessmentQuestions("wicara_oral");
+    const bahasaQ = await getAssessmentQuestions("wicara_bahasa");
+
+    // flatten questions
+    const flatten = (groups: any[]) =>
+      groups.flatMap((g) => g.questions || []);
+
+    const oralQuestions = flatten(oralQ.groups);
+    const bahasaQuestions = flatten(bahasaQ.groups);
+
+    // 3. merge
+    const merge = (questions: any[]) =>
+      questions.map((q) => {
+        const found = answers.find(
+          (a: any) => Number(a.question_id) === Number(q.id)
+        );
 
         return {
-          title: g.title,
-          questions: list.filter((q: any) =>
-            g.ids.includes(Number(q.question_id))
-          ),
+          question_id: q.id,
+          question_text: q.question_text,
+          answer: found?.answer ?? null,
+          note: found?.note ?? null,
         };
-      }).filter(
-        (g) => Boolean(g.questions?.length) || Boolean(g.aspek?.length)
-      );
+      });
 
-      /* ===== BAHASA ===== */
-      const bahasa = BAHASA_GROUP_MAP.map((g) => ({
+    const mergedOral = merge(oralQuestions);
+    const mergedBahasa = merge(bahasaQuestions);
+
+    /* ===== ORAL GROUP ===== */
+    const oral = ORAL_GROUP_MAP.map((g) => {
+      if (g.title === "Evaluasi Lidah") {
+        return {
+          title: g.title,
+          aspek: LIDAH_ASPEK.map((a) => ({
+            title: a.title,
+            questions: mergedOral.filter((q) => {
+              const id = Number(q.question_id);
+              return id >= a.range[0] && id <= a.range[1];
+            }),
+          })),
+        };
+      }
+
+      return {
         title: g.title,
-        questions: list.filter((q: any) => {
-          const id = Number(q.question_id);
-          return id >= g.range[0] && id <= g.range[1];
-        }),
-      })).filter((g) => g.questions.length > 0);
+        questions: mergedOral.filter((q) =>
+          g.ids.includes(Number(q.question_id))
+        ),
+      };
+    });
 
-      setOralFasial(oral);
-      setKemampuanBahasa(bahasa);
-      setLoading(false);
-    };
+    /* ===== BAHASA GROUP ===== */
+    const bahasa = BAHASA_GROUP_MAP
+  .map((g) => ({
+    title: g.title,
+    questions: mergedBahasa.filter((q) => {
+      const id = Number(q.question_id);
+      return id >= g.range[0] && id <= g.range[1];
+    }),
+  }))
+  .filter((g) =>
+    g.questions.some(
+      (q) => q.answer?.value !== null && q.answer?.value !== undefined
+    )
+  );
 
-    if (assessmentId) load();
-  }, [assessmentId]);
+
+    setOralFasial(oral);
+    setKemampuanBahasa(bahasa);
+    setLoading(false);
+  };
+
+  if (assessmentId) load();
+}, [assessmentId]);
+
 
   const data = activeTab === "Oral Fasial" ? oralFasial : kemampuanBahasa;
 
