@@ -26,18 +26,69 @@ export default function FormTambahPasien({
         guardian_type: "ayah" as "ayah" | "ibu" | "wali",
     });
 
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const REQUIRED_MESSAGE = "Data wajib diisi";
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setForm((prev) => ({ ...prev, [name]: value }));
     };
 
     const toggleService = (service: string) => {
-        setForm((prev) => ({
-            ...prev,
-            child_service_choice: prev.child_service_choice.includes(service)
+        setForm((prev) => {
+            const updated = prev.child_service_choice.includes(service)
                 ? prev.child_service_choice.filter((s) => s !== service)
-                : [...prev.child_service_choice, service],
+                : [...prev.child_service_choice, service];
+
+            return {
+                ...prev,
+                child_service_choice: updated,
+            };
+        });
+
+        setErrors((prev) => ({
+            ...prev,
+            child_service_choice: "",
         }));
+    };
+
+
+    const validate = () => {
+        const newErrors: Record<string, string> = {};
+
+        if (!form.child_name.trim())
+            newErrors.child_name = REQUIRED_MESSAGE;
+
+        if (!form.child_gender)
+            newErrors.child_gender = REQUIRED_MESSAGE;
+
+        if (!form.child_birth_place.trim())
+            newErrors.child_birth_place = REQUIRED_MESSAGE;
+
+        if (!form.child_birth_date)
+            newErrors.child_birth_date = REQUIRED_MESSAGE;
+
+        if (!form.child_address.trim())
+            newErrors.child_address = REQUIRED_MESSAGE;
+
+        if (!form.child_complaint.trim())
+            newErrors.child_complaint = REQUIRED_MESSAGE;
+
+        if (!form.guardian_name.trim())
+            newErrors.guardian_name = REQUIRED_MESSAGE;
+
+        if (!form.guardian_phone.trim())
+            newErrors.guardian_phone = REQUIRED_MESSAGE;
+
+        if (!form.email.trim())
+            newErrors.email = REQUIRED_MESSAGE;
+
+        if (form.child_service_choice.length === 0)
+            newErrors.child_service_choice = REQUIRED_MESSAGE;
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     // 🔥 HANDLE SUBMIT FINAL (SESUAI API YANG BERHASIL)
@@ -45,18 +96,8 @@ export default function FormTambahPasien({
         e.preventDefault();
 
         // optional tapi disarankan
-        if (
-            !form.child_name ||
-            !form.child_gender ||
-            !form.child_birth_place ||
-            !form.child_birth_date ||
-            !form.guardian_name ||
-            !form.guardian_phone ||
-            !form.email
-        ) {
-            alert("Lengkapi semua field wajib");
-            return;
-        }
+        if (!validate()) return;
+
 
         const payload = {
             child_name: form.child_name,
@@ -119,6 +160,11 @@ export default function FormTambahPasien({
                                 onChange={handleChange}
                                 className="mt-1 w-full rounded border px-3 py-2 text-sm"
                             />
+                            {errors.child_name && (
+                                <p className="text-xs text-red-500 mt-1">
+                                    {errors.child_name}
+                                </p>
+                            )}
 
                         </div>
 
@@ -134,6 +180,11 @@ export default function FormTambahPasien({
                                     onChange={handleChange}
                                     className="mt-1 w-full rounded border px-3 py-2 text-sm"
                                 />
+                                {errors.child_birth_place && (
+                                    <p className="text-xs text-red-500 mt-1">
+                                        {errors.child_birth_place}
+                                    </p>
+                                )}
                             </div>
                             <div>
                                 <label className="block text-sm font-medium">
@@ -146,6 +197,11 @@ export default function FormTambahPasien({
                                     onChange={handleChange}
                                     className="mt-1 w-full rounded border px-3 py-2 text-sm"
                                 />
+                                {errors.child_birth_date && (
+                                    <p className="text-xs text-red-500 mt-1">
+                                        {errors.child_birth_date}
+                                    </p>
+                                )}
 
                             </div>
                         </div>
@@ -180,6 +236,11 @@ export default function FormTambahPasien({
                                     />
                                     Perempuan
                                 </label>
+                                {errors.child_gender && (
+                                    <p className="text-xs text-red-500 mt-1">
+                                        {errors.child_gender}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
@@ -195,6 +256,7 @@ export default function FormTambahPasien({
                                 className="mt-1 w-full rounded border px-3 py-2 text-sm"
                             />
 
+
                         </div>
 
                         {/* Alamat */}
@@ -208,6 +270,11 @@ export default function FormTambahPasien({
                                 onChange={handleChange}
                                 className="mt-1 w-full rounded border px-3 py-2 text-sm"
                             />
+                            {errors.child_address && (
+                                <p className="text-xs text-red-500 mt-1">
+                                    {errors.child_address}
+                                </p>
+                            )}
                         </div>
 
                         {/* Keluhan */}
@@ -221,6 +288,11 @@ export default function FormTambahPasien({
                                 onChange={handleChange}
                                 className="mt-1 w-full rounded border px-3 py-2 text-sm"
                             />
+                            {errors.child_complaint && (
+                                <p className="text-xs text-red-500 mt-1">
+                                    {errors.child_complaint}
+                                </p>
+                            )}
 
                         </div>
 
@@ -238,6 +310,11 @@ export default function FormTambahPasien({
                                     onChange={handleChange}
                                     className="mt-1 w-full rounded border px-3 py-2 text-sm"
                                 />
+                                {errors.guardian_name && (
+                                    <p className="text-xs text-red-500 mt-1">
+                                        {errors.guardian_name}
+                                    </p>
+                                )}
 
                             </div>
 
@@ -285,6 +362,7 @@ export default function FormTambahPasien({
                                     />
                                     Wali
                                 </label>
+
                             </div>
                         </div>
 
@@ -303,6 +381,11 @@ export default function FormTambahPasien({
                                     onChange={handleChange}
                                     className="mt-1 w-full rounded border px-3 py-2 text-sm"
                                 />
+                                {errors.guardian_phone && (
+                                    <p className="text-xs text-red-500 mt-1">
+                                        {errors.guardian_phone}
+                                    </p>
+                                )}
 
                             </div>
                             <div>
@@ -315,6 +398,11 @@ export default function FormTambahPasien({
                                     onChange={handleChange}
                                     className="mt-1 w-full rounded border px-3 py-2 text-sm"
                                 />
+                                {errors.email && (
+                                    <p className="text-xs text-red-500 mt-1">
+                                        {errors.email}
+                                    </p>
+                                )}
 
                             </div>
                         </div>
@@ -350,8 +438,15 @@ export default function FormTambahPasien({
 
                                         {item}
                                     </label>
+
                                 ))}
                             </div>
+                            {errors.child_service_choice && (
+                                <p className="text-xs text-red-500 mt-1">
+                                    {errors.child_service_choice}
+                                </p>
+                            )}
+
                         </div>
 
                         {/* ACTION */}
