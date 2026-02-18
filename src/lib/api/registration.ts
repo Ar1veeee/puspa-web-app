@@ -20,7 +20,7 @@ export interface RegistrationPayload {
 export async function registrationChild(payload: RegistrationPayload) {
   try {
     const response = await axios.post(
-      "https://puspa.sinus.ac.id/api/v1/registration", 
+      "https://puspa-api.alfirdausina.com/api/v1/registration", 
       payload,
       {
         headers: {

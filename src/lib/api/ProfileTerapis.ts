@@ -6,7 +6,7 @@ function normalizeProfilePictureUrl(path?: string | null): string | null {
   if (!path) return null;
   const filename = path.split("/").pop();
   if (!filename) return null;
-  return `https://puspa.sinus.ac.id/storage/therapists/${filename}`;
+  return `https://puspa-api.alfirdausina.com/storage/therapists/${filename}`;
 }
 
 // ===================== INTERFACE (TYPE) =====================

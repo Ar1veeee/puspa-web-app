@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "puspa.sinus.ac.id",
+        hostname: "puspa-api.alfirdausina.com",
         pathname: "/storage/**",
       },
     ],
@@ -19,7 +19,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "https://puspa.sinus.ac.id/api/v1/:path*",
+        destination: "https://puspa-api.alfirdausina.com/api/v1/:path*",
       },
     ];
   },

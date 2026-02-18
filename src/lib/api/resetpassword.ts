@@ -21,7 +21,7 @@ export async function resetPassword({
 }: ResetPasswordPayload): Promise<ResetPasswordResponse> {
   try {
     const res = await axios.post(
-      `https://puspa.sinus.ac.id/api/v1/auth/reset-password?token=${token}&email=${encodeURIComponent(email)}`,
+      `https://puspa-api.alfirdausina.com/api/v1/auth/reset-password?token=${token}&email=${encodeURIComponent(email)}`,
       { password, password_confirmation },
       { headers: { "Content-Type": "application/json" } }
     );

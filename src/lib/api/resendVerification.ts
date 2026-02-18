@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 
-const BASE_URL = "https://puspa.sinus.ac.id/api/v1";
+const BASE_URL = "https://puspa-api.alfirdausina.com/api/v1";
 
 export async function resendVerification(userId: string) {
   try {

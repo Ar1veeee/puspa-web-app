@@ -16,7 +16,7 @@ export async function forgotPassword(
 ): Promise<ForgotPasswordResponse> {
   try {
     const response = await axios.post(
-      "https://puspa.sinus.ac.id/api/v1/auth/forgot-password",
+      "https://puspa-api.alfirdausina.com/api/v1/auth/forgot-password",
       { email },
       { headers: { "Content-Type": "application/json" } }
     );

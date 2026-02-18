@@ -22,7 +22,7 @@ export interface LoginErrorResponse {
 }
 
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://puspa.sinus.ac.id/api/v1",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://puspa-api.alfirdausina.com/api/v1",
 });
 
 axiosInstance.interceptors.request.use((config) => {

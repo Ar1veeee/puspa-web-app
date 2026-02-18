@@ -13,7 +13,7 @@ export async function registerUser({
 }) {
   try {
     const res = await axios.post(
-      "https://puspa.sinus.ac.id/api/v1/auth/register",
+      "https://puspa-api.alfirdausina.com/api/v1/auth/register",
       { email, username, password }
     );
 
