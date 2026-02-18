@@ -13,6 +13,8 @@ export interface PatientList {
   child_school: string;
 }
 
+
+
 /* =========================
    DETAIL PATIENT (GET /children/{id})
 ========================= */
@@ -181,4 +183,31 @@ export async function updatePatient(
 ========================= */
 export async function deletePatient(id: string) {
   return await api.delete(`/children/${id}`);
+}
+
+/* =========================
+   CREATE PATIENT (POST /children)
+========================= */
+export interface PatientCreatePayload {
+  child_name: string;
+  child_gender: string;
+  child_birth_place: string;
+  child_birth_date: string;
+
+  child_school?: string;
+  child_address?: string;
+  child_complaint?: string;
+  child_service_choice?: string;
+
+  parent_name: string;
+  parent_phone: string;
+  parent_email: string;
+
+  guardian_type: "ayah" | "ibu" | "wali";
+}
+
+
+export async function addPatient(data: PatientCreatePayload) {
+  const res = await api.post("/children", data);
+  return res.data ?? null;
 }

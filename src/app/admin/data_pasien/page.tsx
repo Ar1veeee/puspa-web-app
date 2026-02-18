@@ -5,6 +5,7 @@ import { Pencil, Trash2, Plus, Search, Eye } from "lucide-react";
 
 import FormUbahPatient from "@/components/form/FormUbahPatient";
 import FormHapusPatient from "@/components/form/FormHapusPatient";
+import FormTambahPasien from "@/components/form/FormTambahPasien";
 import {
   getPatients,
   getPatientById,
@@ -13,6 +14,7 @@ import {
   PatientList,
   PatientDetail,
   PatientUpdatePayload,
+  addPatient
 } from "@/lib/api/data_patient";
 
 
@@ -128,6 +130,7 @@ export default function PatientPage() {
   const [search, setSearch] = useState("");
   const [patients, setPatients] = useState<PatientList[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<PatientDetail | null>(null);
+  const [showTambah, setShowTambah] = useState(false);
   const [showUbah, setShowUbah] = useState(false);
   const [showHapus, setShowHapus] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
@@ -207,6 +210,13 @@ export default function PatientPage() {
 
         <main className="p-6 space-y-6">
           <div className="flex justify-between items-center">
+            <button
+              onClick={() => setShowTambah(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded bg-[#81B7A9] hover:bg-[#36315B] text-white transition"
+            >
+              <Plus size={18} />
+              Tambah Pasien
+            </button>
 
             <div className="relative w-64">
               <Search
@@ -222,6 +232,7 @@ export default function PatientPage() {
               />
             </div>
           </div>
+
 
           <div className="bg-white rounded-lg shadow-md shadow-[#ADADAD] p-4">
             <table className="w-full text-sm border-collapse">
@@ -292,8 +303,8 @@ export default function PatientPage() {
                   onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                   disabled={currentPage === 1}
                   className={`px-4 py-2 rounded-md border ${currentPage === 1
-                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                      : "bg-white hover:bg-gray-100"
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-100"
                     }`}
                 >
                   Previous
@@ -307,8 +318,8 @@ export default function PatientPage() {
                   onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
                   disabled={currentPage === totalPages || totalPages === 0}
                   className={`px-4 py-2 rounded-md border ${currentPage === totalPages || totalPages === 0
-                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                      : "bg-white hover:bg-gray-100"
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-100"
                     }`}
                 >
                   Next
@@ -320,6 +331,11 @@ export default function PatientPage() {
         </main>
       </div>
 
+
+      <FormTambahPasien
+        open={showTambah}
+        onClose={() => setShowTambah(false)}
+      />
 
       <FormUbahPatient
         open={showUbah}
