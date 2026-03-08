@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from "react";
 
 import Image from "next/image";
-import { Bell, User, LayoutDashboard, Search, Menu } from "lucide-react";
+import { User, LayoutDashboard, Search, Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { baseMenu } from "@/components/layout/sidebar";
 import { useAdminProfile } from "@/context/ProfileAdminContext";
+import NotificationPopover from "@/components/layout/NotificationPopover";
 
 interface HeaderTerapisProps {
   pageTitle?: string;
@@ -121,10 +122,7 @@ export default function HeaderTerapis({
         </div>
 
         {/* Notifikasi */}
-        <button className="relative flex items-center justify-center w-10 h-10 bg-white border border-teal-50 rounded-xl hover:bg-[#F4F9F8] hover:border-[#2B7A75] text-gray-400 hover:text-[#2B7A75] transition-colors duration-300 shadow-[0_2px_10px_rgba(43,122,117,0.05)] focus:outline-none focus:ring-2 focus:ring-[#2B7A75]/20">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-2 right-2.5 w-2 h-2 rounded-full bg-red-400 border border-white"></span>
-        </button>
+        <NotificationPopover />
 
         {/* User Greet & Info */}
         <div className="flex items-center gap-3 pl-2 sm:pl-4 border-l border-gray-100/80">
