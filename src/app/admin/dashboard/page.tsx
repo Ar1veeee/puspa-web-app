@@ -130,7 +130,7 @@ export default function AdminDashboard() {
                 <button
                   onClick={() => setOpenTambahAdmin(true)}
                   disabled={loading}
-                  className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 text-white font-semibold transition-all duration-300 disabled:opacity-50"
+                  className="cursor-pointer flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 text-white font-semibold transition-all duration-300 disabled:opacity-50"
                 >
                   <ShieldPlus className="w-4 h-4" />
                   Tambah Admin
@@ -139,7 +139,7 @@ export default function AdminDashboard() {
                 <button
                   onClick={() => setOpenTambahTerapis(true)}
                   disabled={loading}
-                  className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#1E5C58] shadow-md hover:scale-[1.02] active:scale-[0.98] font-bold transition-all duration-300 disabled:opacity-50"
+                  className="cursor-pointer flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#1E5C58] shadow-md hover:scale-[1.02] active:scale-[0.98] font-bold transition-all duration-300 disabled:opacity-50"
                 >
                   <UserPlus className="w-5 h-5" />
                   Tambah Terapis

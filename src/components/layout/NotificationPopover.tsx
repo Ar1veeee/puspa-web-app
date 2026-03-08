@@ -133,7 +133,7 @@ export default function NotificationPopover() {
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            className="absolute right-0 mt-3 w-[320px] sm:w-[400px] bg-white rounded-2xl shadow-2xl shadow-teal-900/10 border border-teal-50 z-50 overflow-hidden"
+            className="fixed inset-x-4 top-[85px] sm:absolute sm:inset-auto sm:right-0 sm:translate-x-0 sm:mt-3 w-auto sm:w-[400px] bg-white rounded-2xl shadow-2xl shadow-teal-900/10 border border-teal-50 z-50 overflow-hidden"
           >
             {/* Header */}
             <div className="p-4 border-b border-gray-50 flex items-center justify-between bg-white sticky top-0 z-10">

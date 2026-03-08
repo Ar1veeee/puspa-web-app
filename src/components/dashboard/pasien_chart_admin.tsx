@@ -2,7 +2,7 @@
 "use client";
 
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Users, PieChart as ChartIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -28,13 +28,15 @@ type PieLabelProps = {
 export default function PasienChartAdmin({ data, loading }: PasienChartProps) {
   // A sophisticated, calming palette for the health/therapy theme
   const COLORS = [
-    "#1E5C58",
-    "#38A3A5",
-    "#8EC3AA",
-    "#FFB703",
-    "#E9C46A",
-    "#F4A261",
+    "#1E5C58", // Umum
+    "#38A3A5", // Terapi Wicara
+    "#4ADE80", // Terapi Okupasi (Warna Terang - Hijau Cerah)
+    "#FFB703", // Fisioterapi
+    "#F472B6", // Paedagog (Warna Terang - Merah Muda Cerah)
+    "#F4A261", // Cadangan
   ];
+
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const CATEGORY_LABEL_MAP: Record<string, string> = {
     fisio: "Fisioterapi",
@@ -130,18 +132,47 @@ export default function PasienChartAdmin({ data, loading }: PasienChartProps) {
                       cx="50%"
                       cy="50%"
                       outerRadius={85}
-                      innerRadius={45}
+                      innerRadius={50}
                       paddingAngle={4}
                       stroke="none"
                       label={(props) => {
-                        const { name, payload } = props as PieLabelProps;
-                        const percentage =
-                          typeof payload?.percentage === "number"
-                            ? payload.percentage.toFixed(0)
-                            : "0";
-                        return percentage !== "0"
-                          ? `${name} ${percentage}%`
-                          : "";
+                        const {
+                          cx,
+                          cy,
+                          midAngle,
+                          innerRadius,
+                          outerRadius,
+                          percent,
+                        } = props as any;
+
+                        if (!percent || percent === 0) return null;
+
+                        const RADIAN = Math.PI / 180;
+                        const radius =
+                          (innerRadius as number) +
+                          ((outerRadius as number) - (innerRadius as number)) *
+                            0.5;
+                        const x =
+                          (cx as number) +
+                          radius * Math.cos(-midAngle * RADIAN);
+                        const y =
+                          (cy as number) +
+                          radius * Math.sin(-midAngle * RADIAN);
+
+                        return (
+                          <text
+                            x={x}
+                            y={y}
+                            fill="white"
+                            textAnchor="middle"
+                            dominantBaseline="central"
+                            fontSize={11}
+                            fontWeight="bold"
+                            style={{ pointerEvents: "none" }}
+                          >
+                            {`${(percent * 100).toFixed(0)}%`}
+                          </text>
+                        );
                       }}
                       labelLine={false}
                     >
@@ -149,7 +180,19 @@ export default function PasienChartAdmin({ data, loading }: PasienChartProps) {
                         <Cell
                           key={`cell-${index}`}
                           fill={COLORS[index % COLORS.length]}
-                          className="hover:opacity-80 transition-opacity duration-300 outline-none"
+                          className="outline-none"
+                          style={{
+                            opacity:
+                              activeIndex === null || activeIndex === index
+                                ? 1
+                                : 0.6,
+                            transform:
+                              activeIndex === index
+                                ? "scale(1.05)"
+                                : "scale(1)",
+                            transformOrigin: "center",
+                            transition: "all 150ms ease",
+                          }}
                         />
                       ))}
                     </Pie>
@@ -180,10 +223,23 @@ export default function PasienChartAdmin({ data, loading }: PasienChartProps) {
                 {chartData.map((item, index) => (
                   <div
                     key={item.name}
-                    className="flex items-center gap-2 group cursor-pointer p-2 rounded-lg hover:bg-white transition-colors"
+                    onMouseEnter={() => setActiveIndex(index)}
+                    onMouseLeave={() => setActiveIndex(null)}
+                    onClick={() =>
+                      setActiveIndex(activeIndex === index ? null : index)
+                    }
+                    className={`flex items-center gap-2 group cursor-pointer p-2 rounded-lg transition-all duration-150 ${
+                      activeIndex === index
+                        ? "bg-teal-50 shadow-sm translate-x-1"
+                        : "hover:bg-teal-50/50"
+                    }`}
                   >
                     <div
-                      className="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm transition-transform group-hover:scale-125 duration-300"
+                      className={`w-3.5 h-3.5 rounded-full shrink-0 shadow-sm transition-all duration-150 ${
+                        activeIndex === index
+                          ? "scale-150"
+                          : "group-hover:scale-125"
+                      }`}
                       style={{ backgroundColor: COLORS[index % COLORS.length] }}
                     />
                     <div className="flex flex-col text-left">
