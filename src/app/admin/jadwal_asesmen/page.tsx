@@ -383,7 +383,7 @@ export default function JadwalAsesmenPage() {
                 <div className="hidden md:block overflow-visible pb-24">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
+                      <tr className="bg-linear-to-r from-gray-50 to-white border-b border-gray-100">
                         <th className="py-4 px-6 text-xs font-bold text-gray-400 uppercase tracking-wider">
                           Info Pasien
                         </th>
