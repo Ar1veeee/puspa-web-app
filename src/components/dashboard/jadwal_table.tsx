@@ -72,7 +72,7 @@ export default function JadwalTable({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="space-y-3 pr-2 overflow-y-auto max-h-[20rem] custom-scrollbar"
+              className="space-y-3 pr-2 overflow-y-auto max-h-80 custom-scrollbar"
             >
               <style
                 dangerouslySetInnerHTML={{
