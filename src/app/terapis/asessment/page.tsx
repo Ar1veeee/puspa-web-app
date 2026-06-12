@@ -10,10 +10,12 @@ import {
   Search, 
   Calendar, 
   ClipboardList,
-  Settings 
+  Settings,
+  AlertTriangle
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getAssessments } from "@/lib/api/asesment";
+import { useTherapistProfile } from "@/context/ProfileTerapisContext";
 
 // --- INTERFACES ---
 type TerapiTab =
@@ -60,6 +62,7 @@ export default function AssessmentPage() {
 function AssessmentContent() {
   const router = useRouter();
   const params = useSearchParams();
+  const { profile } = useTherapistProfile();
 
   const urlStatus = params.get("status");
 
@@ -75,6 +78,10 @@ function AssessmentContent() {
 
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // Warning modal states
+  const [showWarningModal, setShowWarningModal] = useState(false);
+  const [pendingAssessmentId, setPendingAssessmentId] = useState<number | null>(null);
 
   // Pagination state
   const [page, setPage] = useState(1);
@@ -146,6 +153,22 @@ function AssessmentContent() {
 
   const handleStartAssessment = (id: number) => {
     const type = getType();
+
+    // Check if therapist specialization matches the assessment type
+    if (profile && profile.therapist_section) {
+      const userSection = profile.therapist_section.toLowerCase(); // e.g. "okupasi"
+      if (userSection !== type.toLowerCase()) {
+        setPendingAssessmentId(id);
+        setShowWarningModal(true);
+        return;
+      }
+    }
+
+    proceedToAssessment(id);
+  };
+
+  const proceedToAssessment = (id: number) => {
+    const type = getType();
     router.push(
       `/terapis/asessment/${type}Asesment?assessment_id=${id}&status=${mappedStatus}`
     );
@@ -162,17 +185,7 @@ function AssessmentContent() {
 
   return (
     <div className="p-6 md:p-8 space-y-8 text-[#1E5C58] bg-[#F8FBFB] min-h-screen">
-      {/* ================= HEADER ================= */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-teal-100/50">
-        <div>
-          <h1 className="text-xl md:text-2xl font-extrabold tracking-tight text-[#1E5C58]">
-            Daftar Asesmen Anak
-          </h1>
-          <p className="text-xs md:text-sm text-gray-400 mt-1">
-            Kelola, jadwalkan, dan tinjau hasil penilaian asesmen klinis pasien.
-          </p>
-        </div>
-      </div>
+
 
       {/* ================= TAB TERAPI ================= */}
       <div className="flex flex-wrap gap-2 p-1.5 bg-[#EAF4F2]/50 border border-teal-50/50 rounded-2xl w-fit">
@@ -405,6 +418,68 @@ function AssessmentContent() {
           </motion.div>
         </AnimatePresence>
       )}
+
+      {/* ================= CUSTOM WARNING MODAL ================= */}
+      <AnimatePresence>
+        {showWarningModal && (
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowWarningModal(false)}
+              className="absolute inset-0 bg-[#1E5C58]/35 backdrop-blur-sm"
+            />
+
+            {/* Modal Body */}
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 10 }}
+              className="relative max-w-md w-full bg-white rounded-3xl p-6 shadow-2xl border border-teal-50 space-y-5 text-center z-10"
+            >
+              {/* Icon */}
+              <div className="mx-auto w-14 h-14 bg-amber-50 rounded-full flex items-center justify-center border border-amber-100 animate-pulse">
+                <AlertTriangle className="w-7 h-7 text-amber-500" />
+              </div>
+
+              {/* Title & Description */}
+              <div className="space-y-2">
+                <h3 className="text-lg font-extrabold text-[#1E5C58]">
+                  Peringatan Akses Asesmen
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-500 font-medium leading-relaxed px-2">
+                  Anda bisa melihat pertanyaan tapi anda tidak bisa menyimpan asesmen.
+                </p>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowWarningModal(false)}
+                  className="cursor-pointer flex-1 py-2.5 rounded-xl border border-teal-100 text-xs font-semibold text-gray-500 hover:bg-gray-50 transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowWarningModal(false);
+                    if (pendingAssessmentId !== null) {
+                      proceedToAssessment(pendingAssessmentId);
+                    }
+                  }}
+                  className="cursor-pointer flex-1 py-2.5 rounded-xl bg-[#1E5C58] hover:bg-[#2E8B83] text-white text-xs font-bold shadow-md hover:shadow-lg transition-colors"
+                >
+                  Lanjutkan
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

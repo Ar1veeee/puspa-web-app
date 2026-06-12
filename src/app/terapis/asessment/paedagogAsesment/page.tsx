@@ -252,7 +252,7 @@ export default function PLBAssessmentPage() {
 
       if (status === 401) {
         handleApiError(err, "Sesi Anda telah berakhir. Silakan login kembali.");
-        router.push("/login");
+        router.push("/auth/login");
         return;
       }
 

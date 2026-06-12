@@ -16,6 +16,8 @@ import {
   ChevronRight,
   IdCard,
   UsersRound,
+  User,
+  Key,
 } from "lucide-react";
 import { useSidebar } from "@/context/SidebarContext";
 
@@ -65,8 +67,8 @@ export const baseMenu: MenuGroup[] = [
         href: "#",
         icon: Settings,
         dropdown: [
-          { name: "Ubah Profil", href: "/terapis/profileTerapis" },
-          { name: "Ubah Password", href: "/terapis/ubahPassword" },
+          { name: "Ubah Profil", href: "/terapis/profileTerapis", icon: User },
+          { name: "Ubah Password", href: "/terapis/ubahPassword", icon: Key },
         ],
       },
       { name: "Log Out", href: "/auth/login", icon: LogOut },
@@ -416,32 +418,35 @@ export default function SidebarTerapis({ isOpen = false, onClose = () => {} }: S
       {/* Logout Confirmation Modal */}
       <AnimatePresence>
         {showLogoutModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-xs p-4">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-sm bg-white rounded-2xl p-6 shadow-2xl border border-gray-100 text-center"
+              className="w-full max-w-sm bg-white rounded-3xl p-6 shadow-[0_20px_50px_rgba(30,92,88,0.12)] border border-teal-50/80 text-center relative overflow-hidden"
             >
-              <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <LogOut size={28} />
+              {/* Decorative Accent Glow */}
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-400 via-rose-500 to-red-400" />
+
+              <div className="w-14 h-14 bg-rose-50 border border-rose-100/60 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-4 mt-2">
+                <LogOut size={24} />
               </div>
-              <h3 className="text-lg font-extrabold text-gray-800 mb-2">
+              <h3 className="text-base font-extrabold text-[#1E5C58] mb-1.5">
                 Konfirmasi Keluar
               </h3>
-              <p className="text-sm text-gray-500 mb-6">
+              <p className="text-xs font-bold text-gray-400 mb-6 max-w-[240px] mx-auto leading-relaxed">
                 Apakah Anda yakin ingin keluar dari sistem PUSPA Terapis?
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowLogoutModal(false)}
-                  className="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition"
+                  className="cursor-pointer flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-500 font-bold text-xs hover:bg-gray-50 transition-all duration-300"
                 >
                   Batal
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold text-sm shadow-lg shadow-red-500/20 transition"
+                  className="cursor-pointer flex-1 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs shadow-[0_4px_12px_rgba(244,63,94,0.2)] hover:shadow-[0_8px_20px_rgba(244,63,94,0.3)] hover:-translate-y-0.5 transition-all duration-300"
                 >
                   Ya, Keluar
                 </button>

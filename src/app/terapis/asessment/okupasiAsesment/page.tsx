@@ -174,7 +174,7 @@ export default function OkupasiAssessmentPage() {
 
       if (status === 401) {
         handleApiError(err, "Sesi Anda telah berakhir. Silakan login kembali.");
-        window.location.href = "/login";
+        window.location.href = "/auth/login";
         return;
       }
 

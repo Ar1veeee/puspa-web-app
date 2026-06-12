@@ -180,47 +180,41 @@ export default function ObservasiPage() {
 
   return (
     <div className="p-6 md:p-8 space-y-8 text-[#1E5C58] bg-[#F8FBFB] min-h-screen">
-      {/* ================= HEADER ================= */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-teal-100/50 pb-6">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-[#1E5C58]">
-            Pilih Anak Untuk Observasi
-          </h1>
-          <p className="text-sm text-gray-400 mt-1">
-            Daftar janji temu anak yang dijadwalkan untuk proses observasi klinis hari ini.
-          </p>
+      {/* ================= SEARCH, FILTER & ACTION ================= */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 w-full">
+        <div className="flex flex-col sm:flex-row gap-4 items-center w-full md:w-auto">
+          {/* Calendar Input */}
+          <div className="relative w-full sm:w-64">
+            <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#81B7A9]" />
+            <input
+              type="date"
+              value={filterDate}
+              onChange={(e) => setFilterDate(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 border border-teal-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#81B7A9] shadow-[0_2px_8px_rgba(30,92,88,0.02)] hover:border-teal-200 transition-colors"
+            />
+          </div>
+
+          {/* Search Input */}
+          <div className="relative w-full sm:w-96">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#81B7A9]" />
+            <input
+              type="text"
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+              placeholder="Cari nama anak atau nama orang tua..."
+              className="w-full pl-10 pr-4 py-2.5 border border-teal-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#81B7A9] shadow-[0_2px_8px_rgba(30,92,88,0.02)] hover:border-teal-200 transition-colors"
+            />
+          </div>
         </div>
+
+        {/* Action Button */}
         <button
           onClick={() => router.push("/terapis/observasi/riwayat")}
-          className="cursor-pointer inline-flex items-center gap-2 bg-[#1E5C58] hover:bg-[#2E8B83] text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition-all duration-300 shadow-[0_4px_12px_rgba(129,183,169,0.2)] hover:shadow-[0_8px_20px_rgba(30,92,88,0.2)] hover:-translate-y-0.5"
+          className="cursor-pointer inline-flex items-center gap-2 bg-[#1E5C58] hover:bg-[#2E8B83] text-white font-semibold px-4 py-2.5 rounded-xl text-xs transition-all duration-300 shadow-sm shrink-0 w-full md:w-auto justify-center md:justify-start"
         >
-          <span>Lihat Riwayat Observasi</span>
+          <span>Riwayat Observasi</span>
           <ArrowRight className="w-4 h-4" />
         </button>
-      </div>
-
-      {/* ================= SEARCH & FILTER ================= */}
-      <div className="flex flex-col sm:flex-row gap-4 items-center">
-        <div className="relative w-full sm:w-64">
-          <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#81B7A9]" />
-          <input
-            type="date"
-            value={filterDate}
-            onChange={(e) => setFilterDate(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 border border-teal-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#81B7A9] shadow-[0_2px_8px_rgba(30,92,88,0.02)] hover:border-teal-200 transition-colors"
-          />
-        </div>
-
-        <div className="relative w-full sm:w-96">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#81B7A9]" />
-          <input
-            type="text"
-            value={searchName}
-            onChange={(e) => setSearchName(e.target.value)}
-            placeholder="Cari nama anak atau nama orang tua..."
-            className="w-full pl-10 pr-4 py-2.5 border border-teal-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#81B7A9] shadow-[0_2px_8px_rgba(30,92,88,0.02)] hover:border-teal-200 transition-colors"
-          />
-        </div>
       </div>
 
       {/* ================= CATEGORY NAVIGATION ================= */}

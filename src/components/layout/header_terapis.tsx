@@ -44,6 +44,15 @@ export default function HeaderTerapis({
   // (untuk page detail / riwayat)
   // ===============================
   const getTitleFromPath = (pathname: string): string | null => {
+    if (pathname === "/terapis/asessment") return "Assessment - Asesor";
+    if (pathname.startsWith("/terapis/asessmentOrtu")) return "Assessment - Orang Tua";
+    if (pathname === "/terapis/observasi") return "Jadwal Observasi";
+    if (pathname === "/terapis/observasi/riwayat") return "Riwayat Observasi";
+    if (pathname.startsWith("/terapis/riwayat/umumRiwayat")) return "Riwayat Asesmen - Umum";
+    if (pathname.startsWith("/terapis/riwayat/fisioterapiRiwayat")) return "Riwayat Asesmen - Fisioterapi";
+    if (pathname.startsWith("/terapis/riwayat/okupasiRiwayat")) return "Riwayat Asesmen - Okupasi";
+    if (pathname.startsWith("/terapis/riwayat/wicaraRiwayat")) return "Riwayat Asesmen - Wicara";
+    if (pathname.startsWith("/terapis/riwayat/paedagogRiwayat")) return "Riwayat Asesmen - Paedagog";
     if (pathname.startsWith("/terapis/riwayat-hasil")) return "Observasi";
     if (pathname.startsWith("/terapis/hasil-observasi")) return "Observasi";
     if (pathname.startsWith("/terapis/asessment/wicaraRiwayat")) return "Assessment Wicara";
@@ -59,7 +68,7 @@ export default function HeaderTerapis({
   };
 
   const title =
-    pageTitle || activeItem?.name || getTitleFromPath(pathname) || "Dashboard";
+    pageTitle || getTitleFromPath(pathname) || activeItem?.name || "Dashboard";
 
   // Foto profil
   const profileImage: string | null =
