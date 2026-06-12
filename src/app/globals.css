@@ -226,3 +226,28 @@ header,
   -ms-overflow-style: none !important;  /* IE and Edge */
   scrollbar-width: none !important;  /* Firefox */
 }
+
+/* Custom modern Teal scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #81B7A9 transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C0DCD6;
+  border-radius: 99px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1E5C58;
+}

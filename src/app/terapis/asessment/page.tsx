@@ -1,13 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, Suspense, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Play, Clock3 } from "lucide-react";
+import { 
+  ChevronDown, 
+  Play, 
+  Clock, 
+  Search, 
+  Calendar, 
+  ClipboardList,
+  Settings 
+} from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getAssessments } from "@/lib/api/asesment";
 
-// --- INTERFACES (Tetap Sama) ---
+// --- INTERFACES ---
 type TerapiTab =
   | "PLB (Paedagog)"
   | "Terapi Okupasi"
@@ -36,10 +44,10 @@ interface Assessment {
 export default function AssessmentPage() {
   return (
     <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 text-[#36315B]">
-        <div className="flex flex-col items-center gap-2">
+      <div className="flex min-h-screen items-center justify-center bg-[#F8FBFB] text-[#1E5C58]">
+        <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#81B7A9] border-t-transparent"></div>
-          <p className="font-semibold">Memuat Halaman Asesmen...</p>
+          <p className="text-sm font-semibold">Memuat Halaman Asesmen...</p>
         </div>
       </div>
     }>
@@ -48,7 +56,7 @@ export default function AssessmentPage() {
   );
 }
 
-// --- SUB-KOMPONEN KONTEN (Logika Asli Anda) ---
+// --- SUB-KOMPONEN KONTEN ---
 function AssessmentContent() {
   const router = useRouter();
   const params = useSearchParams();
@@ -61,7 +69,10 @@ function AssessmentContent() {
   );
   const [dateFilter, setDateFilter] = useState("");
   const [searchName, setSearchName] = useState("");
+  
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
+
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -126,6 +137,13 @@ function AssessmentContent() {
     fetchData();
   }, [activeTab, activeFilter, dateFilter, searchName]);
 
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleOutsideClick = () => setOpenDropdown(null);
+    window.addEventListener("click", handleOutsideClick);
+    return () => window.removeEventListener("click", handleOutsideClick);
+  }, []);
+
   const handleStartAssessment = (id: number) => {
     const type = getType();
     router.push(
@@ -133,252 +151,260 @@ function AssessmentContent() {
     );
   };
 
-  const toggleDropdown = (id: number) =>
-    setOpenDropdown((prev) => (prev === id ? null : id));
-
   // Pagination logic
   const totalPages = Math.ceil(assessments.length / itemsPerPage);
-  const paginatedData = assessments.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
-  );
+  const paginatedData = useMemo(() => {
+    return assessments.slice(
+      (page - 1) * itemsPerPage,
+      page * itemsPerPage
+    );
+  }, [assessments, page]);
 
   return (
-    <div className="p-4 sm:p-8 space-y-6 text-[#1E5C58]">
-      <main className="p-6 flex-1 flex flex-col text-[#1E5C58]">
-  {/* TAB TERAPI */}
-  <div className="flex gap-4 mb-4">
-    {(
-      [
-        "PLB (Paedagog)",
-        "Terapi Okupasi",
-        "Terapi Wicara",
-        "Fisioterapi",
-      ] as TerapiTab[]
-    ).map((tab) => (
-      <button
-        key={tab}
-        onClick={() => setActiveTab(tab)}
-        className={`
-          px-5 py-2 rounded-full text-md font-semibold
-          transition-all duration-300 ease-in-out
-          ${
-            activeTab === tab
-              ? "border border-[#81B7A9] bg-[#d2f3e7] shadow-lg"
-              : "text-[#36315B]/70 hover:text-[#36315B] hover:shadow-md hover:bg-white"
-          }
-        `}
-      >
-        {tab}
-      </button>
-    ))}
-  </div>
+    <div className="p-6 md:p-8 space-y-8 text-[#1E5C58] bg-[#F8FBFB] min-h-screen">
+      {/* ================= HEADER ================= */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-teal-100/50">
+        <div>
+          <h1 className="text-xl md:text-2xl font-extrabold tracking-tight text-[#1E5C58]">
+            Daftar Asesmen Anak
+          </h1>
+          <p className="text-xs md:text-sm text-gray-400 mt-1">
+            Kelola, jadwalkan, dan tinjau hasil penilaian asesmen klinis pasien.
+          </p>
+        </div>
+      </div>
 
+      {/* ================= TAB TERAPI ================= */}
+      <div className="flex flex-wrap gap-2 p-1.5 bg-[#EAF4F2]/50 border border-teal-50/50 rounded-2xl w-fit">
+        {(
+          [
+            "PLB (Paedagog)",
+            "Terapi Okupasi",
+            "Terapi Wicara",
+            "Fisioterapi",
+          ] as TerapiTab[]
+        ).map((tab) => {
+          const isActive = activeTab === tab;
+          return (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`cursor-pointer px-4 py-2.5 text-xs md:text-sm font-semibold rounded-xl transition-all duration-300 ${
+                isActive
+                  ? "bg-[#1E5C58] text-white shadow-sm"
+                  : "text-[#1E5C58]/80 hover:bg-white/60 hover:text-[#1E5C58]"
+              }`}
+            >
+              {tab}
+            </button>
+          );
+        })}
+      </div>
 
+      {/* ================= FILTERS ================= */}
+      <div className="flex flex-col sm:flex-row gap-4 items-center">
+        <div className="relative w-full sm:w-64">
+          <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#81B7A9]" />
+          <input
+            type="date"
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 border border-teal-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#81B7A9] shadow-[0_2px_8px_rgba(30,92,88,0.02)] hover:border-teal-200 transition-colors"
+          />
+        </div>
 
-         {/* FILTERS */}
-<div className="flex flex-wrap sm:flex-row justify-end gap-3 mb-6">
-  <input
-    type="date"
-    value={dateFilter}
-    onChange={(e) => setDateFilter(e.target.value)}
-    className="
-      border border-gray-300
-   px-3 py-2 rounded-lg text-sm shadow-sm
-      transition-all duration-300 ease-in-out
-      hover:shadow-md
-      focus:outline-none focus:ring-2 focus:ring-[#81B7A9] focus:shadow-lg
-    "
-  />
+        <div className="relative w-full sm:w-96">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#81B7A9]" />
+          <input
+            type="text"
+            placeholder="Cari nama anak..."
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 border border-teal-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#81B7A9] shadow-[0_2px_8px_rgba(30,92,88,0.02)] hover:border-teal-200 transition-colors"
+          />
+        </div>
+      </div>
 
-  <input
-    type="text"
-    placeholder="Cari nama anak..."
-    value={searchName}
-    onChange={(e) => setSearchName(e.target.value)}
-    className="
-      border border-gray-300
- px-3 py-2 rounded-lg text-sm shadow-sm w-60
-      transition-all duration-300 ease-in-out
-      hover:shadow-md
-      focus:outline-none focus:ring-2 focus:ring-[#81B7A9] focus:shadow-lg
-    "
-  />
-</div>
+      {/* ================= STATUS FILTER ================= */}
+      <div className="flex border-b border-teal-100/50">
+        {(["Terjadwal", "Selesai"] as StatusFilter[]).map((filter) => {
+          const isActive = activeFilter === filter;
+          return (
+            <button
+              key={filter}
+              onClick={() => setActiveFilter(filter)}
+              className={`cursor-pointer pb-3 px-6 text-sm font-bold transition-all relative ${
+                isActive ? "text-[#1E5C58]" : "text-gray-400 hover:text-gray-600"
+              }`}
+            >
+              <span>{filter}</span>
+              {isActive && (
+                <motion.div
+                  layoutId="activeStatusLine"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1E5C58]"
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
 
+      {/* ================= TABLE LIST ================= */}
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-12 gap-3 text-gray-400">
+          <div className="w-8 h-8 border-4 border-[#81B7A9] border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-sm font-medium">Memuat data asesmen...</span>
+        </div>
+      ) : assessments.length === 0 ? (
+        <div className="bg-white rounded-2xl p-8 border border-teal-50/60 shadow-[0_4px_24px_rgba(30,92,88,0.03)] flex flex-col items-center justify-center gap-3 text-gray-400">
+          <ClipboardList className="w-10 h-10 text-gray-300" />
+          <span className="text-sm font-medium">Tidak ada data asesmen</span>
+        </div>
+      ) : (
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`${activeTab}|${activeFilter}|${dateFilter}|${searchName}|${page}`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="bg-white rounded-2xl p-6 md:p-8 border border-teal-50/60 shadow-[0_4px_24px_rgba(30,92,88,0.03)] hover:shadow-[0_8px_32px_rgba(30,92,88,0.06)] transition-shadow duration-300"
+          >
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-100 text-gray-400 font-semibold">
+                    <th className="py-3 px-4 text-left font-semibold text-xs uppercase tracking-wider">Nama Pasien</th>
+                    <th className="py-3 px-4 text-left font-semibold text-xs uppercase tracking-wider">Nama Orang Tua</th>
+                    <th className="py-3 px-4 text-center font-semibold text-xs uppercase tracking-wider">Telepon</th>
+                    <th className="py-3 px-4 text-left font-semibold text-xs uppercase tracking-wider">Tipe Assessment</th>
+                    <th className="py-3 px-4 text-left font-semibold text-xs uppercase tracking-wider">
+                      {activeFilter === "Selesai" ? "Assessor" : "Administrator"}
+                    </th>
+                    <th className="py-3 px-4 text-center font-semibold text-xs uppercase tracking-wider">Tanggal Asesmen</th>
+                    <th className="py-3 px-4 text-center font-semibold text-xs uppercase tracking-wider">Waktu</th>
+                    <th className="py-3 px-4 text-center font-semibold text-xs uppercase tracking-wider">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {paginatedData.map((item) => (
+                    <tr key={item.assessment_id} className="hover:bg-[#EAF4F2]/20 transition-colors">
+                      <td className="py-4 px-4 font-bold text-gray-700">{item.child_name}</td>
+                      <td className="py-4 px-4 text-gray-600 font-medium">{item.guardian_name}</td>
+                      <td className="py-4 px-4 text-center text-gray-600 font-mono text-xs">{item.guardian_phone}</td>
+                      <td className="py-4 px-4 text-gray-600 font-medium">{item.type}</td>
+                      <td className="py-4 px-4 text-gray-600 font-medium">
+                        {activeFilter === "Selesai" ? item.assessor : item.administrator}
+                      </td>
+                      <td className="py-4 px-4 text-center text-gray-500 font-medium">{item.scheduled_date}</td>
+                      <td className="py-4 px-4 text-center text-gray-500 font-medium">
+                        {activeFilter === "Selesai" ? item.completed_at : item.scheduled_time}
+                      </td>
+                      <td className="py-4 px-4 text-center relative">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const rect = e.currentTarget.getBoundingClientRect();
+                            setOpenDropdown(openDropdown === item.assessment_id ? null : item.assessment_id);
+                            setDropdownPosition({
+                              top: rect.bottom + 6 + window.scrollY,
+                              left: rect.left - 120 + window.scrollX,
+                            });
+                          }}
+                          className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 border border-teal-100 rounded-lg text-[#1E5C58] hover:bg-teal-50/40 text-xs font-semibold transition-colors"
+                        >
+                          <Settings size={14} />
+                          <span>Aksi</span>
+                          <ChevronDown size={12} />
+                        </button>
 
-          {/* STATUS FILTER */}
-          <div className="mb-4 border-b border-gray-200">
-            <ul className="flex text-sm font-semibold">
-              {(["Terjadwal", "Selesai"] as StatusFilter[]).map((filter) => (
-                <li
-                  key={filter}
-                  onClick={() => setActiveFilter(filter)}
-                  className={`pb-2 flex-1 text-center cursor-pointer ${
-                    activeFilter === filter
-                      ? "border-b-2 border-[#81B7A9] text-[#81B7A9]"
-                      : "text-[#36315B]"
+                        {openDropdown === item.assessment_id && dropdownPosition && (
+                          <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="fixed z-[9999] mt-2 w-48 rounded-xl bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-teal-50/80 overflow-hidden py-1 text-[#1E5C58]"
+                            style={{
+                              top: dropdownPosition.top,
+                              left: dropdownPosition.left,
+                            }}
+                          >
+                            {activeFilter === "Terjadwal" ? (
+                              <>
+                                <button
+                                  onClick={() => handleStartAssessment(item.assessment_id)}
+                                  className="cursor-pointer flex items-center w-full px-4 py-2.5 text-xs font-semibold text-gray-700 hover:bg-teal-50/30 hover:text-[#1E5C58] transition-colors"
+                                >
+                                  <Play size={16} className="mr-2 text-[#81B7A9]" />
+                                  Mulai
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    router.push(
+                                      `/terapis/asessment/detailAsesment?assessment_id=${item.assessment_id}&type=${getType()}&status=${mappedStatus}`
+                                    )
+                                  }
+                                  className="cursor-pointer flex items-center w-full px-4 py-2.5 text-xs font-semibold text-gray-700 hover:bg-teal-50/30 hover:text-[#1E5C58] transition-colors"
+                                >
+                                  <Clock size={16} className="mr-2 text-[#81B7A9]" />
+                                  Detail
+                                </button>
+                              </>
+                            ) : (
+                              <button
+                                onClick={() =>
+                                  router.push(
+                                    `/terapis/asessment/${getType()}Riwayat?assessment_id=${item.assessment_id}&status=${mappedStatus}`
+                                  )
+                                }
+                                className="cursor-pointer flex items-center w-full px-4 py-2.5 text-xs font-semibold text-gray-700 hover:bg-teal-50/30 hover:text-[#1E5C58] transition-colors"
+                              >
+                                <Clock size={16} className="mr-2 text-[#81B7A9]" />
+                                Riwayat Jawaban
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* ================= PAGINATION ================= */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-3 pt-4 border-t border-gray-100">
+                <button
+                  disabled={page === 1}
+                  onClick={() => setPage(page - 1)}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+                    page === 1
+                      ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed"
+                      : "bg-white border-teal-100 hover:bg-teal-50/20 text-[#1E5C58]"
                   }`}
                 >
-                  {filter}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* TABLE */}
-          {/* TABLE */}
-<div className="bg-white rounded-xl p-4 border border-gray-100 transition-all duration-300 ease-out will-change-transform shadow-[0_8px_20px_-5px_rgba(16,185,129,0.20)] hover:shadow-[0_18px_36px_-8px_rgba(16,185,129,0.35)] hover:-translate-y-1">
-            {loading ? (
-              <p className="text-center py-4 text-gray-500">Memuat data…</p>
-            ) : assessments.length === 0 ? (
-              <p className="text-center py-4 text-gray-500">
-                Tidak ada data asesmen.
-              </p>
-            ) : (
-              <>
-                <table className="min-w-full text-sm text-[#36315B] border-collapse">
-                  <thead className="bg-[#F8FAF9] border-b-2 border-[#81B7A9]">
-                    <tr className="text-left">
-                      {[
-                        "Nama Pasien",
-                        "Nama Orang Tua",
-                        "Telepon",
-                        "Tipe Assessment",
-                        activeFilter === "Selesai" ? "Assessor" : "Administrator",
-                        "Tanggal Asesmen",
-                        "Waktu",
-                        "Aksi",
-                      ].map((head) => (
-                        <th key={head} className="px-3 py-2 font-semibold">
-                          {head}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {paginatedData.map((item) => (
-                      <tr
-                        key={item.assessment_id}
-                        className="border-t border-[#81B7A9] hover:bg-[#F8FAF9]"
-                      >
-                        <td className="px-3 py-2">{item.child_name}</td>
-                        <td className="px-3 py-2">{item.guardian_name}</td>
-                        <td className="px-3 py-2">{item.guardian_phone}</td>
-                        <td className="px-3 py-2">{item.type}</td>
-
-                        <td className="px-3 py-2">
-                          {activeFilter === "Selesai"
-                            ? item.assessor
-                            : item.administrator}
-                        </td>
-
-                        <td className="px-3 py-2">{item.scheduled_date}</td>
-                        <td className="px-3 py-2">
-                          {activeFilter === "Selesai"
-                            ? item.completed_at
-                            : item.scheduled_time}
-                        </td>
-                        <td className="px-3 py-2 relative">
-                          <button
-                            onClick={() => toggleDropdown(item.assessment_id)}
-                            className="flex items-center gap-1 border border-[#81B7A9] text-[#81B7A9] rounded-md px-4 py-1 text-sm hover:bg-[#E9F4F1]"
-                          >
-                            Aksi <ChevronDown size={14} />
-                          </button>
-
-                          <AnimatePresence>
-                            {openDropdown === item.assessment_id && (
-                              <motion.div
-                                initial={{ opacity: 0, y: -5 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -5 }}
-                                className="absolute bg-white border border-[#81B7A9] shadow-md rounded-md right-0 mt-2 w-44 z-10"
-                              >
-                                {activeFilter === "Terjadwal" ? (
-                                  <>
-                                    <button
-                                      onClick={() =>
-                                        handleStartAssessment(item.assessment_id)
-                                      }
-                                      className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[#E9F4F1] text-[#81B7A9] text-sm"
-                                    >
-                                      <Play size={14} /> Mulai
-                                    </button>
-
-                                    <div className="border-t border-[#81B7A9]" />
-
-                                    <button
-                                      onClick={() =>
-                                        router.push(
-                                          `/terapis/asessment/detailAsesment?assessment_id=${item.assessment_id}&type=${getType()}&status=${mappedStatus}`
-                                        )
-                                      }
-                                      className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[#E9F4F1] text-[#81B7A9] text-sm"
-                                    >
-                                      <Clock3 size={14} /> Detail
-                                    </button>
-                                  </>
-                                ) : (
-                                  <>
-                                    <button
-                                      onClick={() =>
-                                        router.push(
-                                          `/terapis/asessment/${getType()}Riwayat?assessment_id=${item.assessment_id}&status=${mappedStatus}`
-                                        )
-                                      }
-                                      className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[#E9F4F1] text-[#81B7A9] text-sm"
-                                    >
-                                      <Clock3 size={14} /> Riwayat Jawaban
-                                    </button>
-
-                                    <div className="border-t border-[#81B7A9]" />
-                                  </>
-                                )}
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                {/* PAGINATION */}
-                <div className="flex justify-center mt-4">
-                  <div className="flex items-center gap-4">
-                    <button
-                      disabled={page === 1}
-                      onClick={() => setPage(page - 1)}
-                      className={`px-3 py-1 rounded border ${
-                        page === 1
-                          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                          : "bg-white hover:bg-gray-100"
-                      }`}
-                    >
-                      Prev
-                    </button>
-                    <span className="text-sm font-medium">
-                      Page {page} / {totalPages}
-                    </span>
-                    <button
-                      disabled={page === totalPages || totalPages === 0}
-                      onClick={() => setPage(page + 1)}
-                      className={`px-3 py-1 rounded border ${
-                        page === totalPages || totalPages === 0
-                          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                          : "bg-white hover:bg-gray-100"
-                      }`}
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              </>
+                  Sebelumnya
+                </button>
+                <span className="text-xs font-bold text-gray-500">
+                  Halaman {page} / {totalPages}
+                </span>
+                <button
+                  disabled={page === totalPages}
+                  onClick={() => setPage(page + 1)}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+                    page === totalPages
+                      ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed"
+                      : "bg-white border-teal-100 hover:bg-teal-50/20 text-[#1E5C58]"
+                  }`}
+                >
+                  Selanjutnya
+                </button>
+              </div>
             )}
-          </div>
-        </main>
+          </motion.div>
+        </AnimatePresence>
+      )}
     </div>
   );
 }
