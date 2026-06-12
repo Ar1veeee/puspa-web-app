@@ -4,8 +4,6 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import Image from "next/image";
 import { User } from "lucide-react";
-import SidebarTerapis from "@/components/layout/sidebar_terapis";
-import HeaderTerapis from "@/components/layout/header_terapis";
 import { updateProfileWithPhoto } from "@/lib/api/ProfileTerapis";
 import { useTherapistProfile } from "@/context/ProfileTerapisContext";
 
@@ -117,7 +115,7 @@ export default function ProfilePage() {
   // =====================================
   if (loading) {
     return (
-      <p className="text-[#36315B] flex justify-center items-center min-h-screen">
+      <p className="text-[#1E5C58] flex justify-center items-center min-h-screen">
         Loading...
       </p>
     );
@@ -127,16 +125,10 @@ export default function ProfilePage() {
   // UI
   // =====================================
   return (
-    <div className="flex min-h-screen bg-gray-100 text-[#36315B]">
-      <SidebarTerapis />
-
-      <div className="flex-1">
-        <HeaderTerapis />
-
-        <main className="p-10 flex flex-col items-center">
-          {!isEditing ? (
-            /* ================= VIEW MODE ================= */
-            <div className="bg-white rounded-xl shadow-lg p-6 max-w-5xl w-full">
+    <div className="p-8 md:p-10 flex flex-col items-center text-[#1E5C58]">
+      {!isEditing ? (
+        /* ================= VIEW MODE ================= */
+        <div className="bg-white rounded-xl shadow-lg p-6 max-w-5xl w-full border border-teal-50">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* FOTO */}
                 <div className="flex flex-col items-center text-center p-6 shadow rounded-xl bg-white">
@@ -299,8 +291,6 @@ export default function ProfilePage() {
               )}
             </div>
           )}
-        </main>
-      </div>
     </div>
   );
 }

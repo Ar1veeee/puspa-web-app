@@ -6,8 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
-import SidebarTerapis from "@/components/layout/sidebar_terapis";
-import HeaderTerapis from "@/components/layout/header_terapis";
 import { 
   getAssessmentAnswers,
   getAssessmentQuestions
@@ -153,28 +151,8 @@ export default function RiwayatWicaraPage() {
 
   if (loading) return <p className="p-6">Memuat riwayat...</p>;
 
- return (
-  <div className="flex h-screen bg-gray-50 text-[#36315B] overflow-hidden">
-
-    {/* SIDEBAR FIXED */}
-    <div className="fixed inset-y-0 left-0 w-64 z-40 bg-white">
-      <SidebarTerapis />
-    </div>
-
-    {/* AREA KANAN */}
-    <div className="ml-64 flex-1 flex flex-col">
-
-      {/* HEADER FIXED */}
-      <div className="fixed top-0 left-64 right-0 h-16 z-30 bg-white border-b border-gray-200">
-        <HeaderTerapis />
-      </div>
-
-      {/* FRAME UTAMA (SCROLL DI SINI) */}
-      <div
-        className="pt-16 h-screen overflow-y-auto"
-      >
-        <div className="p-6">
-          <div className="bg-white rounded-xl shadow-md border border-gray-200"></div>
+  return (
+    <div className="p-6 text-[#1E5C58]">
            <div className="flex justify-end mb-4">
             <button
               onClick={() => (window.location.href = "/terapis/asessment")}
@@ -305,9 +283,6 @@ export default function RiwayatWicaraPage() {
               </AnimatePresence>
             </div>
           ))}
-        </div>
-      </div>
     </div>
-     </div>
   );
 }

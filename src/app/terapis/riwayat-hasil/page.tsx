@@ -3,8 +3,6 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import SidebarTerapis from "@/components/layout/sidebar_terapis";
-import HeaderTerapis from "@/components/layout/header_terapis";
 import {
   getObservationDetail,
   getObservationQuestions,
@@ -138,23 +136,19 @@ export default function RiwayatJawabanPage() {
     );
 
   return (
-    <div className="flex h-screen text-[#36315B] font-playpen">
-      <SidebarTerapis />
-      <div className="flex flex-col flex-1 bg-gray-50">
-        <HeaderTerapis />
-        <main className="p-6 overflow-y-auto">
-          <div className="flex justify-end mb-4">
-            <button
-              onClick={() =>
-                (window.location.href = "/terapis/observasi/riwayat")
-              }
-              className="text-[#36315B] hover:text-red-500 font-bold text-2xl"
-            >
-              ✕
-            </button>
-          </div>
+    <div className="p-6 text-[#1E5C58]">
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() =>
+            (window.location.href = "/terapis/observasi/riwayat")
+          }
+          className="text-gray-400 hover:text-red-500 font-bold text-2xl"
+        >
+          ✕
+        </button>
+      </div>
 
-          {loading ? (
+      {loading ? (
             <div className="flex flex-col items-center justify-center mt-20 text-gray-500">
               <div className="w-10 h-10 border-4 border-[#81B7A9] border-t-transparent rounded-full animate-spin mb-3"></div>
               <p className="text-sm">Memuat jawaban...</p>
@@ -298,8 +292,6 @@ export default function RiwayatJawabanPage() {
               </div>
             </>
           )}
-        </main>
-      </div>
     </div>
   );
 }

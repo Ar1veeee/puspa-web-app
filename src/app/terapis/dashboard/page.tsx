@@ -12,8 +12,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import SidebarTerapis from "@/components/layout/sidebar_terapis";
-import HeaderTerapis from "@/components/layout/header_terapis";
 import PasienChart from "@/components/dashboard/pasien_chart";
 
 import {
@@ -112,21 +110,15 @@ const filteredSchedule = schedule.filter((s: any) => {
 
   if (loading || !role) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-lg">
+      <div className="min-h-screen flex items-center justify-center text-lg text-[#1E5C58]">
         Loading dashboard...
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 text-[#36315B]">
-      <SidebarTerapis />
-
-      <div className="flex flex-col flex-1">
-        <HeaderTerapis />
-
-        <main className="p-8 space-y-10 overflow-y-auto">
-          {/* ================= METRIC CARDS ================= */}
+    <div className="p-8 space-y-10 text-[#1E5C58]">
+      {/* ================= METRIC CARDS ================= */}
           <div
             className={`grid gap-6 ${
               role === "terapis" ? "grid-cols-3" : "grid-cols-4"
@@ -320,8 +312,6 @@ const filteredSchedule = schedule.filter((s: any) => {
 
             </table>
           </div>
-        </main>
-      </div>
     </div>
   );
 }

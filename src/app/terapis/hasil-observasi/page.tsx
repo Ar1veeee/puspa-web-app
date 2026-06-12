@@ -3,8 +3,6 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import SidebarTerapis from "@/components/layout/sidebar_terapis";
-import HeaderTerapis from "@/components/layout/header_terapis";
 import {
   getObservationDetail,
   getObservations,
@@ -68,21 +66,17 @@ export default function HasilObservasiFrame() {
   }, [observationId]);
 
   return (
-    <div className="flex h-screen text-[#36315B] font-playpen">
-      <SidebarTerapis />
-      <div className="flex flex-col flex-1 bg-gray-50">
-        <HeaderTerapis />
-
-        <main className="p-10 bg-white m-4 rounded-xl shadow-md overflow-auto">
-          <div className="flex justify-end mb-4">
-  <button
-    onClick={() => (window.location.href = "/terapis/observasi/riwayat")}
-    className="text-[#36315B] hover:text-red-500 font-bold text-2xl"
-  >
-    ✕
-  </button>
-</div>
-          {loading ? (
+    <div className="p-8 md:p-10 text-[#1E5C58]">
+      <main className="p-10 bg-white rounded-xl shadow-md overflow-auto border border-teal-50">
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => (window.location.href = "/terapis/observasi/riwayat")}
+            className="text-gray-400 hover:text-red-500 font-bold text-2xl"
+          >
+            ✕
+          </button>
+        </div>
+        {loading ? (
             <div className="flex items-center justify-center h-96 text-gray-500 animate-pulse">
               Memuat hasil observasi...
             </div>
@@ -172,8 +166,7 @@ export default function HasilObservasiFrame() {
               </div>
             </>
           )}
-        </main>
-      </div>
+      </main>
     </div>
   );
 }

@@ -4,10 +4,8 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Eye, Menu } from "lucide-react";
+import { Eye } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import SidebarTerapis from "@/components/layout/sidebar_terapis";
-import HeaderTerapis from "@/components/layout/header_terapis";
 import {
   getScheduledObservations,
   getScheduledObservationDetail,
@@ -171,45 +169,7 @@ export default function ObservasiPage() {
   }, [filterDate, searchName]);
 
   return (
-    <div className="flex h-screen text-[#36315B] font-playpen">
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-40 z-40 sm:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-<div
-  className={`
-    fixed inset-y-0 left-0 z-40 w-64 bg-white
-    shadow-lg transform transition-transform duration-300
-    ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-    sm:translate-x-0
-  `}
->
-
-        <SidebarTerapis
-          activePage="observasi"
-          isMobile={true}
-          onClose={() => setSidebarOpen(false)}
-        />
-      </div>
-
-      <div className="flex flex-col flex-1 bg-gray-50">
-        <div className="fixed top-0 left-0 sm:left-64 right-0 z-30 bg-white shadow-sm">
-  <HeaderTerapis />
-</div>
-
-
-        <div className="sm:hidden p-2">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-md text-[#36315B] hover:bg-gray-200"
-          >
-            <Menu size={24} />
-          </button>
-        </div>
-
-        <main className="pt-20 sm:pt-24 pl-0 sm:pl-[18rem] p-4 sm:p-6 overflow-y-auto">
+    <div className="p-4 sm:p-8 space-y-6 text-[#1E5C58]">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-3">
             <h2 className="text-lg sm:text-2xl font-bold">Pilih Anak Untuk Observasi</h2>
             <button
@@ -499,8 +459,6 @@ export default function ObservasiPage() {
               </motion.div>
             )}
           </AnimatePresence>
-        </main>
-      </div>
     </div>
   );
 }

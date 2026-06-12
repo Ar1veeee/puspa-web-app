@@ -3,8 +3,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import SidebarTerapis from "@/components/layout/sidebar_terapis";
-import HeaderTerapis from "@/components/layout/header_terapis";
+
+
 import { getUmumParentAnswer } from "@/lib/api/riwayatAsesmentOrtu";
 
 /* ===================== TYPES ===================== */
@@ -145,29 +145,7 @@ export default function RiwayatJawabanUmum() {
   if (errorMsg) return <div className="p-10 text-center text-red-600">{errorMsg}</div>;
 
   return (
-         <div className="flex h-screen bg-gray-50 text-[#36315B] overflow-hidden">
-       
-           {/* SIDEBAR FIXED */}
-           <div className="fixed inset-y-0 left-0 w-64 z-40 bg-white">
-             <SidebarTerapis />
-           </div>
-       
-           {/* AREA KANAN */}
-           <div className="ml-64 flex-1 flex flex-col">
-       
-             {/* HEADER FIXED */}
-             <div className="fixed top-0 left-64 right-0 h-16 z-30 bg-white border-b border-gray-200">
-               <HeaderTerapis pageTitle="Assessment" />
-             </div>
-       
-             {/* FRAME UTAMA (SCROLL DI SINI) */}
-             <div
-               className="pt-16 h-screen overflow-y-auto"
-             >
-               <div className="p-6">
-                 <div className="bg-white rounded-xl shadow-md border border-gray-200"></div>
-   
-
+    <div className="p-6 text-[#1E5C58]">
         <main className="p-8 flex-1 overflow-y-auto">
           <div className="flex justify-end mb-4">
             <button
@@ -272,9 +250,6 @@ export default function RiwayatJawabanUmum() {
 
           </div>
         </main>
-      </div>
-    </div>
-    </div>
     </div>
   );
 }

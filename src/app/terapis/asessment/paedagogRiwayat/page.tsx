@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 
-import SidebarTerapis from "@/components/layout/sidebar_terapis";
-import HeaderTerapis from "@/components/layout/header_terapis";
 import { getAssessmentAnswers } from "@/lib/api/asesment";
 
 /* ======================
@@ -154,13 +152,8 @@ export default function RiwayatJawabanPaedagogPage() {
      RENDER
   ====================== */
   return (
-    <div className="flex h-screen font-playpen text-[#36315B]">
-      <SidebarTerapis />
-
-      <div className="flex flex-1 flex-col bg-gray-50">
-        <HeaderTerapis />
-
-        <main className="overflow-y-auto p-6">
+    <div className="p-6 text-[#1E5C58]">
+      <main className="overflow-y-auto p-6">
           {/* CLOSE */}
           <div className="mb-4 flex justify-end">
             <button
@@ -283,7 +276,6 @@ export default function RiwayatJawabanPaedagogPage() {
             </button>
           </div>
         </main>
-      </div>
     </div>
   );
 }

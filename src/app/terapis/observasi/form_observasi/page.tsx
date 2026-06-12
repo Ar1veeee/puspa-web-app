@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import SidebarTerapis from "@/components/layout/sidebar_terapis";
-import HeaderTerapis from "@/components/layout/header_terapis";
 import {
   submitObservation,
   getObservationQuestions,
@@ -192,20 +190,16 @@ export default function FormObservasiPage() {
   };
 
   return (
-    <div className="flex h-screen text-[#36315B] font-playpen">
-      <SidebarTerapis />
-      <div className="flex flex-col flex-1 bg-gray-50">
-        <HeaderTerapis />
-        <main className="p-6 overflow-y-auto">
-          {/* 🔹 Tombol Close di atas Total Skor */}
-          <div className="flex justify-end mb-4">
-            <button
-              onClick={() => (window.location.href = "/terapis/observasi")}
-              className="text-[#36315B] hover:text-red-500 font-bold text-2xl"
-            >
-              ✕
-            </button>
-          </div>
+    <div className="p-6 text-[#1E5C58]">
+      {/* 🔹 Tombol Close di atas Total Skor */}
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() => (window.location.href = "/terapis/observasi")}
+          className="text-gray-400 hover:text-red-500 font-bold text-2xl"
+        >
+          ✕
+        </button>
+      </div>
 
           {loading ? (
             <div className="flex flex-col items-center justify-center mt-20 text-gray-500">
@@ -454,8 +448,6 @@ export default function FormObservasiPage() {
               )}
             </>
           )}
-        </main>
-      </div>
     </div>
   );
 }

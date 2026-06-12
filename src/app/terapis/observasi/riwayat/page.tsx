@@ -4,8 +4,6 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import SidebarTerapis from "@/components/layout/sidebar_terapis";
-import HeaderTerapis from "@/components/layout/header_terapis";
 import { ChevronDown, Settings, Clock3, Eye } from "lucide-react";
 import { getObservations } from "@/lib/api/observasiSubmit";
 import { handleApiError } from "@/lib/api-error";
@@ -128,29 +126,8 @@ export default function RiwayatObservasiPage() {
 
   // ==================== UI ====================
   return (
-      <div className="flex h-screen bg-gray-50 text-[#36315B] ">
-    
-        {/* SIDEBAR FIXED */}
-        <div className="fixed inset-y-0 left-0 w-64 z-40 bg-white">
-          <SidebarTerapis />
-        </div>
-    
-        {/* AREA KANAN */}
-        <div className="ml-64 flex-1 flex flex-col">
-    
-          {/* HEADER FIXED */}
-          <div className="fixed top-0 left-64 right-0 h-16 z-30 bg-white border-b border-gray-200">
-            <HeaderTerapis />
-          </div>
-    
-          {/* FRAME UTAMA (SCROLL DI SINI) */}
-          <div
-            className="pt-16 h-screen overflow-y-auto"
-          >
-            <div className="p-6">
-             
-
-        <main className="p-4 sm:p-6 overflow-y-auto">
+    <div className="p-4 sm:p-8 space-y-6 text-[#1E5C58]">
+      <main className="p-4 sm:p-6 overflow-y-auto">
           <button
             onClick={() => router.push("/terapis/observasi")}
             className="mb-4 px-4 py-2 text-sm font-semibold text-[#36315B] border border-[#81B7A9] rounded hover:bg-[#81B7A9] hover:text-white transition"
@@ -364,9 +341,6 @@ export default function RiwayatObservasiPage() {
             </AnimatePresence>
           )}
         </main>
-      </div>
-    </div>
-    </div>
     </div>
   );
 }

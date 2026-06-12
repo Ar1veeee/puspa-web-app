@@ -3,8 +3,6 @@
 
 import { useEffect, useState, Suspense } from "react"; // Tambahkan Suspense
 import { ChevronDown } from "lucide-react";
-import SidebarTerapis from "@/components/layout/sidebar_terapis";
-import HeaderTerapis from "@/components/layout/header_terapis";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getAssessmentQuestions, submitAssessment } from "@/lib/api/asesment";
 import { handleApiError, showSuccessToast } from "@/lib/api-error";
@@ -242,26 +240,8 @@ function AsesmenWicaraContent() {
 
 
   /* ================= RENDER ================= */
- return (
-  <div className="flex min-h-screen bg-gray-50">
-    {/* ================= SIDEBAR ================= */}
-    <div className="fixed inset-y-0 left-0 w-64 z-40 bg-white">
-      <SidebarTerapis />
-    </div>
-
-    {/* ================= AREA KANAN ================= */}
-    <div className="ml-64 flex flex-col flex-1">
-      {/* ================= HEADER ================= */}
-      <div className="fixed top-0 left-64 right-0 h-16 z-30 bg-white shadow">
-        <HeaderTerapis />
-      </div>
-
-      {/* ================= KONTEN (SCROLL) ================= */}
-      <div
-        className="pt-16 overflow-y-auto"
-        style={{ height: "calc(100vh - 4rem)" }} // 4rem = h-16
-      >
-        <div className="p-6">
+  return (
+    <div className="p-6 text-[#1E5C58]">
 
           <div className="flex justify-end mb-4">
             <button
@@ -390,10 +370,6 @@ function AsesmenWicaraContent() {
               Simpan
             </button>
           </div>
-        </div>
-      </div>
     </div>
-      </div>
-
   );
 }

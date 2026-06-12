@@ -3,8 +3,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import SidebarTerapis from "@/components/layout/sidebar_terapis";
-import HeaderTerapis from "@/components/layout/header_terapis";
 import { getAssessmentQuestions, submitAssessment } from "@/lib/api/asesment";
 import { handleApiError, showSuccessToast } from "@/lib/api-error";
 
@@ -197,12 +195,7 @@ export default function OkupasiAssessmentPage() {
   let lastSubTitle: string | null = null;
 
   return (
-    <div className="flex h-screen bg-gray-50 text-[#36315B]">
-      <SidebarTerapis />
-      <div className="flex-1 flex flex-col">
-        <HeaderTerapis />
-
-        <div className="p-6 overflow-auto">
+    <div className="p-6 text-[#1E5C58]">
           <div className="flex justify-end mb-4">
             <button
               onClick={() => (window.location.href = "/terapis/asessment")}
@@ -362,8 +355,6 @@ export default function OkupasiAssessmentPage() {
               </button>
             )}
           </div>
-        </div>
-      </div>
     </div>
   );
 }

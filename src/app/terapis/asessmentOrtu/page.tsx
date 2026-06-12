@@ -4,8 +4,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import SidebarTerapis from "@/components/layout/sidebar_terapis";
-import HeaderTerapis from "@/components/layout/header_terapis";
 import { ChevronDown } from "lucide-react";
 import { getPendingParents, getCompletedParents } from "@/lib/api/asesmentParent";
 import { uploadAssessmentReport } from "@/lib/api/asesmentReport";
@@ -117,29 +115,8 @@ export default function AssessmentPage() {
   };
 
   return (
-      <div className="flex h-screen bg-gray-50 text-[#36315B] overflow-hidden">
-    
-        {/* SIDEBAR FIXED */}
-        <div className="fixed inset-y-0 left-0 w-64 z-40 bg-white">
-          <SidebarTerapis />
-        </div>
-    
-        {/* AREA KANAN */}
-        <div className="ml-64 flex-1 flex flex-col">
-    
-          {/* HEADER FIXED */}
-          <div className="fixed top-0 left-64 right-0 h-16 z-30 bg-white border-b border-gray-200">
-            <HeaderTerapis />
-          </div>
-    
-          {/* FRAME UTAMA (SCROLL DI SINI) */}
-          <div
-            className="pt-16 h-screen overflow-y-auto"
-          >
-            <div className="p-6">
-  
-
-        <main className="p-6 flex-1">
+    <div className="p-4 sm:p-8 space-y-6 text-[#1E5C58]">
+      <main className="p-6 flex-1 text-[#1E5C58]">
         {/* Search & Date */}
 <div className="flex flex-col md:flex-row md:items-center gap-2 mb-4">
   <input
@@ -366,7 +343,6 @@ export default function AssessmentPage() {
             </div>
           )}
         </main>
-      </div>
 
       {/* ================= MODAL UPLOAD FILE ================= */}
       <AnimatePresence>
@@ -437,8 +413,6 @@ export default function AssessmentPage() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
-    </div>
     </div>
   );
 }

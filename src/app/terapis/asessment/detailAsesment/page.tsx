@@ -5,8 +5,6 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { getAssessmentDetail } from "@/lib/api/asesment";
 
-import SidebarTerapis from "@/components/layout/sidebar_terapis";
-import HeaderTerapis from "@/components/layout/header_terapis";
 import { X } from "lucide-react";
 
 export default function DetailAssessmentPage() {
@@ -43,18 +41,7 @@ export default function DetailAssessmentPage() {
   }
 
   return (
-    <div className="flex w-full min-h-screen bg-[#F9FAFB]">
-
-      {/* SIDEBAR */}
-      <SidebarTerapis />
-
-      <div className="flex-1 flex flex-col">
-
-        {/* HEADER */}
-        <HeaderTerapis />
-
-        {/* CONTENT */}
-        <div className="p-6 w-full text-[#36315B]">
+    <div className="p-6 w-full text-[#1E5C58]">
 
 
           {/* TITLE BAR */}
@@ -114,9 +101,6 @@ export default function DetailAssessmentPage() {
               <p className="text-sm">{detail.complaint}</p>
             </div>
           )}
-
-        </div>
-      </div>
     </div>
   );
 }

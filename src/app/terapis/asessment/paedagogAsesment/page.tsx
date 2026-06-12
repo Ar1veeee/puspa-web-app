@@ -6,9 +6,6 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
-import SidebarTerapis from "@/components/layout/sidebar_terapis";
-import HeaderTerapis from "@/components/layout/header_terapis";
-
 import { submitAssessment, getAssessmentQuestions } from "@/lib/api/asesment";
 import { handleApiError, showSuccessToast } from "@/lib/api-error";
 
@@ -275,11 +272,8 @@ export default function PLBAssessmentPage() {
   }
 
   return (
-    <div className="flex h-screen text-[#36315B] font-playpen">
-      <SidebarTerapis />
-      <div className="flex flex-col flex-1 bg-gray-50">
-        <HeaderTerapis />
-        <main className="p-6 overflow-y-auto">
+    <div className="p-6 text-[#1E5C58]">
+      <main className="p-6 overflow-y-auto">
           <div className="flex justify-end mb-4">
             <button
               onClick={() => (window.location.href = "/terapis/asessment")}
@@ -428,7 +422,6 @@ export default function PLBAssessmentPage() {
             )}
           </div>
         </main>
-      </div>
     </div>
   );
 }

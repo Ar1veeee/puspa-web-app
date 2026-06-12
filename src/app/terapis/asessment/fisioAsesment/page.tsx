@@ -4,8 +4,6 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-import SidebarTerapis from "@/components/layout/sidebar_terapis";
-import HeaderTerapis from "@/components/layout/header_terapis";
 
 import { getAssessmentQuestions, submitAssessment } from "@/lib/api/asesment";
 import { handleApiError, showSuccessToast } from "@/lib/api-error";
@@ -228,26 +226,7 @@ const khususIndex = pemeriksaanKhususList.findIndex(
   }
 
   return (
-  <div className="flex h-screen bg-gray-50 overflow-hidden">
-
-    {/* SIDEBAR */}
-    <div className="fixed inset-y-0 left-0 w-64 z-40 bg-white">
-      <SidebarTerapis />
-    </div>
-
-    {/* AREA KANAN */}
-    <div className="ml-64 flex-1">
-
-      {/* HEADER */}
-      <div className="fixed top-0 left-64 right-0 h-16 z-30 bg-white">
-        <HeaderTerapis />
-      </div>
-
-      {/* CONTENT SCROLL */}
-      <div
-        className="pt-16 h-screen overflow-y-auto bg-gray-50"
-      >
-        <div className="p-6">
+    <div className="p-6 text-[#1E5C58]">
           {/* FRAME UTAMA */}
           <div className="bg-white rounded-xl shadow-md border border-gray-200"></div>
           <div className="flex justify-end mb-4">
@@ -627,10 +606,6 @@ const khususIndex = pemeriksaanKhususList.findIndex(
               </button>
             </div>
           )}
-        </div>
-      </div>
     </div>
-       </div>
-
   );
 }
