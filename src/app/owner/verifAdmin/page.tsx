@@ -1,17 +1,22 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Sidebar from "@/components/layout/sidebar_owner";
-import Header from "@/components/layout/header_owner";
+import { motion } from "framer-motion";
+import {
+  ShieldCheck,
+  Search,
+  Check,
+  X,
+  User,
+  Mail,
+  Calendar,
+} from "lucide-react";
 import {
   getUnverifiedAdmins,
   activateAdmin,
   deactivateAdmin,
 } from "@/lib/api/ownerAdmin";
 
-// ==========================
-// TYPE
-// ==========================
 interface AdminData {
   user_id: string;
   admin_id: string;
@@ -23,209 +28,183 @@ interface AdminData {
 
 const VerifikasiAdminPage: React.FC = () => {
   const [admins, setAdmins] = useState<AdminData[]>([]);
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // ==========================
-  // FETCH DATA ADMIN
-  // ==========================
   const fetchUnverifiedAdmins = async () => {
     setLoading(true);
-    const res = await getUnverifiedAdmins();
-    if (res.success) {
-      setAdmins(res.data);
-    } else {
-      alert(res.message || "Gagal memuat data admin.");
+    try {
+      const res = await getUnverifiedAdmins();
+      if (res.success && Array.isArray(res.data)) {
+        setAdmins(res.data);
+      } else {
+        console.error("Gagal memuat data admin:", res.message);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
     fetchUnverifiedAdmins();
   }, []);
 
-  // ==========================
-  // HANDLE APPROVE ADMIN
-  // ==========================
   const handleApprove = async (user_id: string) => {
     const confirmApprove = window.confirm("Aktifkan admin ini?");
     if (!confirmApprove) return;
 
-    const res = await activateAdmin(user_id);
-
-    if (res.success) {
-      alert("Admin berhasil diaktifkan!");
-      // Refresh daftar admin belum verifikasi
-      fetchUnverifiedAdmins();
-    } else {
-      alert(res.message || "Gagal mengaktifkan admin.");
+    try {
+      const res = await activateAdmin(user_id);
+      if (res.success) {
+        alert("Admin berhasil diaktifkan!");
+        fetchUnverifiedAdmins();
+      } else {
+        alert(res.message || "Gagal mengaktifkan admin.");
+      }
+    } catch (err) {
+      alert("Terjadi kesalahan.");
     }
   };
 
-  // ==========================
-  // HANDLE REJECT ADMIN
-  // ==========================
   const handleReject = async (user_id: string) => {
     const confirmReject = window.confirm("Apakah Anda yakin ingin menolak admin ini?");
     if (!confirmReject) return;
 
-    const result = await deactivateAdmin(user_id);
-
-    if (result.success) {
-      alert("Admin berhasil ditolak.");
-      // reload ulang data admin belum terverifikasi
-      fetchUnverifiedAdmins();
-    } else {
-      alert(result.message || "Gagal menolak admin.");
+    try {
+      const result = await deactivateAdmin(user_id);
+      if (result.success) {
+        alert("Admin berhasil ditolak.");
+        fetchUnverifiedAdmins();
+      } else {
+        alert(result.message || "Gagal menolak admin.");
+      }
+    } catch (err) {
+      alert("Terjadi kesalahan.");
     }
   };
 
+  const filteredAdmins = admins.filter(
+    (item) =>
+      item.admin_name.toLowerCase().includes(search.toLowerCase()) ||
+      item.email.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-        <div className="min-h-screen bg-[#F7F7F7] text-[#36315B]">
-         {/* SIDEBAR */}
-    <div className="fixed inset-y-0 left-0 w-64 z-40 bg-white">
-      <Sidebar />
-    </div>
-    
-    {/* HEADER */}
-    <div className="fixed top-0 left-64 right-0 h-16 z-30 bg-white shadow">
-      <Header />
-    </div>
-    
-    {/* CONTENT (INI YANG SCROLL) */}
-    <div className="ml-64 pt-16 h-screen overflow-y-auto bg-[#F7F7F7]">
-
-        <main className="p-8">
-          <section className="bg-white rounded-xl shadow-lg p-6">
-            <h1 className="text-2xl font-bold mb-3 pb-2">
-              Menunggu Verifikasi
-            </h1>
-
-            {/* Search */}
-            <div className="flex justify-end mb-4 relative w-full max-w-xs ml-auto">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z"
-                />
-              </svg>
-              <input
-                type="search"
-                placeholder="Search"
-                className="border border-gray-300 rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#81B7A9] w-full"
-              />
+    <div className="flex min-h-[calc(100vh-80px)] bg-transparent w-full">
+      <div className="flex flex-col flex-1 w-full px-4 sm:px-6 lg:px-8 py-8">
+        {/* Page Actions */}
+        <div className="flex justify-start mb-6">
+          {/* Search Bar */}
+          <div className="relative w-full sm:w-64">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-4 w-4 text-gray-400" />
             </div>
+            <input
+              type="text"
+              placeholder="Cari admin..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 bg-white border border-teal-50 rounded-xl text-sm focus:ring-2 focus:ring-teal-100 focus:border-teal-400 outline-none transition-all placeholder-gray-400 font-medium text-gray-750 shadow-xs"
+            />
+          </div>
+        </div>
 
-            {/* Loading */}
-            {loading ? (
-              <p className="text-center py-6 text-gray-500">Loading...</p>
-            ) : admins.length === 0 ? (
-              <p className="text-center py-6 text-gray-500">
-                Tidak ada admin yang menunggu verifikasi.
+
+
+        {/* Table Container */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.99 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          className="bg-white rounded-3xl shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] border border-teal-50 overflow-hidden"
+        >
+          {loading ? (
+            <div className="flex flex-col items-center justify-center p-16">
+              <div className="w-10 h-10 border-4 border-teal-100 border-t-[#2B7A75] rounded-full animate-spin mb-4" />
+              <p className="text-gray-400 font-medium text-sm animate-pulse">
+                Memuat berkas verifikasi...
               </p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr>
-                      {[
-                        { label: "No", width: "w-12" },
-                        { label: "Nama Admin" },
-                        { label: "Email" },
-                        { label: "Tanggal Pendaftaran" },
-                        { label: "Aksi", width: "w-48" },
-                      ].map(({ label, width }) => (
-                        <th
-                          key={label}
-                          className={`py-3 px-4 font-semibold text-[#36315B] border-b-2 ${
-                            width || ""
-                          }`}
-                          style={{ borderBottomColor: "#81B7A9" }}
-                        >
-                          {label}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {admins.map((admin, idx) => (
-                      <tr
-                        key={admin.user_id}
-                        className={`border-b ${
-                          idx % 2 === 0 ? "bg-white" : "bg-gray-50"
-                        }`}
-                        style={{ borderBottomColor: "#81B7A9" }}
-                      >
-                        <td className="py-3 px-4">{idx + 1}</td>
-                        <td className="py-3 px-4">{admin.admin_name}</td>
-                        <td className="py-3 px-4 text-[#757575]">
-                          {admin.email}
-                        </td>
-                        <td className="py-3 px-4 text-[#757575]">
-                          {admin.createdAt.split(" ").slice(0, 3).join(" ")}
-                        </td>
-
-                        <td className="py-3 px-4 flex gap-3">
-                          {/* Approve */}
-                          <button
-                            onClick={() => handleApprove(admin.user_id)}
-                            className="bg-green-500 text-white px-3 py-1 rounded-md flex items-center gap-1 hover:bg-green-600 transition"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-4 w-4"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              strokeWidth={2}
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                            Setujui
-                          </button>
-
-                          {/* Reject */}
-                          <button
-                            onClick={() => handleReject(admin.user_id)}
-                            className="bg-red-600 text-white px-3 py-1 rounded-md flex items-center gap-1 hover:bg-red-700 transition"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-4 w-4"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              strokeWidth={2}
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                            Tolak
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            </div>
+          ) : filteredAdmins.length === 0 ? (
+            <div className="flex flex-col items-center justify-center p-20 text-center">
+              <div className="w-20 h-20 bg-teal-50/50 rounded-full flex items-center justify-center mb-4">
+                <ShieldCheck className="w-10 h-10 text-[#2B7A75] opacity-40" />
               </div>
-            )}
-          </section>
-        </main>
+              <h3 className="text-lg font-bold text-gray-700 mb-1">
+                Tidak Ada Antrean Verifikasi
+              </h3>
+              <p className="text-gray-400 text-sm max-w-sm">
+                Saat ini belum ada administrator baru yang menunggu verifikasi dari Anda.
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-linear-to-r from-gray-50 to-white border-b border-gray-100">
+                    <th className="py-4 px-6 text-xs font-bold text-gray-400 uppercase tracking-wider w-16">
+                      No
+                    </th>
+                    <th className="py-4 px-6 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                      Nama Admin
+                    </th>
+                    <th className="py-4 px-6 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th className="py-4 px-6 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                      Tanggal Pendaftaran
+                    </th>
+                    <th className="py-4 px-6 text-xs font-bold text-gray-400 uppercase tracking-wider text-center w-64">
+                      Tindakan
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredAdmins.map((admin, idx) => (
+                    <tr
+                      key={admin.user_id}
+                      className="border-b border-gray-50 last:border-0 hover:bg-[#F4F9F8]/50 transition-colors"
+                    >
+                      <td className="py-4 px-6 text-sm font-semibold text-gray-400">
+                        {idx + 1}
+                      </td>
+                      <td className="py-4 px-6 text-sm font-bold text-gray-800">
+                        {admin.admin_name}
+                      </td>
+                      <td className="py-4 px-6 text-sm font-medium text-gray-500">
+                        {admin.email}
+                      </td>
+                      <td className="py-4 px-6 text-sm font-semibold text-[#1E5C58]">
+                        {admin.createdAt.split(" ").slice(0, 3).join(" ")}
+                      </td>
+                      <td className="py-4 px-6 flex items-center justify-center gap-3">
+                        {/* Approve Button */}
+                        <button
+                          onClick={() => handleApprove(admin.user_id)}
+                          className="cursor-pointer inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100/80 text-emerald-700 border border-emerald-200/50 transition-all font-bold text-xs shadow-xs hover:-translate-y-0.5 active:translate-y-0"
+                        >
+                          <Check size={14} strokeWidth={2.5} />
+                          Setujui
+                        </button>
+
+                        {/* Reject Button */}
+                        <button
+                          onClick={() => handleReject(admin.user_id)}
+                          className="cursor-pointer inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100/80 text-rose-700 border border-rose-200/50 transition-all font-bold text-xs shadow-xs hover:-translate-y-0.5 active:translate-y-0"
+                        >
+                          <X size={14} strokeWidth={2.5} />
+                          Tolak
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </motion.div>
       </div>
     </div>
   );
