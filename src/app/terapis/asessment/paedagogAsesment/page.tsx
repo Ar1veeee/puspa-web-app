@@ -10,6 +10,7 @@ import SidebarTerapis from "@/components/layout/sidebar_terapis";
 import HeaderTerapis from "@/components/layout/header_terapis";
 
 import { submitAssessment, getAssessmentQuestions } from "@/lib/api/asesment";
+import { handleApiError, showSuccessToast } from "@/lib/api-error";
 
 // ==========================================================
 // API INTERFACES
@@ -140,8 +141,8 @@ export default function PLBAssessmentPage() {
 
         setAllQuestions(mapped);
         if (mapped.length > 0) setActiveAspek(mapped[0].key);
-      } catch {
-        alert("❌ Gagal memuat pertanyaan dari server.");
+      } catch (err) {
+        handleApiError(err, "Gagal memuat pertanyaan dari server. ❌");
         setAllQuestions([]);
       } finally {
         setLoadingQuestions(false);
@@ -211,13 +212,18 @@ export default function PLBAssessmentPage() {
   };
 
    const handleSubmit = async () => {
-    if (!assessmentId) return alert("❌ assessment_id tidak ditemukan");
+    if (!assessmentId) {
+      handleApiError(null, "assessment_id tidak ditemukan ❌");
+      return;
+    }
 
     const allComplete = Object.values(validationStatus).every(
       (v) => v === "completed"
     );
-    if (!allComplete)
-      return alert("❌ Lengkapi semua penilaian sebelum menyimpan!");
+    if (!allComplete) {
+      handleApiError(null, "Lengkapi semua penilaian sebelum menyimpan! ❌");
+      return;
+    }
 
     const payload = mapAnswersToPayloadBE(answers, allQuestions);
 
@@ -229,7 +235,7 @@ export default function PLBAssessmentPage() {
       setLoading(true);
       await submitAssessment(assessmentId, type, payload);
 
-      alert("✅ Penilaian berhasil disimpan!");
+      showSuccessToast("Penilaian berhasil disimpan! ✅");
       router.push(`/terapis/asessment?type=paedagog&status=completed`);
     } catch (err: any) {
       console.error("❌ Submit assessment error:", err);
@@ -242,24 +248,19 @@ export default function PLBAssessmentPage() {
 
       // 👉 Khusus tidak punya izin
       if (status === 403) {
-        alert(
-          "❌ Anda tidak memiliki izin untuk menyimpan penilaian ini.\n\n" +
-            "Pastikan:\n" +
-            "- Anda login sebagai Asesor sesuai jenis terapi\n" +
-            "- Assessment ini memang milik Anda"
-        );
+        handleApiError(err, "Anda tidak memiliki izin untuk menyimpan penilaian ini. Pastikan Anda login sebagai Asesor sesuai jenis terapi dan assessment ini memang milik Anda.");
         return;
       }
 
       // 👉 Unauthorized / token habis
       if (status === 401) {
-        alert("⚠️ Sesi Anda telah berakhir. Silakan login kembali.");
+        handleApiError(err, "Sesi Anda telah berakhir. Silakan login kembali.");
         router.push("/login");
         return;
       }
 
       // 👉 Error lainnya
-      alert("❌ Gagal menyimpan: " + message);
+      handleApiError(err, "Gagal menyimpan: " + message);
     } finally {
       setLoading(false);
     }
@@ -415,7 +416,7 @@ export default function PLBAssessmentPage() {
               <button
                 onClick={() => {
                   if (!validateCurrentAspek()) {
-                    alert("❌ Masih ada pertanyaan yang belum dinilai!");
+                    handleApiError(null, "Masih ada pertanyaan yang belum dinilai! ❌");
                     return;
                   }
                   setActiveAspek(aspekTabs[aspekTabs.indexOf(activeAspek) + 1]);

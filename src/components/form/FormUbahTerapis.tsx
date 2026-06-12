@@ -13,6 +13,8 @@ import {
   Stethoscope,
 } from "lucide-react";
 
+import { handleApiError } from "@/lib/api-error";
+
 interface FormUbahTerapisProps {
   open: boolean;
   onClose: () => void;
@@ -83,7 +85,7 @@ export default function FormUbahTerapis({
       !formData.email ||
       !formData.telepon
     ) {
-      alert("Semua field wajib diisi!");
+      handleApiError(null, "Semua field wajib diisi!");
       return;
     }
 

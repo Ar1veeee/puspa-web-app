@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import SidebarTerapis from "@/components/layout/sidebar_terapis";
 import HeaderTerapis from "@/components/layout/header_terapis";
 import { getAssessmentQuestions, submitAssessment } from "@/lib/api/asesment";
+import { handleApiError, showSuccessToast } from "@/lib/api-error";
 
 /* =======================
    TYPES
@@ -108,9 +109,9 @@ export default function OkupasiAssessmentPage() {
   /* =======================
      SUBMIT
   ======================= */
-    const handleSubmit = async () => {
+  const handleSubmit = async () => {
     if (!assessmentId) {
-      alert("❌ assessment_id tidak ditemukan");
+      handleApiError(null, "assessment_id tidak ditemukan ❌");
       return;
     }
 
@@ -154,7 +155,7 @@ export default function OkupasiAssessmentPage() {
       setSubmitting(true);
       await submitAssessment(assessmentId, "okupasi", payload);
 
-      alert("✅ Assessment berhasil disubmit");
+      showSuccessToast("Assessment berhasil disubmit! ✅");
       router.push(`/terapis/asessment?type=okupasi&status=completed`);
     } catch (err: any) {
       console.error("❌ Submit Okupasi Assessment error:", err);
@@ -167,24 +168,19 @@ export default function OkupasiAssessmentPage() {
 
       // ⛔ TIDAK PUNYA IZIN
       if (status === 403) {
-        alert(
-          "❌ Anda tidak memiliki izin untuk mengirim assessment ini.\n\n" +
-            "Pastikan:\n" +
-            "- Login sebagai Asesor sesuai jenis terapi\n" +
-            "- Assessment ini adalah milik Anda"
-        );
+        handleApiError(err, "Anda tidak memiliki izin untuk mengirim assessment ini. Pastikan login sebagai Asesor sesuai jenis terapi dan assessment ini adalah milik Anda.");
         return;
       }
 
       // 🔐 TOKEN HABIS / BELUM LOGIN
       if (status === 401) {
-        alert("⚠️ Sesi Anda telah berakhir. Silakan login kembali.");
+        handleApiError(err, "Sesi Anda telah berakhir. Silakan login kembali.");
         window.location.href = "/login";
         return;
       }
 
       // ❌ ERROR LAINNYA
-      alert("❌ Gagal submit assessment: " + message);
+      handleApiError(err, "Gagal submit assessment: " + message);
     } finally {
       setSubmitting(false);
     }

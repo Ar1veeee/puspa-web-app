@@ -9,6 +9,7 @@ import HeaderTerapis from "@/components/layout/header_terapis";
 import { ChevronDown } from "lucide-react";
 import { getPendingParents, getCompletedParents } from "@/lib/api/asesmentParent";
 import { uploadAssessmentReport } from "@/lib/api/asesmentReport";
+import { handleApiError, showSuccessToast } from "@/lib/api-error";
 
 type StatusFilter = "Terjadwal" | "Selesai";
 
@@ -96,20 +97,20 @@ export default function AssessmentPage() {
   // Submit upload handler
   const handleSubmitUpload = async () => {
     if (!selectedFile || !selectedAssessmentId) {
-      alert("File atau assessment tidak valid");
+      handleApiError(null, "File atau assessment tidak valid");
       return;
     }
     try {
       setUploadLoading(true);
       await uploadAssessmentReport(selectedAssessmentId, selectedFile);
-      alert("File berhasil diupload");
+      showSuccessToast("File berhasil diupload");
       setShowUploadModal(false);
       setSelectedFile(null);
       setSelectedFileName(null);
       setSelectedAssessmentId(null);
     } catch (error) {
       console.error(error);
-      alert("Gagal upload file");
+      handleApiError(error, "Gagal upload file");
     } finally {
       setUploadLoading(false);
     }

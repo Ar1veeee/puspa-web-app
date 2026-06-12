@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar as CalendarIcon, Clock, X, CheckCircle2 } from "lucide-react";
 
+import { handleApiError } from "@/lib/api-error";
+
 interface FormAturAsesmenProps {
   onClose: () => void;
   onSave?: (date: string, time: string) => void | Promise<void>;
@@ -35,7 +37,7 @@ export default function FormAturAsesmen({
     if (!onSave) return;
 
     if (!date || !time) {
-      alert("Tanggal dan Waktu tidak boleh kosong!");
+      handleApiError(null, "Tanggal dan Waktu tidak boleh kosong!");
       return;
     }
 

@@ -12,6 +12,7 @@ import {
   getScheduledObservations,
   getScheduledObservationDetail,
 } from "@/lib/api/observasiTerapis";
+import { handleApiError } from "@/lib/api-error";
 
 interface Anak {
   observation_id: string | number;
@@ -158,7 +159,7 @@ export default function ObservasiPage() {
       setSelected(null);
     } catch (err) {
       console.error("❌ Gagal ambil detail observasi:", err);
-      alert("Gagal memuat detail observasi");
+      handleApiError(err, "Gagal memuat detail observasi");
     } finally {
       setLoadingDetail(false);
     }

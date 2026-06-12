@@ -95,9 +95,6 @@ export default function HeaderTerapis({
         </button>
 
         <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
-          <div className="hidden md:flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-[0_2px_10px_rgba(43,122,117,0.1)] border border-teal-50 text-[#2B7A75]">
-            <LayoutDashboard className="w-5 h-5" />
-          </div>
           <div>
             <h2 className="text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight truncate max-w-[150px] sm:max-w-none">
               {title}

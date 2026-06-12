@@ -102,3 +102,127 @@ input[type="password"]::-ms-clear {
 input[type="password"]::-webkit-textfield-decoration-container {
   display: none;
 }
+
+/* ================= COLLAPSIBLE SIDEBAR ================= */
+/* Add smooth transitions to sidebars, content wrappers, and headers */
+aside,
+main,
+header,
+.ml-64,
+.left-64,
+.fixed.inset-y-0.left-0 {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Sidebar collapsed state overrides */
+.sidebar-collapsed aside,
+.sidebar-collapsed .fixed.inset-y-0.left-0.w-64 {
+  width: 80px !important;
+  min-width: 80px !important;
+  max-width: 80px !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+  overflow: visible !important; /* Allow hover submenus to fly out */
+}
+
+.sidebar-collapsed nav {
+  overflow: visible !important;
+}
+
+/* Swap logo on collapsed state */
+.sidebar-collapsed .sidebar-logo-wide {
+  display: none !important;
+}
+
+.sidebar-collapsed .sidebar-logo-mini {
+  display: flex !important;
+}
+
+/* Hide text and indicators */
+.sidebar-collapsed .sidebar-text,
+.sidebar-collapsed .sidebar-chevron,
+.sidebar-collapsed .sidebar-section-title {
+  display: none !important;
+}
+
+/* Center icons inside navigation buttons/links when collapsed */
+.sidebar-collapsed aside button,
+.sidebar-collapsed aside a {
+  justify-content: center !important;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+  gap: 0px !important;
+}
+
+/* Shift main content margin */
+.sidebar-collapsed .ml-64 {
+  margin-left: 80px !important;
+}
+
+.sidebar-collapsed .left-64 {
+  left: 80px !important;
+}
+
+/* Hover floating submenu for collapsed sidebar */
+.sidebar-collapsed-submenu {
+  display: none !important;
+  pointer-events: none;
+}
+
+.sidebar-collapsed-submenu::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -16px;
+  width: 16px;
+  background: transparent;
+}
+
+.sidebar-collapsed .group\/menu:hover .sidebar-collapsed-submenu {
+  display: block !important;
+  pointer-events: auto !important;
+}
+
+/* Style submenu items inside collapsed sidebar to avoid centering and lack of gap */
+.sidebar-collapsed .sidebar-collapsed-submenu a,
+.sidebar-collapsed .sidebar-collapsed-submenu button {
+  justify-content: flex-start !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  gap: 10px !important;
+}
+
+/* Beautiful popover container overrides */
+.sidebar-collapsed-submenu {
+  border: 1px solid rgba(43, 122, 117, 0.08) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 16px -6px rgba(0, 0, 0, 0.05) !important;
+  border-radius: 12px !important;
+  padding: 6px !important;
+  background-color: #ffffff !important;
+}
+
+/* Submenu popover title header style */
+.sidebar-collapsed-submenu > div:first-child {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: #2b7a75 !important;
+  opacity: 0.7 !important;
+  padding: 6px 12px 8px 12px !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04) !important;
+  margin-bottom: 6px !important;
+}
+
+/* Hide scrollbars globally on specified elements */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
+}

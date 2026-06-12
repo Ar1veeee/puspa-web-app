@@ -8,6 +8,7 @@ import SidebarTerapis from "@/components/layout/sidebar_terapis";
 import HeaderTerapis from "@/components/layout/header_terapis";
 
 import { getAssessmentQuestions, submitAssessment } from "@/lib/api/asesment";
+import { handleApiError, showSuccessToast } from "@/lib/api-error";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -159,68 +160,63 @@ const khususIndex = pemeriksaanKhususList.findIndex(
   // SUBMIT
   // ==============================
   const handleSubmit = async () => {
-  if (!assessmentId) {
-    alert("❌ assessment_id tidak ditemukan");
-    return;
-  }
-
-  // ======================
-  // BUILD PAYLOAD
-  // ======================
-  const answers = Object.keys(responses).map((key) => ({
-    question_id: Number(key.replace("q_", "")),
-    answer: responses[key],
-  }));
-
-  const payload = { answers };
-
-  // ======================
-  // CONSOLE DEBUG
-  // ======================
-  console.log("📦 Submit Fisio Assessment");
-  console.log("🆔 assessment_id:", assessmentId);
-  console.log("📌 type: fisio");
-  console.log("📌 activeTab:", activeTab);
-  console.log("📦 responses (raw):", responses);
-  console.log("📦 payload (final):", payload);
-
-  try {
-    await submitAssessment(assessmentId, "fisio", payload);
-
-    console.log("✅ Submit Fisio Assessment SUCCESS");
-    alert("✅ Assessment Fisioterapi berhasil disimpan!");
-    router.push(`/terapis/asessment?type=fisio&status=completed`);
-  } catch (err: any) {
-    console.error("❌ Submit Fisio Assessment error:", err);
-
-    const status = err?.response?.status;
-    const message =
-      err?.response?.data?.message ||
-      err?.message ||
-      "Terjadi kesalahan";
-
-    // ⛔ TIDAK PUNYA IZIN
-    if (status === 403) {
-      alert(
-        "❌ Anda tidak memiliki izin untuk menyimpan assessment ini.\n\n" +
-          "Pastikan:\n" +
-          "-  Anda login sebagai Asesor sesuai jenis terapi\n" +
-          "- Assessment ini adalah milik Anda"
-      );
+    if (!assessmentId) {
+      handleApiError(null, "assessment_id tidak ditemukan ❌");
       return;
     }
 
-    // 🔐 TOKEN HABIS / BELUM LOGIN
-    if (status === 401) {
-      alert("⚠️ Sesi Anda telah berakhir. Silakan login kembali.");
-      window.location.href = "/login";
-      return;
-    }
+    // ======================
+    // BUILD PAYLOAD
+    // ======================
+    const answers = Object.keys(responses).map((key) => ({
+      question_id: Number(key.replace("q_", "")),
+      answer: responses[key],
+    }));
 
-    // ❌ ERROR LAINNYA
-    alert("❌ Gagal menyimpan: " + message);
-  }
-};
+    const payload = { answers };
+
+    // ======================
+    // CONSOLE DEBUG
+    // ======================
+    console.log("📦 Submit Fisio Assessment");
+    console.log("🆔 assessment_id:", assessmentId);
+    console.log("📌 type: fisio");
+    console.log("📌 activeTab:", activeTab);
+    console.log("📦 responses (raw):", responses);
+    console.log("📦 payload (final):", payload);
+
+    try {
+      await submitAssessment(assessmentId, "fisio", payload);
+
+      console.log("✅ Submit Fisio Assessment SUCCESS");
+      showSuccessToast("Assessment Fisioterapi berhasil disimpan! ✅");
+      router.push(`/terapis/asessment?type=fisio&status=completed`);
+    } catch (err: any) {
+      console.error("❌ Submit Fisio Assessment error:", err);
+
+      const status = err?.response?.status;
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Terjadi kesalahan";
+
+      // ⛔ TIDAK PUNYA IZIN
+      if (status === 403) {
+        handleApiError(err, "Anda tidak memiliki izin untuk menyimpan assessment ini. Pastikan Anda login sebagai Asesor sesuai jenis terapi dan assessment ini adalah milik Anda.");
+        return;
+      }
+
+      // 🔐 TOKEN HABIS / BELUM LOGIN
+      if (status === 401) {
+        handleApiError(err, "Sesi Anda telah berakhir. Silakan login kembali.");
+        window.location.href = "/login";
+        return;
+      }
+
+      // ❌ ERROR LAINNYA
+      handleApiError(err, "Gagal menyimpan: " + message);
+    }
+  };
 
 
   if (loading) {

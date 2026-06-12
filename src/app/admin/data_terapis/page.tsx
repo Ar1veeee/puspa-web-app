@@ -23,6 +23,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import FormTambahTerapis from "@/components/form/FormTambahTerapis";
 import FormUbahTerapis from "@/components/form/FormUbahTerapis";
 import FormHapusTerapis from "@/components/form/FormHapusTerapis";
+import { handleApiError, showSuccessToast } from "@/lib/api-error";
 
 import {
   getTerapis,
@@ -199,12 +200,13 @@ export default function DataTerapisPage() {
       if (res.data.success) {
         setShowTambah(false);
         fetchTerapis();
+        showSuccessToast("Terapis berhasil ditambahkan!");
       } else {
-        alert("Gagal menambah terapis");
+        handleApiError(null, "Gagal menambah terapis");
       }
     } catch (err: any) {
       console.error(" Gagal menambah terapis:", err.response?.data || err);
-      alert(" Gagal menambah terapis");
+      handleApiError(err, "Gagal menambah terapis");
     }
   };
 
@@ -221,12 +223,13 @@ export default function DataTerapisPage() {
       if (res.data.success) {
         setShowUbah(false);
         fetchTerapis();
+        showSuccessToast("Terapis berhasil diperbarui!");
       } else {
-        alert(" Gagal memperbarui data terapis");
+        handleApiError(null, "Gagal memperbarui data terapis");
       }
     } catch (err: any) {
       console.error(" Gagal memperbarui terapis:", err.response?.data || err);
-      alert(" Gagal memperbarui data terapis");
+      handleApiError(err, "Gagal memperbarui data terapis");
     }
   };
 
@@ -236,12 +239,13 @@ export default function DataTerapisPage() {
       if (res.data.success) {
         setShowHapus(false);
         fetchTerapis();
+        showSuccessToast("Terapis berhasil dihapus!");
       } else {
-        alert(" Gagal menghapus terapis");
+        handleApiError(null, "Gagal menghapus terapis");
       }
     } catch (err: any) {
       console.error(" Gagal menghapus terapis:", err.response?.data || err);
-      alert(" Gagal menghapus terapis");
+      handleApiError(err, "Gagal menghapus terapis");
     }
   };
 
@@ -254,7 +258,7 @@ export default function DataTerapisPage() {
       }
     } catch (err) {
       console.error(" Gagal menampilkan detail:", err);
-      alert(" Gagal menampilkan detail terapis");
+      handleApiError(err, "Gagal menampilkan detail terapis");
     }
   };
 
@@ -578,7 +582,7 @@ export default function DataTerapisPage() {
                 >
                   Prev
                 </button>
-                <div className="flex items-center gap-1 overflow-x-auto max-w-[120px] sm:max-w-none">
+                <div className="flex items-center gap-1 overflow-x-auto max-w-[120px] sm:max-w-none no-scrollbar">
                   {[...Array(totalPages)].map((_, i) => (
                     <button
                       key={i}

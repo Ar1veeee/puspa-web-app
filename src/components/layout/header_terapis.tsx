@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Bell, User } from "lucide-react";
+import { Bell, User, Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { baseMenu } from "@/components/layout/sidebar_terapis";
 import { useTherapistProfile } from "@/context/ProfileTerapisContext";
@@ -25,11 +25,11 @@ export default function HeaderTerapis({ pageTitle }: HeaderTerapisProps) {
     ) || null;
 
   const title =
-  pageTitle ||
-  (pathname.startsWith("/terapis/riwayat-hasil") ||
-  pathname.startsWith("/terapis/hasil-observasi")
-    ? "Observasi"
-    : activeItem?.name || "Dashboard");
+    pageTitle ||
+    (pathname.startsWith("/terapis/riwayat-hasil") ||
+    pathname.startsWith("/terapis/hasil-observasi")
+      ? "Observasi"
+      : activeItem?.name || "Dashboard");
 
 
   // ✅ pastikan STRING, bukan null
@@ -40,7 +40,9 @@ export default function HeaderTerapis({ pageTitle }: HeaderTerapisProps) {
 
   return (
     <header className="w-full flex justify-between items-center px-6 py-4 bg-white shadow text-[#36315B]">
-      <h2 className="text-xl font-semibold">{title}</h2>
+      <div className="flex items-center gap-3">
+        <h2 className="text-xl font-semibold">{title}</h2>
+      </div>
 
       <div className="flex items-center gap-4">
         <span className="font-medium">

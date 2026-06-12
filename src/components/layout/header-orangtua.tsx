@@ -33,7 +33,9 @@ const HeaderOrangtua: React.FC = () => {
 
   return (
     <header className="w-full flex justify-between items-center px-6 h-20 bg-white border-b border-gray-100 text-[#36315B]">
-      <h2 className="text-xl font-semibold ml-10 md:ml-0">{title}</h2>
+      <div className="flex items-center gap-3">
+        <h2 className="text-xl font-semibold">{title}</h2>
+      </div>
       <div className="hidden md:flex items-center gap-4">
         <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
           <Bell size={20} />

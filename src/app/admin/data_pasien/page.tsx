@@ -646,7 +646,7 @@ export default function PatientPage() {
                 >
                   Prev
                 </button>
-                <div className="flex items-center gap-1 overflow-x-auto max-w-[120px] sm:max-w-none">
+                <div className="flex items-center gap-1 overflow-x-auto max-w-[120px] sm:max-w-none no-scrollbar">
                   {[...Array(totalPages)].map((_, i) => (
                     <button
                       key={i}
@@ -657,7 +657,7 @@ export default function PatientPage() {
                           : "text-gray-400 hover:bg-gray-50"
                       }`}
                     >
-                      {i + i + 1}
+                      {i + 1}
                     </button>
                   ))}
                 </div>

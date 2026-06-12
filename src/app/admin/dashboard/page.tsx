@@ -17,6 +17,7 @@ import {
   TodaySchedule,
 } from "@/lib/api/dashboard_admin";
 import { motion } from "framer-motion";
+import { handleApiError, showSuccessToast } from "@/lib/api-error";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -40,8 +41,10 @@ export default function AdminDashboard() {
       await addAdmin(data);
       setOpenTambahAdmin(false);
       fetchDashboardData();
+      showSuccessToast("Admin berhasil ditambahkan!");
     } catch (error) {
       console.error("❌ Gagal menambah admin dari dashboard:", error);
+      handleApiError(error, "Gagal menambah admin");
     }
   };
 
@@ -57,10 +60,10 @@ export default function AdminDashboard() {
       await addTerapis(data);
       setOpenTambahTerapis(false);
       fetchDashboardData();
-      alert("Terapis berhasil ditambahkan!");
+      showSuccessToast("Terapis berhasil ditambahkan!");
     } catch (err) {
       console.error("❌ Gagal menambah terapis dari dashboard:", err);
-      alert("Gagal menambah terapis");
+      handleApiError(err, "Gagal menambah terapis");
     }
   };
 

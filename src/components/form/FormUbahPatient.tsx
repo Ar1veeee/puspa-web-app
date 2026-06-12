@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PatientDetail } from "@/lib/api/data_patient";
+import { handleApiError } from "@/lib/api-error";
 import {
   User,
   Phone,
@@ -124,7 +125,7 @@ export default function FormUbahPatient({
     e.preventDefault();
 
     if (!form.child_birth_date.trim()) {
-      alert("Tanggal lahir anak wajib diisi");
+      handleApiError(null, "Tanggal lahir anak wajib diisi");
       return;
     }
 

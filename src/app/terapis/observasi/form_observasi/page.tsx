@@ -8,6 +8,7 @@ import {
   submitObservation,
   getObservationQuestions,
 } from "@/lib/api/observasiSubmit";
+import { handleApiError, showSuccessToast } from "@/lib/api-error";
 
 type Question = {
   question_id: number;
@@ -71,7 +72,7 @@ export default function FormObservasiPage() {
   useEffect(() => {
     const fetchData = async () => {
       if (!pasien.observation_id) {
-        alert("Observation ID tidak ditemukan di URL.");
+        handleApiError(null, "Observation ID tidak ditemukan di URL.");
         setLoading(false);
         return;
       }
@@ -85,11 +86,11 @@ export default function FormObservasiPage() {
           const firstPrefix = data[0].question_code.split("-")[0];
           setActiveTab(kategoriMap[firstPrefix] || firstPrefix);
         } else {
-          alert("Tidak ada pertanyaan untuk observasi ini.");
+          handleApiError(null, "Tidak ada pertanyaan untuk observasi ini.");
         }
       } catch (err) {
         console.error("Gagal mengambil data observasi:", err);
-        alert("Terjadi kesalahan saat memuat data observasi.");
+        handleApiError(err, "Terjadi kesalahan saat memuat data observasi.");
       } finally {
         setLoading(false);
       }
@@ -131,7 +132,10 @@ export default function FormObservasiPage() {
     const belumDiisi = pertanyaanKategori.some(
       (q) => answers[q.question_id]?.jawaban === undefined
     );
-    if (belumDiisi) return alert("Harap isi semua jawaban sebelum lanjut.");
+    if (belumDiisi) {
+      handleApiError(null, "Harap isi semua jawaban sebelum lanjut.");
+      return;
+    }
     const idx = kategoriList.indexOf(activeTab);
     if (idx < kategoriList.length - 1) setActiveTab(kategoriList[idx + 1]);
   };
@@ -174,14 +178,14 @@ export default function FormObservasiPage() {
     try {
       const res = await submitObservation(pasien.observation_id, payload);
       if (res?.success) {
-        alert("✅ Observasi berhasil disimpan!");
+        showSuccessToast("Observasi berhasil disimpan! ✅");
         window.location.href = "/terapis/observasi/riwayat";
       } else {
-        alert(`❌ Gagal menyimpan: ${res?.message || "Unknown error"}`);
+        handleApiError(res, `Gagal menyimpan: ${res?.message || "Unknown error"} ❌`);
       }
     } catch (err) {
       console.error("Error saat menyimpan:", err);
-      alert("Terjadi kesalahan saat menyimpan data.");
+      handleApiError(err, "Terjadi kesalahan saat menyimpan data.");
     } finally {
       setSubmitting(false);
     }

@@ -20,7 +20,10 @@ import {
   Lock,
   AlertTriangle,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
+import { useSidebar } from "@/context/SidebarContext";
 
 interface MenuItem {
   name: string;
@@ -88,6 +91,7 @@ export default function SidebarAdmin({ isOpen, onClose }: SidebarAdminProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const { isCollapsed, toggleSidebar } = useSidebar();
 
   const [mounted, setMounted] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
@@ -163,27 +167,46 @@ export default function SidebarAdmin({ isOpen, onClose }: SidebarAdminProps) {
         />
 
         {/* Header / Logo */}
-        <div className="flex justify-center items-center h-24 shrink-0 px-6 border-b border-gray-100">
-          <Link
-            href="/admin/dashboard"
-            className="hover:scale-105 transition-transform duration-300"
-          >
+        <div className="flex justify-between items-center h-24 shrink-0 px-6 border-b border-gray-100 relative">
+          <div className="sidebar-logo-wide">
+            <Link
+              href="/admin/dashboard"
+              className="hover:scale-105 transition-transform duration-300"
+            >
+              <Image
+                src="/logo.png"
+                alt="Logo Puspa"
+                width={120}
+                height={32}
+                priority
+                className="object-contain"
+              />
+            </Link>
+          </div>
+          <div className="sidebar-logo-mini hidden w-full justify-center">
             <Image
-              src="/logo.png"
-              alt="Logo Puspa"
-              width={140}
-              height={40}
+              src="/favicon.ico"
+              alt="Logo"
+              width={28}
+              height={28}
               priority
               className="object-contain"
             />
-          </Link>
+          </div>
+          <button 
+            onClick={toggleSidebar}
+            className={`text-[#2B7A75] hover:bg-[#2B7A75]/10 p-1.5 rounded-lg transition-colors cursor-pointer ${isCollapsed ? "mx-auto" : ""}`}
+            title={isCollapsed ? "Tampilkan Menu" : "Sembunyikan Menu"}
+          >
+            {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+          </button>
         </div>
 
         <nav className="flex-1 space-y-7 sidebar-scroll overflow-y-auto px-4 py-8">
           {menu.map((group, idx) => (
             <div key={idx} className="flex flex-col gap-1.5">
               {group.section && (
-                <p className="text-[11px] font-bold tracking-wider uppercase mb-1 px-3 text-[#2B7A75]/60">
+                <p className="sidebar-section-title text-[11px] font-bold tracking-wider uppercase mb-1 px-3 text-[#2B7A75]/60">
                   {group.section}
                 </p>
               )}
@@ -205,29 +228,44 @@ export default function SidebarAdmin({ isOpen, onClose }: SidebarAdminProps) {
                     openDropdown === item.name ||
                     isChildActive ||
                     isParentActive;
-                  const isActiveGroup = isOpen || isChildActive;
 
                   return (
-                    <div key={i} className="flex flex-col">
+                    <div key={i} className="flex flex-col relative group/menu">
                       <button
-                        onClick={() => toggleDropdown(item.name)}
+                        onClick={() => {
+                          if (!isCollapsed) {
+                            toggleDropdown(item.name);
+                          }
+                        }}
                         className={`w-full flex justify-between items-center px-3.5 py-3 rounded-xl transition-all duration-300 group
                         ${
-                          isActiveGroup
-                            ? "bg-[#F4F9F8] text-[#1E5C58]"
-                            : "text-gray-600 hover:bg-[#F4F9F8] hover:text-[#2B7A75]"
+                          isCollapsed
+                            ? (isChildActive
+                                ? "bg-[#2B7A75] text-white shadow-md shadow-teal-500/20"
+                                : "text-gray-600 hover:bg-[#F4F9F8] hover:text-[#2B7A75]")
+                            : ((isOpen || isChildActive)
+                                ? "bg-[#F4F9F8] text-[#1E5C58]"
+                                : "text-gray-600 hover:bg-[#F4F9F8] hover:text-[#2B7A75]")
                         }`}
                       >
                         <div className="flex items-center gap-3">
                           <div
-                            className={`p-1.5 rounded-lg transition-colors duration-300 ${isActiveGroup ? "bg-[#2B7A75]/10 text-[#2B7A75]" : "text-gray-400 group-hover:bg-[#2B7A75]/10 group-hover:text-[#2B7A75]"}`}
+                            className={`p-1.5 rounded-lg transition-colors duration-300 ${
+                              isCollapsed
+                                ? (isChildActive
+                                    ? "text-white bg-transparent"
+                                    : "text-gray-400 group-hover:text-[#2B7A75] bg-transparent")
+                                : ((isOpen || isChildActive)
+                                    ? "bg-[#2B7A75]/10 text-[#2B7A75]"
+                                    : "text-gray-400 group-hover:bg-[#2B7A75]/10 group-hover:text-[#2B7A75]")
+                            }`}
                           >
                             {item.icon && (
                               <item.icon size={18} strokeWidth={2.5} />
                             )}
                           </div>
                           <span
-                            className={`text-sm ${isActiveGroup ? "font-bold" : "font-semibold"}`}
+                            className="sidebar-text text-sm font-semibold"
                           >
                             {item.name}
                           </span>
@@ -235,18 +273,18 @@ export default function SidebarAdmin({ isOpen, onClose }: SidebarAdminProps) {
                         <ChevronDown
                           size={16}
                           strokeWidth={3}
-                          className={`transition-transform duration-300 text-gray-400 group-hover:text-[#2B7A75] ${isOpen ? "rotate-180 text-[#2B7A75]" : ""}`}
+                          className={`sidebar-chevron transition-transform duration-300 text-gray-400 group-hover:text-[#2B7A75] ${isOpen ? "rotate-180 text-[#2B7A75]" : ""}`}
                         />
                       </button>
 
                       <AnimatePresence>
-                        {isOpen && (
+                        {isOpen && !isCollapsed && (
                           <motion.div
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.2, ease: "easeInOut" }}
-                            className="overflow-hidden"
+                            className="sidebar-text overflow-hidden"
                           >
                             <div className="ml-10 mt-1 space-y-1 relative before:absolute before:inset-y-0 before:left-[-14px] before:w-px before:bg-gray-200">
                               {item.dropdown.map((sub, j) => {
@@ -284,12 +322,44 @@ export default function SidebarAdmin({ isOpen, onClose }: SidebarAdminProps) {
                           </motion.div>
                         )}
                       </AnimatePresence>
+
+                      {/* Floating Submenu for Collapsed State */}
+                      <div className="absolute left-full top-0 ml-2 hidden group-hover/menu:block sidebar-collapsed-submenu bg-white shadow-xl border border-teal-50 rounded-xl p-2 min-w-[200px] z-50 space-y-1">
+                        <div className="px-3 py-1 text-xs font-bold text-[#2B7A75]/60 border-b border-gray-100 mb-1">
+                          {item.name}
+                        </div>
+                        {item.dropdown.map((sub, j) => {
+                          const isSubActive =
+                            pathname === sub.href ||
+                            pathname.startsWith(sub.href + "/");
+
+                          return (
+                            <Link
+                              key={j}
+                              href={sub.href}
+                              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13.5px] transition-all duration-300 ${
+                                isSubActive
+                                  ? "text-[#1E5C58] bg-[#F4F9F8] font-bold"
+                                  : "text-gray-500 hover:text-[#2B7A75] hover:bg-gray-50 font-medium"
+                              }`}
+                            >
+                              {sub.icon && (
+                                <sub.icon
+                                  size={15}
+                                  strokeWidth={2.5}
+                                  className={isSubActive ? "text-[#2B7A75]" : "opacity-60"}
+                                />
+                              )}
+                              <span>{sub.name}</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
                     </div>
                   );
                 }
 
                 // Normal Link
-                // Apply special style if it's "Log Out"
                 const isLogout = item.name === "Log Out";
 
                 if (isLogout) {
@@ -300,11 +370,15 @@ export default function SidebarAdmin({ isOpen, onClose }: SidebarAdminProps) {
                       className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-300 group text-red-500 hover:bg-red-50 hover:text-red-600 mt-4 cursor-pointer`}
                     >
                       <div
-                        className={`p-1.5 rounded-lg transition-colors duration-300 group-hover:bg-red-100/50 text-gray-400`}
+                        className={`p-1.5 rounded-lg transition-colors duration-300 ${
+                          isCollapsed
+                            ? "text-gray-400 group-hover:text-red-600 bg-transparent"
+                            : "group-hover:bg-red-100/50 text-gray-400"
+                        }`}
                       >
                         {item.icon && <item.icon size={18} strokeWidth={2.5} />}
                       </div>
-                      <span className={`text-sm font-semibold`}>
+                      <span className="sidebar-text text-sm font-semibold">
                         {item.name}
                       </span>
                     </button>
@@ -327,14 +401,14 @@ export default function SidebarAdmin({ isOpen, onClose }: SidebarAdminProps) {
                       className={`p-1.5 rounded-lg transition-colors duration-300 
                     ${
                       isParentActive
-                        ? "bg-white/20 text-white"
-                        : "text-gray-400 group-hover:bg-[#2B7A75]/10 group-hover:text-[#2B7A75]"
+                        ? (isCollapsed ? "text-white bg-transparent" : "bg-white/20 text-white")
+                        : `text-gray-400 ${isCollapsed ? "group-hover:text-[#2B7A75]" : "group-hover:bg-[#2B7A75]/10 group-hover:text-[#2B7A75]"}`
                     }`}
                     >
                       {item.icon && <item.icon size={18} strokeWidth={2.5} />}
                     </div>
                     <span
-                      className={`text-sm ${isParentActive ? "font-bold" : "font-semibold"}`}
+                      className="sidebar-text text-sm font-semibold"
                     >
                       {item.name}
                     </span>

@@ -7,6 +7,7 @@ import SidebarTerapis from "@/components/layout/sidebar_terapis";
 import HeaderTerapis from "@/components/layout/header_terapis";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getAssessmentQuestions, submitAssessment } from "@/lib/api/asesment";
+import { handleApiError, showSuccessToast } from "@/lib/api-error";
 
 /* ================= TAB ================= */
 const tabs = ["Oral Fasial", "Kemampuan Bahasa"] as const;
@@ -138,9 +139,9 @@ function AsesmenWicaraContent() {
     setNotes((p) => ({ ...p, [key]: value }));
 
   /* ================= SUBMIT ================= */
-    const handleSubmit = async () => {
+  const handleSubmit = async () => {
     if (!assessmentId) {
-      alert("❌ assessment_id tidak ditemukan");
+      handleApiError(null, "assessment_id tidak ditemukan ❌");
       return;
     }
 
@@ -149,48 +150,47 @@ function AsesmenWicaraContent() {
     sections.forEach((s) => {
       // ===== LIDAH ASPEK =====
       s.aspek?.forEach((a: any) =>
-  a.questions.forEach((q: any) => {
-    const k = `${s.group_key}-${q.id}`;
+        a.questions.forEach((q: any) => {
+          const k = `${s.group_key}-${q.id}`;
 
-    const hasAnswer = responses[k] !== undefined && responses[k] !== null;
-    const hasNote = notes[k] && notes[k].trim() !== "";
+          const hasAnswer = responses[k] !== undefined && responses[k] !== null;
+          const hasNote = notes[k] && notes[k].trim() !== "";
 
-    if (hasAnswer || hasNote) {
-      answers.push({
-        question_id: q.id,
-        answer: { value: hasAnswer ? responses[k] : null },
-        note: hasNote ? notes[k] : "",
-      });
-    }
-  })
-);
+          if (hasAnswer || hasNote) {
+            answers.push({
+              question_id: q.id,
+              answer: { value: hasAnswer ? responses[k] : null },
+              note: hasNote ? notes[k] : "",
+            });
+          }
+        })
+      );
 
 
       // ===== GROUP NORMAL =====
-     s.questions?.forEach((q: any) => {
-  const k = `${s.group_key}-${q.id}`;
+      s.questions?.forEach((q: any) => {
+        const k = `${s.group_key}-${q.id}`;
 
-  if (activeTab === "Oral Fasial") {
-    const hasAnswer = responses[k] !== undefined && responses[k] !== null;
-    const hasNote = notes[k] && notes[k].trim() !== "";
+        if (activeTab === "Oral Fasial") {
+          const hasAnswer = responses[k] !== undefined && responses[k] !== null;
+          const hasNote = notes[k] && notes[k].trim() !== "";
 
-    if (hasAnswer || hasNote) {
-      answers.push({
-        question_id: q.id,
-        answer: { value: hasAnswer ? responses[k] : null },
-        note: hasNote ? notes[k] : "",
-      });
-    }
-  } else {
+          if (hasAnswer || hasNote) {
+            answers.push({
+              question_id: q.id,
+              answer: { value: hasAnswer ? responses[k] : null },
+              note: hasNote ? notes[k] : "",
+            });
+          }
+        } else {
           // Bahasa
           // ===== BAHASA (FIX) =====
-if (responses[k] === true) {
-  answers.push({
-    question_id: q.id,
-    answer: { value: true },
-  });
-}
-
+          if (responses[k] === true) {
+            answers.push({
+              question_id: q.id,
+              answer: { value: true },
+            });
+          }
         }
       });
     });
@@ -210,10 +210,10 @@ if (responses[k] === true) {
       await submitAssessment(assessmentId, "wicara", payload);
 
       if (activeTab === "Oral Fasial") {
-        alert("✅ Jawaban Oral Fasial berhasil disimpan");
+        showSuccessToast("Jawaban Oral Fasial berhasil disimpan ✅");
         setActiveTab("Kemampuan Bahasa");
       } else {
-        alert("✅ Jawaban Kemampuan Bahasa berhasil disimpan");
+        showSuccessToast("Jawaban Kemampuan Bahasa berhasil disimpan ✅");
         router.push("/terapis/asessment?type=wicara&status=completed");
       }
     } catch (err: any) {
@@ -226,22 +226,17 @@ if (responses[k] === true) {
         "Terjadi kesalahan";
 
       if (status === 403) {
-        alert(
-          "❌ Anda tidak memiliki izin untuk menyimpan assessment ini.\n\n" +
-            "Pastikan:\n" +
-            "- Login sebagai Asesor sesuai jenis terapi\n" +
-            "- Assessment ini adalah milik Anda"
-        );
+        handleApiError(err, "Anda tidak memiliki izin untuk menyimpan assessment ini. Pastikan login sebagai Asesor sesuai jenis terapi.");
         return;
       }
 
       if (status === 401) {
-        alert("⚠️ Sesi Anda telah berakhir. Silakan login kembali.");
+        handleApiError(err, "Sesi Anda telah berakhir. Silakan login kembali.");
         router.push("/login");
         return;
       }
 
-      alert("❌ Gagal menyimpan: " + message);
+      handleApiError(err, "Gagal menyimpan: " + message);
     }
   };
 

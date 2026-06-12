@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Bell, User } from "lucide-react";
+import { Bell, User, Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { menu } from "./sidebar_owner";
 
@@ -47,7 +47,9 @@ export default function Header() {
 
   return (
     <header className="w-full flex justify-between items-center p-4 bg-white shadow text-[#36315B]">
-      <h2 className="text-xl font-semibold">{title}</h2>
+      <div className="flex items-center gap-3">
+        <h2 className="text-xl font-semibold">{title}</h2>
+      </div>
 
       <div className="flex items-center gap-3">
         <span>Hallo, Owner Puspa</span>

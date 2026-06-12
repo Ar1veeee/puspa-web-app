@@ -5,6 +5,7 @@ import SidebarTerapis from "@/components/layout/sidebar_terapis";
 import HeaderTerapis from "@/components/layout/header_terapis";
 import { Eye, EyeOff } from "lucide-react";
 import { updatePassword } from "@/lib/api/profile";
+import { handleApiError, showSuccessToast } from "@/lib/api-error";
 
 export default function PasswordOrangtuaPage() {
   const [showOld, setShowOld] = useState(false);
@@ -22,12 +23,12 @@ export default function PasswordOrangtuaPage() {
   // ============================
   const handleSave = async () => {
     if (!oldPass || !newPass || !confirmPass) {
-      alert("Semua field harus diisi.");
+      handleApiError(null, "Semua field harus diisi.");
       return;
     }
 
     if (newPass !== confirmPass) {
-      alert("Konfirmasi password tidak cocok.");
+      handleApiError(null, "Konfirmasi password tidak cocok.");
       return;
     }
 
@@ -41,17 +42,17 @@ export default function PasswordOrangtuaPage() {
       });
 
       if (res?.success) {
-        alert("Password berhasil diubah!");
+        showSuccessToast("Password berhasil diubah!");
 
         // reset form
         setOldPass("");
         setNewPass("");
         setConfirmPass("");
       } else {
-        alert(res?.message || "Gagal mengubah password");
+        handleApiError(res, "Gagal mengubah password");
       }
     } catch (err) {
-      alert("Terjadi kesalahan saat mengubah password.");
+      handleApiError(err, "Terjadi kesalahan saat mengubah password.");
     } finally {
       setLoading(false);
     }

@@ -27,6 +27,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import FormAturAsesmen from "@/components/form/FormAturAsesmen";
 import FormDetailObservasi from "@/components/form/FormDetailObservasi";
+import { handleApiError, showSuccessToast } from "@/lib/api-error";
 import {
   getObservations,
   Jadwal,
@@ -594,10 +595,8 @@ export default function JadwalPage() {
                                             setSelectedObservation(data.data);
                                             setOpenDetail(true);
                                             setOpenDropdown(null);
-                                          } catch {
-                                            alert(
-                                              "Gagal memuat detail observasi",
-                                            );
+                                          } catch (err) {
+                                            handleApiError(err, "Gagal memuat detail observasi");
                                           }
                                         }}
                                         className="cursor-pointer flex items-center w-full px-3 py-2 text-xs font-bold text-gray-700 hover:bg-teal-50 hover:text-teal-700 rounded-xl transition-colors"
@@ -805,8 +804,8 @@ export default function JadwalPage() {
                                   const data = await res.json();
                                   setSelectedObservation(data.data);
                                   setOpenDetail(true);
-                                } catch {
-                                  alert("Gagal memuat detail observasi");
+                                } catch (err) {
+                                  handleApiError(err, "Gagal memuat detail observasi");
                                 }
                               }}
                               className="p-1.5 bg-white border border-teal-50 text-[#2B7A75] rounded-lg shadow-xs active:scale-90 transition-transform"
@@ -899,21 +898,21 @@ export default function JadwalPage() {
                   date,
                   time,
                 );
-                alert("Asesmen berhasil dijadwalkan!");
+                showSuccessToast("Asesmen berhasil dijadwalkan!");
               } else {
                 await updateObservationSchedule(
                   selectedPasien.observation_id,
                   date,
                   time,
                 );
-                alert("Jadwal observasi sukses disimpan!");
+                showSuccessToast("Jadwal observasi sukses disimpan!");
               }
               setOpenAsesmen(false);
               setSelectedPasien(null);
               fetchJadwal();
             } catch (err) {
               console.error(err);
-              alert("Gagal menyimpan jadwal.");
+              handleApiError(err, "Gagal menyimpan jadwal.");
             }
           }}
         />

@@ -8,6 +8,7 @@ import SidebarTerapis from "@/components/layout/sidebar_terapis";
 import HeaderTerapis from "@/components/layout/header_terapis";
 import { ChevronDown, Settings, Clock3, Eye } from "lucide-react";
 import { getObservations } from "@/lib/api/observasiSubmit";
+import { handleApiError } from "@/lib/api-error";
 
 // ==================== Interface ====================
 interface Anak {
@@ -89,7 +90,7 @@ export default function RiwayatObservasiPage() {
       setData(mapped);
     } catch (err) {
       console.error(err);
-      alert("Gagal mengambil riwayat observasi.");
+      handleApiError(err, "Gagal mengambil riwayat observasi.");
     } finally {
       setLoading(false);
     }

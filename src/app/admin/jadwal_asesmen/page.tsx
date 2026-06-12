@@ -31,6 +31,7 @@ import {
 } from "@/lib/api/jadwal_asessment";
 import FormDetailAsesment from "@/components/form/FormDetailAsesment";
 import { motion, AnimatePresence } from "framer-motion";
+import { handleApiError, showSuccessToast } from "@/lib/api-error";
 
 // =======================
 // Interface Jadwal
@@ -952,9 +953,10 @@ export default function JadwalAsesmenPage() {
                 time,
               );
               await fetchJadwal();
+              showSuccessToast("Jadwal asesmen sukses disimpan!");
             } catch (err) {
               console.error(err);
-              alert("Gagal menyimpan jadwal asesmen");
+              handleApiError(err, "Gagal menyimpan jadwal asesmen");
             }
           }}
         />
