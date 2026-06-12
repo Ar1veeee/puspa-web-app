@@ -101,7 +101,7 @@ export default function AdminDashboard() {
       <div className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] bg-[#68b2a020] rounded-full blur-[100px] pointer-events-none z-0" />
 
       <main className="relative z-10 w-full flex flex-col">
-        <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-8 pb-12 w-full shadow-none border-none">
+        <div className="p-4 sm:p-6 lg:p-8 flex flex-col gap-8 pb-12 w-full shadow-none border-none">
           {/* Header Banner */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
