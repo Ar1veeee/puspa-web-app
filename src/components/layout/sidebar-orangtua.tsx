@@ -173,10 +173,70 @@ export default function SidebarOrangtua({ isOpen = false, onClose = () => {} }: 
               </Link>
             );
           })}
+
+          {/* Mobile Only Account Section */}
+          <div className="md:hidden pt-4 mt-4 border-t border-gray-100 space-y-1">
+            <p className="text-[10px] font-bold tracking-wider uppercase mb-2 px-3 text-[#2B7A75]/60">
+              Kelola Akun
+            </p>
+            <Link
+              href="/orangtua/profil"
+              className={`flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-300 group
+              ${
+                pathname === "/orangtua/profil"
+                  ? "bg-[#2B7A75] text-white shadow-md shadow-teal-500/20"
+                  : "text-gray-600 hover:bg-[#F4F9F8] hover:text-[#2B7A75]"
+              }`}
+            >
+              <div
+                className={`p-1.5 rounded-lg transition-colors duration-300 
+                ${
+                  pathname === "/orangtua/profil"
+                    ? "bg-white/20 text-white"
+                    : "text-gray-400 group-hover:bg-[#2B7A75]/10 group-hover:text-[#2B7A75]"
+                }`}
+              >
+                <User size={18} strokeWidth={2.5} />
+              </div>
+              <span className="sidebar-text text-sm font-semibold">Profil</span>
+            </Link>
+
+            <Link
+              href="/orangtua/ubahPassword"
+              className={`flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-300 group
+              ${
+                pathname === "/orangtua/ubahPassword"
+                  ? "bg-[#2B7A75] text-white shadow-md shadow-teal-500/20"
+                  : "text-gray-600 hover:bg-[#F4F9F8] hover:text-[#2B7A75]"
+              }`}
+            >
+              <div
+                className={`p-1.5 rounded-lg transition-colors duration-300 
+                ${
+                  pathname === "/orangtua/ubahPassword"
+                    ? "bg-white/20 text-white"
+                    : "text-gray-400 group-hover:bg-[#2B7A75]/10 group-hover:text-[#2B7A75]"
+                }`}
+              >
+                <Lock size={18} strokeWidth={2.5} />
+              </div>
+              <span className="sidebar-text text-sm font-semibold">Ubah Password</span>
+            </Link>
+
+            <button
+              onClick={() => setShowLogoutModal(true)}
+              className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-300 group text-red-500 hover:bg-red-50 hover:text-red-600 cursor-pointer"
+            >
+              <div className="p-1.5 rounded-lg text-gray-400 group-hover:bg-red-100/50 group-hover:text-red-500 transition-colors duration-300">
+                <LogOut size={18} strokeWidth={2.5} />
+              </div>
+              <span className="sidebar-text text-sm font-semibold">Logout</span>
+            </button>
+          </div>
         </nav>
 
         {/* Profile Dropdown Section at bottom */}
-        <div className="p-4 border-t border-gray-150 mt-auto bg-white/50 backdrop-blur-md relative">
+        <div className="hidden md:block p-4 border-t border-gray-150 mt-auto bg-white/50 backdrop-blur-md relative">
           <div
             className="flex items-center justify-between cursor-pointer p-2 rounded-2xl hover:bg-gray-50 transition-colors"
             onClick={() => setOpenProfileMenu(!openProfileMenu)}
