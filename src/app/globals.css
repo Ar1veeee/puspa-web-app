@@ -99,10 +99,6 @@ input[type="password"]::-ms-clear {
   display: none;
 }
 
-input[type="password"]::-webkit-textfield-decoration-container {
-  display: none;
-}
-
 /* ================= COLLAPSIBLE SIDEBAR ================= */
 
 /* Hanya transisi properti yang berubah pada aside agar workspace ikut melebar */
