@@ -14,7 +14,7 @@ interface AssessmentDetail {
   type: string;
   status: string;
   parent_completed_status: string; // global
-  is_filled: boolean; // 🔥 PER TERAPI
+  is_filled: boolean; // PER TERAPI
 }
 
 export default function AssessmentPage() {
@@ -30,13 +30,12 @@ export default function AssessmentPage() {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const [completionStatus, setCompletionStatus] = useState<
-  Record<string, string>
->({});
+    Record<string, string>
+  >({});
 
-const [filledStatus, setFilledStatus] = useState<
-  Record<string, boolean>
->({});
-
+  const [filledStatus, setFilledStatus] = useState<
+    Record<string, boolean>
+  >({});
 
   useEffect(() => {
     async function fetchDetail() {
@@ -48,16 +47,15 @@ const [filledStatus, setFilledStatus] = useState<
         setTypes(res.details.map((d: AssessmentDetail) => d.type));
 
         const mapCompleted: Record<string, string> = {};
-const mapFilled: Record<string, boolean> = {};
+        const mapFilled: Record<string, boolean> = {};
 
-res.details.forEach((d: AssessmentDetail) => {
-  mapCompleted[d.type] = d.parent_completed_status;
-  mapFilled[d.type] = d.is_filled; // 🔥 AMBIL DARI BE
-});
+        res.details.forEach((d: AssessmentDetail) => {
+          mapCompleted[d.type] = d.parent_completed_status;
+          mapFilled[d.type] = d.is_filled; // AMBIL DARI BE
+        });
 
-setCompletionStatus(mapCompleted);
-setFilledStatus(mapFilled);
-
+        setCompletionStatus(mapCompleted);
+        setFilledStatus(mapFilled);
 
         setHasNewFile(Boolean(res.report?.available));
       } catch (err) {
@@ -71,7 +69,7 @@ setFilledStatus(mapFilled);
 
   if (!assessmentId) {
     return (
-      <div className="flex items-center justify-center h-screen text-red-600 text-xl font-bold">
+      <div className="flex items-center justify-center h-screen text-red-650 text-xl font-bold">
         Assessment ID tidak ditemukan.
       </div>
     );
@@ -79,8 +77,9 @@ setFilledStatus(mapFilled);
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="h-10 w-10 border-4 border-[#68B2A0] border-t-transparent rounded-full animate-spin"></div>
+      <div className="flex flex-col justify-center items-center min-h-[60vh] gap-4">
+        <div className="h-10 w-10 border-4 border-teal-150 border-t-[#2B7A75] rounded-full animate-spin"></div>
+        <p className="text-gray-400 font-medium animate-pulse text-sm">Memuat kategori formulir...</p>
       </div>
     );
   }
@@ -153,12 +152,12 @@ setFilledStatus(mapFilled);
 
   return (
     <ResponsiveOrangtuaLayout maxWidth="max-w-5xl">
-      <div className="space-y-6">
+      <div className="space-y-6 text-[#1E5C58]">
         {/* Tombol Tutup/Keluar */}
         <div className="flex justify-end">
           <button
             onClick={() => router.push("/orangtua/assessment")}
-            className="text-[#36315B] hover:bg-gray-100 p-2 rounded-full transition-colors"
+            className="text-[#1E5C58] hover:bg-[#F4F9F8] p-2 rounded-full transition-colors cursor-pointer"
             aria-label="Tutup"
           >
             <X size={28} />
@@ -166,19 +165,17 @@ setFilledStatus(mapFilled);
         </div>
 
         {/* Card Utama List Kategori */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 md:p-8 relative z-20">
-          <div className="flex justify-between border-b border-gray-100 pb-4 mb-6">
-            <h2 className="font-bold text-[#36315B] text-lg">Kategori</h2>
-            <h2 className="font-bold text-[#36315B] text-lg hidden sm:block">Status</h2>
+        <div className="bg-white rounded-3xl border border-teal-50 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] p-5 md:p-8 relative z-20">
+          <div className="flex justify-between border-b border-gray-150 pb-4 mb-6">
+            <h2 className="font-extrabold text-[#1E5C58] text-lg">Kategori Formulir</h2>
+            <h2 className="font-extrabold text-[#1E5C58] text-lg hidden sm:block">Aksi</h2>
           </div>
 
           <div className="space-y-8">
             {filteredKategori.map((item, index) => {
               const isFilled = filledStatus[item.code] === true;
-
-const canStart = !isFilled;
-const canViewHistory = isFilled;
-
+              const canStart = !isFilled;
+              const canViewHistory = isFilled;
 
               return (
                 <div
@@ -186,11 +183,11 @@ const canViewHistory = isFilled;
                   className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 border-b border-gray-50 pb-6 last:border-none last:pb-0"
                 >
                   <div className="flex-1">
-                    <h3 className="font-bold text-[#36315B] text-base md:text-lg mb-2">
+                    <h3 className="font-extrabold text-[#1E5C58] text-base md:text-lg mb-2">
                       {item.kategori}
                     </h3>
 
-                    <ul className="ml-5 text-sm text-gray-600 space-y-1">
+                    <ul className="ml-5 text-sm text-gray-500 font-semibold space-y-1">
                       {item.subkategori.map((sub, idx) => (
                         <li key={idx} className="list-none relative pl-0">
                           {sub}
@@ -205,57 +202,50 @@ const canViewHistory = isFilled;
                       onClick={() =>
                         setActiveId(activeId === item.code ? null : item.code)
                       }
-                      className="flex  cursor-pointer items-center justify-between gap-2 min-h-[40px] px-5 py-2 text-sm font-bold text-white bg-[#68B2A0] hover:bg-[#599A8A] rounded-xl w-full sm:w-auto shadow-sm transition-all"
+                      className="flex cursor-pointer items-center justify-between gap-2 min-h-[40px] px-5 py-2 text-xs font-bold text-white bg-[#2B7A75] hover:bg-[#1E5C58] rounded-xl w-full sm:w-auto shadow-md shadow-teal-500/10 transition-all"
                     >
                       Aksi
                       <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeId === item.code ? 'rotate-180' : ''}`} />
                     </button>
 
-                   {activeId === item.code && (
-  <div className="absolute right-0 z-50 mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200">
-    
-    <button
-  disabled={!canStart}
-  onClick={() => {
-    handleAction("mulai", item);
-    setActiveId(null);
-  }}
-  className={`flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold border-b border-gray-50 transition-colors
-    ${
-      canStart
-        ? "text-[#68B2A0] hover:bg-gray-50 cursor-pointer"
-        : "text-gray-300 cursor-not-allowed"
-    }`}
->
-  <Play className="w-4 h-4 fill-current" />
-  Mulai
-</button>
+                    {activeId === item.code && (
+                      <div className="absolute right-0 z-50 mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-150 overflow-hidden animate-in fade-in zoom-in duration-200">
+                        <button
+                          disabled={!canStart}
+                          onClick={() => {
+                            handleAction("mulai", item);
+                            setActiveId(null);
+                          }}
+                          className={`flex items-center gap-3 w-full px-4 py-3 text-xs font-bold border-b border-gray-50 transition-colors
+                            ${
+                              canStart
+                                ? "text-[#2B7A75] hover:bg-teal-50/50 cursor-pointer"
+                                : "text-gray-300 cursor-not-allowed"
+                            }`}
+                        >
+                          <Play className="w-4 h-4 fill-current" />
+                          Mulai Isi
+                        </button>
 
-
-    <button
-  disabled={!canViewHistory}
-  onClick={() => {
-    if (!canViewHistory) return;
-    handleAction("riwayat", item);
-    setActiveId(null);
-  }}
-  className={`flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold transition-colors
-    ${
-      canViewHistory
-        ? "text-[#68B2A0] hover:bg-gray-50 cursor-pointer"
-        : "text-gray-300 cursor-not-allowed"
-    }`}
->
-  <History className="w-4 h-4" />
-  Riwayat Jawaban
-</button>
-
-
-  </div>
-)}
-
-
-              
+                        <button
+                          disabled={!canViewHistory}
+                          onClick={() => {
+                            if (!canViewHistory) return;
+                            handleAction("riwayat", item);
+                            setActiveId(null);
+                          }}
+                          className={`flex items-center gap-3 w-full px-4 py-3 text-xs font-bold transition-colors
+                            ${
+                              canViewHistory
+                                ? "text-[#2B7A75] hover:bg-teal-50/50 cursor-pointer"
+                                : "text-gray-300 cursor-not-allowed"
+                            }`}
+                        >
+                          <History className="w-4 h-4" />
+                          Riwayat Jawaban
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -264,17 +254,18 @@ const canViewHistory = isFilled;
         </div>
 
         {/* Bottom Section: Unduh Laporan */}
-        <div className={`${hasNewFile ? "opacity-100" : "opacity-50"} bg-white border-2 border-[#68B2A0] p-5 md:p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm`}>
+        <div className={`${hasNewFile ? "opacity-100" : "opacity-50"} bg-white border border-[#2B7A75] p-5 md:p-6 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-[0_8px_30px_rgb(0,0,0,0.02)]`}>
           <div className="flex items-start gap-4">
-            <div className="bg-[#EAF4F0] p-2 rounded-lg mt-1">
-              <Info className="w-5 h-5 text-[#68B2A0]" />
+            <div className="bg-teal-55/10 p-2.5 rounded-xl mt-1 text-[#2B7A75]">
+              <Info className="w-5 h-5" />
             </div>
             <div>
-              <p className="font-bold text-[#36315B] text-base md:text-lg">
+              <p className="font-extrabold text-[#1E5C58] text-base md:text-lg">
                 {hasNewFile
                   ? "File baru telah diunggah."
-                  : "File belum diunggah."}</p>
-              <p className="text-xs md:text-sm text-gray-500 mt-0.5">
+                  : "File belum diunggah."}
+              </p>
+              <p className="text-xs md:text-sm text-gray-500 font-semibold mt-0.5">
                 {hasNewFile
                   ? "Asesor telah mengunggah laporan perkembangan terbaru anak Anda."
                   : "Asesor belum mengunggah laporan perkembangan terbaru anak Anda."}
@@ -285,7 +276,7 @@ const canViewHistory = isFilled;
           <button
             onClick={handleDownload}
             disabled={!hasNewFile || downloading}
-            className="w-full md:w-auto flex items-center justify-center gap-2 bg-[#68B2A0] hover:bg-[#599A8A] text-white px-6 py-3 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm shadow-sm cursor-pointer"
+            className="w-full md:w-auto flex items-center justify-center gap-2 bg-[#2B7A75] hover:bg-[#1E5C58] text-white px-6 py-3 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all text-xs shadow-md shadow-teal-500/10 cursor-pointer"
           >
             <Download className="w-4 h-4" />
             <span>
@@ -295,15 +286,17 @@ const canViewHistory = isFilled;
         </div>
       </div>
 
-      <style jsx global>{`
-        .animate-in {
-          animation: fadeIn 0.2s ease-out;
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: scale(0.95); }
-          to { opacity: 1; transform: scale(1); }
-        }
-      `}</style>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .animate-in {
+            animation: fadeIn 0.2s ease-out;
+          }
+          @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+          }
+        `
+      }} />
     </ResponsiveOrangtuaLayout>
   );
 }

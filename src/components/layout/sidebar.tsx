@@ -152,7 +152,7 @@ export default function SidebarAdmin({ isOpen, onClose }: SidebarAdminProps) {
           x: mounted && windowWidth < 768 ? (isOpen ? 0 : -300) : 0,
         }}
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-white/95 backdrop-blur-xl flex flex-col font-medium border-r border-teal-50 shadow-[2px_0_24px_rgba(0,0,0,0.02)] z-50 md:z-40 overflow-y-auto`}
+        className={`fixed md:sticky top-0 left-0 h-screen w-64 shrink-0 bg-white/95 backdrop-blur-xl flex flex-col font-medium border-r border-teal-50 shadow-[2px_0_24px_rgba(0,0,0,0.02)] z-50 md:z-40 overflow-y-auto`}
       >
         {/* Scrollable Handle Customization */}
         <style
