@@ -22,6 +22,7 @@ import {
   FileText,
   Info,
   ArrowRight,
+  ShieldCheck,
 } from "lucide-react";
 
 const layananOptions = [
@@ -202,7 +203,7 @@ export default function Page() {
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#0d3633]/30 rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/3 pointer-events-none" />
 
         <div className="relative z-10">
-          <div className="bg-white p-2.5 rounded-xl inline-block mb-6 shadow-lg max-w-fit">
+          <div className="hidden lg:inline-block bg-white p-2.5 rounded-xl mb-6 shadow-lg max-w-fit">
             <Image
               src="/logo.png"
               alt="Logo"
@@ -253,7 +254,7 @@ export default function Page() {
             </div>
             <div className="flex items-center gap-3 bg-white/10 p-4 rounded-2xl backdrop-blur-md border border-white/10 hover:bg-white/15 transition-colors">
               <div className="bg-[#A2E4D3]/20 p-2.5 rounded-xl">
-                <Sparkles className="w-5 h-5 text-[#A2E4D3]" />
+                <ShieldCheck className="w-5 h-5 text-[#A2E4D3]" />
               </div>
               <div>
                 <h3 className="font-semibold text-base">Terapis Profesional</h3>
@@ -265,12 +266,12 @@ export default function Page() {
           </motion.div>
         </div>
 
-        <div className="relative z-10 pt-6 border-t border-white/20 mt-auto flex flex-col justify-between gap-4">
+        <div className="hidden lg:inline-block relative z-10 pt-6 border-t border-white/20 mt-auto justify-between gap-4">
           <div className="flex flex-col gap-1">
             <p className="text-teal-50 text-xs sm:text-sm">
               Sudah memiliki akun?
             </p>
-            <p className="text-white font-semibold text-sm lg:text-xs">
+            <p className="text-white font-semibold text-sm lg:text-xs pb-3">
               Masuk untuk memantau tumbuh kembang anak secara real-time.
             </p>
           </div>
