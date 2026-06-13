@@ -336,6 +336,9 @@ export default function DataTerapisPage() {
                     Spesialisasi
                   </th>
                   <th className="py-4 px-6 text-xs font-bold text-[#1E5C58] uppercase tracking-wider">
+                    Role
+                  </th>
+                  <th className="py-4 px-6 text-xs font-bold text-[#1E5C58] uppercase tracking-wider">
                     Kontak
                   </th>
                   <th className="py-4 px-6 text-xs font-bold text-[#1E5C58] uppercase tracking-wider">
@@ -349,7 +352,7 @@ export default function DataTerapisPage() {
               <tbody className="divide-y divide-gray-50">
                 {isFetching ? (
                   <tr>
-                    <td colSpan={6} className="py-12 text-center text-gray-400">
+                    <td colSpan={7} className="py-12 text-center text-gray-400">
                       <div className="flex flex-col items-center justify-center gap-3">
                         <div className="w-8 h-8 border-4 border-teal-100 border-t-[#2B7A75] rounded-full animate-spin"></div>
                         <p className="text-sm font-medium">Memuat data...</p>
@@ -358,7 +361,7 @@ export default function DataTerapisPage() {
                   </tr>
                 ) : paginatedTerapis.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-12 text-center text-gray-400">
+                    <td colSpan={7} className="py-12 text-center text-gray-400">
                       <div className="flex flex-col items-center justify-center gap-2">
                         <Filter className="w-10 h-10 text-gray-300 mb-2" />
                         <p className="text-sm font-medium">
@@ -385,8 +388,8 @@ export default function DataTerapisPage() {
                             <p className="text-sm font-bold text-[#1E5C58] line-clamp-1">
                               {terapis.nama}
                             </p>
-                            <p className="text-xs text-gray-500 font-medium mt-0.5 line-clamp-1">
-                              @{terapis.username} • {terapis.role}
+                            <p className="text-xs text-gray-550 font-medium mt-0.5 line-clamp-1">
+                              @{terapis.username}
                             </p>
                           </div>
                         </div>
@@ -398,12 +401,17 @@ export default function DataTerapisPage() {
                         </div>
                       </td>
                       <td className="py-4 px-6">
+                        <span className="capitalize text-xs font-bold text-teal-800 bg-teal-50 border border-teal-100/50 px-2.5 py-1.5 rounded-lg whitespace-nowrap">
+                          {terapis.role}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6">
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-1.5 text-xs text-gray-600 font-medium whitespace-nowrap">
                             <Mail className="w-3.5 h-3.5 text-gray-400" />
                             {terapis.email}
                           </div>
-                          <div className="flex items-center gap-1.5 text-xs text-gray-500 font-medium whitespace-nowrap">
+                          <div className="flex items-center gap-1.5 text-xs text-gray-505 font-medium whitespace-nowrap">
                             <Phone className="w-3.5 h-3.5 text-gray-400" />
                             {terapis.telepon || "-"}
                           </div>
@@ -487,8 +495,13 @@ export default function DataTerapisPage() {
                           {terapis.nama}
                         </p>
                         <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider truncate">
-                          @{terapis.username} • {terapis.role}
+                          @{terapis.username}
                         </p>
+                        <div className="mt-0.5">
+                          <span className="capitalize text-[9px] font-black text-teal-850 bg-teal-55 px-1.5 py-0.5 rounded border border-teal-100/50">
+                            {terapis.role}
+                          </span>
+                        </div>
                       </div>
                     </div>
                     <span
