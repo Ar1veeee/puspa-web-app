@@ -18,6 +18,7 @@ import {
   UsersRound,
   User,
   Key,
+  AlertTriangle,
 } from "lucide-react";
 import { useSidebar } from "@/context/SidebarContext";
 
@@ -418,39 +419,49 @@ export default function SidebarTerapis({ isOpen = false, onClose = () => {} }: S
       {/* Logout Confirmation Modal */}
       <AnimatePresence>
         {showLogoutModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-xs p-4">
+          <div className="fixed inset-0 z-100 flex items-center justify-center p-4 sm:p-6 bg-black/20 backdrop-blur-md">
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-sm bg-white rounded-3xl p-6 shadow-[0_20px_50px_rgba(30,92,88,0.12)] border border-teal-50/80 text-center relative overflow-hidden"
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="bg-white rounded-3xl shadow-2xl shadow-teal-900/10 w-full max-w-sm overflow-hidden"
             >
-              {/* Decorative Accent Glow */}
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-400 via-rose-500 to-red-400" />
+              <div className="p-8 text-center">
+                <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 relative">
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                    className="absolute inset-0 bg-red-100/50 rounded-full scale-125 opacity-20"
+                  />
+                  <AlertTriangle className="w-10 h-10 text-red-500" />
+                </div>
 
-              <div className="w-14 h-14 bg-rose-50 border border-rose-100/60 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-4 mt-2">
-                <LogOut size={24} />
+                <h3 className="text-xl font-extrabold text-[#1E5C58] mb-2 tracking-tight">
+                  Konfirmasi Logout
+                </h3>
+                <p className="text-sm text-gray-505 font-medium leading-relaxed mb-8 px-4">
+                  Apakah Anda yakin ingin keluar dari sistem? Anda harus login
+                  kembali untuk mengakses data.
+                </p>
+
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={handleLogout}
+                    className="cursor-pointer w-full py-3.5 bg-red-500 hover:bg-red-650 text-white rounded-2xl font-bold text-sm transition-all shadow-md shadow-red-500/20 active:scale-95"
+                  >
+                    Ya, Keluar Sekarang
+                  </button>
+                  <button
+                    onClick={() => setShowLogoutModal(false)}
+                    className="cursor-pointer w-full py-3.5 bg-gray-50 hover:bg-gray-100 text-gray-750 rounded-2xl font-bold text-sm transition-all border border-gray-100 active:scale-95"
+                  >
+                    Batal
+                  </button>
+                </div>
               </div>
-              <h3 className="text-base font-extrabold text-[#1E5C58] mb-1.5">
-                Konfirmasi Keluar
-              </h3>
-              <p className="text-xs font-bold text-gray-400 mb-6 max-w-[240px] mx-auto leading-relaxed">
-                Apakah Anda yakin ingin keluar dari sistem PUSPA Terapis?
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setShowLogoutModal(false)}
-                  className="cursor-pointer flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-500 font-bold text-xs hover:bg-gray-50 transition-all duration-300"
-                >
-                  Batal
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="cursor-pointer flex-1 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs shadow-[0_4px_12px_rgba(244,63,94,0.2)] hover:shadow-[0_8px_20px_rgba(244,63,94,0.3)] hover:-translate-y-0.5 transition-all duration-300"
-                >
-                  Ya, Keluar
-                </button>
-              </div>
+
+              {/* Decorative line */}
+              <div className="h-1.5 w-full bg-linear-to-r from-red-500/10 via-red-500 to-red-500/10" />
             </motion.div>
           </div>
         )}

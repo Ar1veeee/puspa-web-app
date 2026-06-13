@@ -115,10 +115,6 @@ export default function AdminDashboard() {
 
             <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-sm font-medium mb-4">
-                  <Sparkles className="w-4 h-4 text-[#A2E4D3]" />
-                  <span>Ikhtisar Sistem</span>
-                </div>
                 <h1 className="text-3xl lg:text-4xl font-extrabold mb-2 tracking-tight">
                   Dasbor Admin
                 </h1>
