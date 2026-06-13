@@ -255,7 +255,7 @@ export default function FormTambahAdmin({
                 </div>
                 <input
                   type="text"
-                  placeholder="admin_budi"
+                  placeholder="adminBudi"
                   value={form.username}
                   onChange={(e) =>
                     setForm({ ...form, username: e.target.value })
@@ -283,7 +283,7 @@ export default function FormTambahAdmin({
                 </div>
                 <input
                   type="password"
-                  placeholder="Buat Password Kuat"
+                  placeholder="••••••••••••"
                   value={form.password}
                   onChange={(e) =>
                     setForm({ ...form, password: e.target.value })

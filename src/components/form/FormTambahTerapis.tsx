@@ -190,7 +190,7 @@ export default function FormTambahTerapis({
                   <input
                     type="text"
                     name="nama"
-                    placeholder="Masukkan nama"
+                    placeholder="Budi Santoso"
                     value={formData.nama}
                     onChange={handleChange}
                     className={`w-full pl-11 pr-4 py-3 bg-gray-50 border rounded-xl outline-none transition-all text-sm text-gray-700 font-medium ${errors.nama ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10" : "border-gray-200 focus:border-[#2B7A75] focus:bg-white focus:ring-4 focus:ring-[#2B7A75]/10"}`}
@@ -251,7 +251,7 @@ export default function FormTambahTerapis({
                   <input
                     type="text"
                     name="username"
-                    placeholder="Masukkan username"
+                    placeholder="fisioBudi"
                     value={formData.username}
                     onChange={handleChange}
                     className={`w-full pl-11 pr-4 py-3 bg-gray-50 border rounded-xl outline-none transition-all text-sm text-gray-700 font-medium ${errors.username ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10" : "border-gray-200 focus:border-[#2B7A75] focus:bg-white focus:ring-4 focus:ring-[#2B7A75]/10"}`}
@@ -278,7 +278,7 @@ export default function FormTambahTerapis({
                   <input
                     type="email"
                     name="email"
-                    placeholder="Masukkan email"
+                    placeholder="budi@gmail.com"
                     value={formData.email}
                     onChange={handleChange}
                     className={`w-full pl-11 pr-4 py-3 bg-gray-50 border rounded-xl outline-none transition-all text-sm text-gray-700 font-medium ${errors.email ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10" : "border-gray-200 focus:border-[#2B7A75] focus:bg-white focus:ring-4 focus:ring-[#2B7A75]/10"}`}
@@ -305,7 +305,7 @@ export default function FormTambahTerapis({
                   <input
                     type="text"
                     name="telepon"
-                    placeholder="Masukkan nomor telepon"
+                    placeholder="628956567878980"
                     value={formData.telepon}
                     onChange={handleChange}
                     className={`w-full pl-11 pr-4 py-3 bg-gray-50 border rounded-xl outline-none transition-all text-sm text-gray-700 font-medium ${errors.telepon ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10" : "border-gray-200 focus:border-[#2B7A75] focus:bg-white focus:ring-4 focus:ring-[#2B7A75]/10"}`}
@@ -332,7 +332,7 @@ export default function FormTambahTerapis({
                   <input
                     type="password"
                     name="password"
-                    placeholder="Buat Password Kuat"
+                    placeholder="••••••••••••"
                     value={formData.password}
                     onChange={handleChange}
                     className={`w-full pl-11 pr-4 py-3 bg-gray-50 border rounded-xl outline-none transition-all text-sm text-gray-700 font-medium ${errors.password ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10" : "border-gray-200 focus:border-[#2B7A75] focus:bg-white focus:ring-4 focus:ring-[#2B7A75]/10"}`}
