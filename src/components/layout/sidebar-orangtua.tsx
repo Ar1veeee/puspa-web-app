@@ -10,7 +10,6 @@ import {
   UserSquare2,
   HelpCircle,
   ChevronRight,
-  ChevronLeft,
   ChevronDown,
   User,
   Lock,
@@ -19,7 +18,6 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useProfile } from "@/context/ProfileContext";
-import { useSidebar } from "@/context/SidebarContext";
 
 export const menuOrangtua = [
   {
@@ -55,7 +53,6 @@ export default function SidebarOrangtua({ isOpen = false, onClose = () => {} }: 
   const [openProfileMenu, setOpenProfileMenu] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { profile } = useProfile();
-  const { isCollapsed, toggleSidebar } = useSidebar();
   const [mounted, setMounted] = useState(false);
   const [windowWidth, setWindowWidth] = useState(1024);
 
@@ -72,6 +69,11 @@ export default function SidebarOrangtua({ isOpen = false, onClose = () => {} }: 
   useEffect(() => {
     setMounted(true);
     setWindowWidth(window.innerWidth);
+
+    // Reset body collapsed class on parent portal since parent portal sidebar cannot collapse
+    if (typeof document !== "undefined") {
+      document.body.classList.remove("sidebar-collapsed");
+    }
 
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
@@ -106,7 +108,7 @@ export default function SidebarOrangtua({ isOpen = false, onClose = () => {} }: 
           x: mounted && windowWidth < 768 ? (isOpen ? 0 : -300) : 0,
         }}
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className={`fixed md:sticky top-0 left-0 h-screen w-64 shrink-0 bg-white/95 backdrop-blur-xl flex flex-col font-medium border-r border-teal-50 shadow-[2px_0_24px_rgba(0,0,0,0.02)] z-50 md:z-40 overflow-y-auto`}
+        className="fixed md:sticky top-0 left-0 h-screen w-64 shrink-0 bg-white/95 backdrop-blur-xl flex flex-col font-medium border-r border-teal-50 shadow-[2px_0_24px_rgba(0,0,0,0.02)] z-50 md:z-40 overflow-y-auto"
       >
         {/* Scrollable Handle Customization */}
         <style
@@ -137,23 +139,6 @@ export default function SidebarOrangtua({ isOpen = false, onClose = () => {} }: 
               />
             </Link>
           </div>
-          <div className="sidebar-logo-mini hidden w-full justify-center">
-            <Image
-              src="/favicon.ico"
-              alt="Logo"
-              width={28}
-              height={28}
-              priority
-              className="object-contain"
-            />
-          </div>
-          <button 
-            onClick={toggleSidebar}
-            className={`text-[#2B7A75] hover:bg-[#2B7A75]/10 p-1.5 rounded-lg transition-colors cursor-pointer ${isCollapsed ? "mx-auto" : ""}`}
-            title={isCollapsed ? "Tampilkan Menu" : "Sembunyikan Menu"}
-          >
-            {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-          </button>
         </div>
 
         {/* Navigation Menu */}
@@ -176,8 +161,8 @@ export default function SidebarOrangtua({ isOpen = false, onClose = () => {} }: 
                   className={`p-1.5 rounded-lg transition-colors duration-300 
                   ${
                     active
-                      ? (isCollapsed ? "text-white bg-transparent" : "bg-white/20 text-white")
-                      : `text-gray-400 ${isCollapsed ? "group-hover:text-[#2B7A75]" : "group-hover:bg-[#2B7A75]/10 group-hover:text-[#2B7A75]"}`
+                      ? "bg-white/20 text-white"
+                      : "text-gray-400 group-hover:bg-[#2B7A75]/10 group-hover:text-[#2B7A75]"
                   }`}
                 >
                   <Icon size={18} strokeWidth={2.5} />
@@ -193,7 +178,7 @@ export default function SidebarOrangtua({ isOpen = false, onClose = () => {} }: 
         {/* Profile Dropdown Section at bottom */}
         <div className="p-4 border-t border-gray-150 mt-auto bg-white/50 backdrop-blur-md relative">
           <div
-            className={`flex items-center justify-between cursor-pointer p-2 rounded-2xl hover:bg-gray-50 transition-colors ${isCollapsed ? "justify-center" : ""}`}
+            className="flex items-center justify-between cursor-pointer p-2 rounded-2xl hover:bg-gray-50 transition-colors"
             onClick={() => setOpenProfileMenu(!openProfileMenu)}
           >
             <div className="flex items-center gap-3 min-w-0">
@@ -231,7 +216,7 @@ export default function SidebarOrangtua({ isOpen = false, onClose = () => {} }: 
           </div>
 
           <AnimatePresence>
-            {openProfileMenu && !isCollapsed && (
+            {openProfileMenu && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -250,7 +235,7 @@ export default function SidebarOrangtua({ isOpen = false, onClose = () => {} }: 
                 </Link>
                 <button
                   onClick={() => setShowLogoutModal(true)}
-                  className="w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-xl cursor-pointer text-red-600 hover:bg-red-50 transition"
+                  className="w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-xl cursor-pointer text-red-655 hover:bg-red-50 hover:text-red-700 transition-colors duration-300"
                 >
                   <LogOut size={15} /> Logout
                 </button>
