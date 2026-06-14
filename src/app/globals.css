@@ -101,14 +101,29 @@ input[type="password"]::-ms-clear {
 
 /* ================= COLLAPSIBLE SIDEBAR ================= */
 
-/* Hanya transisi properti yang berubah pada aside agar workspace ikut melebar */
+/* Set default dimensions in expanded state to allow smooth collapse transition */
 aside {
+  width: 256px;
+  min-width: 256px;
+  max-width: 256px;
   transition:
     width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     padding-right 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+aside a,
+aside button {
+  transition: 
+    width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    padding-right 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    gap 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 /* Sidebar collapsed state: perkecil lebar */
@@ -130,15 +145,15 @@ aside {
   opacity: 1;
   max-width: 180px;
   overflow: hidden;
-  transition: opacity 0.2s ease, max-width 0.25s ease !important;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .sidebar-logo-mini {
   opacity: 0;
   max-width: 0;
   overflow: hidden;
-  display: flex;
-  transition: opacity 0.2s ease, max-width 0.25s ease !important;
+  display: flex !important; /* Force flex display to override Tailwind's hidden class */
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   pointer-events: none;
 }
 
@@ -162,23 +177,53 @@ aside {
   overflow: hidden;
   white-space: nowrap;
   display: inline-block;
-  transition: opacity 0.18s ease, max-width 0.22s ease !important;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .sidebar-collapsed .sidebar-text,
 .sidebar-collapsed .sidebar-chevron,
 .sidebar-collapsed .sidebar-section-title {
   opacity: 0 !important;
+  width: 0 !important;
+  min-width: 0 !important;
   max-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
   pointer-events: none;
 }
 
 /* Center icons saat sidebar collapsed */
 .sidebar-collapsed aside button,
 .sidebar-collapsed aside a {
+  width: 100% !important; /* Force full width (48px) inside nav to enable perfect flex-centering */
   justify-content: center !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
+  gap: 0 !important;
+}
+
+/* Reset untuk submenu melayang dan popover profil agar tetap rapi, rata kiri, dan memiliki gap */
+.sidebar-collapsed aside .absolute a,
+.sidebar-collapsed aside .absolute button,
+.sidebar-collapsed-submenu a,
+.sidebar-collapsed-submenu button {
+  justify-content: flex-start !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+/* Center bottom profile container when collapsed */
+.sidebar-collapsed aside .border-t {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.sidebar-collapsed aside .border-t > div {
+  justify-content: center !important;
+  padding: 8px 0 !important;
   gap: 0 !important;
 }
 
@@ -267,4 +312,35 @@ aside {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #1E5C58;
+}
+
+/* Custom Toast slide animations */
+@keyframes slideInRight {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+
+.toast-slide-in {
+  animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.toast-slide-out {
+  animation: slideOutRight 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

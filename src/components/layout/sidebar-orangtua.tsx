@@ -17,6 +17,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSidebar } from "@/context/SidebarContext";
 import { useProfile } from "@/context/ProfileContext";
 
 export const menuOrangtua = [
@@ -55,6 +56,7 @@ export default function SidebarOrangtua({ isOpen = false, onClose = () => {} }: 
   const { profile } = useProfile();
   const [mounted, setMounted] = useState(false);
   const [windowWidth, setWindowWidth] = useState(1024);
+  const { isCollapsed, toggleSidebar } = useSidebar();
 
   const guardianName = profile?.guardian_name || "User";
   const email = profile?.email || "-";
@@ -69,11 +71,6 @@ export default function SidebarOrangtua({ isOpen = false, onClose = () => {} }: 
   useEffect(() => {
     setMounted(true);
     setWindowWidth(window.innerWidth);
-
-    // Reset body collapsed class on parent portal since parent portal sidebar cannot collapse
-    if (typeof document !== "undefined") {
-      document.body.classList.remove("sidebar-collapsed");
-    }
 
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
@@ -139,6 +136,25 @@ export default function SidebarOrangtua({ isOpen = false, onClose = () => {} }: 
               />
             </Link>
           </div>
+          <div className="sidebar-logo-mini hidden w-full justify-center">
+            <Image
+              src="/favicon.ico"
+              alt="Logo"
+              width={28}
+              height={28}
+              priority
+              className="object-contain"
+            />
+          </div>
+          <button
+            onClick={toggleSidebar}
+            className={`text-[#2B7A75] hover:bg-[#2B7A75]/10 p-1.5 rounded-lg transition-colors cursor-pointer ${
+              isCollapsed ? "mx-auto" : ""
+            }`}
+            title={isCollapsed ? "Tampilkan Menu" : "Sembunyikan Menu"}
+          >
+            {isCollapsed ? <ChevronRight size={18} /> : <ChevronRight size={18} className="rotate-180" />}
+          </button>
         </div>
 
         {/* Navigation Menu */}
@@ -150,7 +166,7 @@ export default function SidebarOrangtua({ isOpen = false, onClose = () => {} }: 
               <Link
                 key={i}
                 href={item.path}
-                className={`flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-300 group
+                className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-300 group
                 ${
                   active
                     ? "bg-[#2B7A75] text-white shadow-md shadow-teal-500/20"
@@ -161,8 +177,8 @@ export default function SidebarOrangtua({ isOpen = false, onClose = () => {} }: 
                   className={`p-1.5 rounded-lg transition-colors duration-300 
                   ${
                     active
-                      ? "bg-white/20 text-white"
-                      : "text-gray-400 group-hover:bg-[#2B7A75]/10 group-hover:text-[#2B7A75]"
+                      ? (isCollapsed ? "text-white bg-transparent" : "bg-white/20 text-white")
+                      : `text-gray-400 ${isCollapsed ? "group-hover:text-[#2B7A75]" : "group-hover:bg-[#2B7A75]/10 group-hover:text-[#2B7A75]"}`
                   }`}
                 >
                   <Icon size={18} strokeWidth={2.5} />
@@ -260,6 +276,7 @@ export default function SidebarOrangtua({ isOpen = false, onClose = () => {} }: 
                 <span className="text-xs font-bold text-[#1E5C58] truncate">
                   {guardianName}
                 </span>
+                <br />
                 <span className="text-[10px] font-semibold text-gray-400 truncate">
                   {email}
                 </span>
@@ -278,10 +295,14 @@ export default function SidebarOrangtua({ isOpen = false, onClose = () => {} }: 
           <AnimatePresence>
             {openProfileMenu && (
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                className="mt-3 space-y-1 bg-gray-50/50 p-2 rounded-2xl border border-gray-100"
+                initial={isCollapsed ? { opacity: 0, scale: 0.95, x: -10 } : { opacity: 0, y: 10 }}
+                animate={isCollapsed ? { opacity: 1, scale: 1, x: 0 } : { opacity: 1, y: 0 }}
+                exit={isCollapsed ? { opacity: 0, scale: 0.95, x: -10 } : { opacity: 0, y: 10 }}
+                className={`space-y-1 p-2 rounded-2xl border border-teal-50 bg-white shadow-xl ${
+                  isCollapsed
+                    ? "absolute left-full bottom-4 ml-3 min-w-[180px] z-50 shadow-teal-900/5"
+                    : "mt-3 bg-gray-50/50"
+                }`}
               >
                 <Link href="/orangtua/profil">
                   <div className={`flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-xl transition cursor-pointer ${pathname === "/orangtua/profil" ? "text-white bg-[#2B7A75]" : "text-gray-650 hover:bg-gray-100"}`}>
