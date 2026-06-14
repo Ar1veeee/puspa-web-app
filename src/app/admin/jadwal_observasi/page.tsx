@@ -51,6 +51,14 @@ export default function JadwalPage() {
     initialTab,
   );
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("tab") !== tab) {
+      params.set("tab", tab);
+      router.replace(`?${params.toString()}`, { scroll: false });
+    }
+  }, [tab, router]);
+
   const [jadwalList, setJadwalList] = useState<Jadwal[]>([]);
   const [originalList, setOriginalList] = useState<Jadwal[]>([]);
 

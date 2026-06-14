@@ -22,7 +22,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import FormEditAsesment from "@/components/form/FormEditAsesment";
 import {
   getAssessmentsAdmin,
@@ -90,8 +90,24 @@ const ASESSOR_ICONS: Record<string, any> = {
 // =======================
 export default function JadwalAsesmenPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [search, setSearch] = useState("");
-  const [tab, setTab] = useState<"terjadwal" | "selesai">("terjadwal");
+  
+  const initialTab =
+    searchParams.get("tab") === "selesai"
+      ? "selesai"
+      : "terjadwal";
+
+  const [tab, setTab] = useState<"terjadwal" | "selesai">(initialTab);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("tab") !== tab) {
+      params.set("tab", tab);
+      router.replace(`?${params.toString()}`, { scroll: false });
+    }
+  }, [tab, router]);
+
   const [jadwalList, setJadwalList] = useState<Jadwal[]>([]);
   const [selectedPasien, setSelectedPasien] = useState<Jadwal | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
