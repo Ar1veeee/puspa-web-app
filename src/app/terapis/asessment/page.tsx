@@ -64,9 +64,21 @@ function AssessmentContent() {
   const params = useSearchParams();
   const { profile } = useTherapistProfile();
 
+  const urlType = params.get("type");
   const urlStatus = params.get("status");
 
-  const [activeTab, setActiveTab] = useState<TerapiTab>("PLB (Paedagog)");
+  const [activeTab, setActiveTab] = useState<TerapiTab>(() => {
+    switch (urlType) {
+      case "okupasi":
+        return "Terapi Okupasi";
+      case "wicara":
+        return "Terapi Wicara";
+      case "fisio":
+        return "Fisioterapi";
+      default:
+        return "PLB (Paedagog)";
+    }
+  });
   const [activeFilter, setActiveFilter] = useState<StatusFilter>(
     urlStatus === "completed" ? "Selesai" : "Terjadwal"
   );
