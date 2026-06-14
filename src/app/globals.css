@@ -203,6 +203,11 @@ aside button {
   gap: 0 !important;
 }
 
+.sidebar-collapsed aside button > div {
+  gap: 0 !important;
+  justify-content: center !important;
+}
+
 /* Reset untuk submenu melayang dan popover profil agar tetap rapi, rata kiri, dan memiliki gap */
 .sidebar-collapsed aside .absolute a,
 .sidebar-collapsed aside .absolute button,

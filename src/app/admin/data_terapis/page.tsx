@@ -152,6 +152,17 @@ function DetailTerapis({
 }
 
 export default function DataTerapisPage() {
+  const getStatusBadgeClass = (status: string) => {
+    const s = status?.toLowerCase() || "aktif";
+    if (s === "aktif" || s === "terverifikasi") {
+      return "bg-emerald-50 text-emerald-700 border border-emerald-100";
+    }
+    if (s === "tidak terverifikasi" || s === "nonaktif" || s === "tidak_aktif") {
+      return "bg-rose-50 text-rose-700 border border-rose-100";
+    }
+    return "bg-amber-50 text-amber-700 border border-amber-100";
+  };
+
   const [search, setSearch] = useState("");
   const [terapisList, setTerapisList] = useState<Terapis[]>([]);
   const [isFetching, setIsFetching] = useState(true);
@@ -319,7 +330,7 @@ export default function DataTerapisPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="bg-white rounded-3xl shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] border border-teal-50 overflow-hidden flex-1 flex flex-col"
+          className="bg-transparent md:bg-white rounded-3xl md:shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] md:border md:border-teal-50 overflow-hidden flex-1 flex flex-col"
         >
           {/* Desktop Table View */}
           <div className="hidden md:block overflow-x-auto w-full flex-1">
@@ -419,12 +430,8 @@ export default function DataTerapisPage() {
                       </td>
                       <td className="py-4 px-6">
                         <span
-                          className={`inline-flex px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider
-                          ${
-                            terapis.status?.toLowerCase() === "aktif"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-gray-100 text-gray-600"
-                          }`}
+                          className={`inline-flex px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider border
+                          ${getStatusBadgeClass(terapis.status)}`}
                         >
                           {terapis.status || "Aktif"}
                         </span>
@@ -468,14 +475,14 @@ export default function DataTerapisPage() {
           </div>
 
           {/* Mobile Card View */}
-          <div className="md:hidden flex-1 overflow-y-auto w-full p-4 space-y-4">
+          <div className="md:hidden flex-1 w-full space-y-4">
             {isFetching ? (
-              <div className="py-12 flex flex-col items-center justify-center gap-3 text-gray-400">
+              <div className="py-12 flex flex-col items-center justify-center gap-3 text-gray-400 bg-white rounded-3xl border border-teal-50 shadow-xs">
                 <div className="w-8 h-8 border-4 border-teal-100 border-t-[#2B7A75] rounded-full animate-spin"></div>
                 <p className="text-sm font-medium">Memuat data...</p>
               </div>
             ) : paginatedTerapis.length === 0 ? (
-              <div className="py-12 flex flex-col items-center justify-center gap-2 text-gray-400">
+              <div className="py-12 flex flex-col items-center justify-center gap-2 text-gray-400 bg-white rounded-3xl border border-teal-50 shadow-xs">
                 <Filter className="w-10 h-10 text-gray-300 mb-2" />
                 <p className="text-sm font-medium">Tidak ada data ditemukan.</p>
               </div>
@@ -483,83 +490,90 @@ export default function DataTerapisPage() {
               paginatedTerapis.map((terapis) => (
                 <div
                   key={terapis.id}
-                  className="bg-[#F4F9F8]/30 border border-teal-50 rounded-2xl p-4 shadow-xs"
+                  className="bg-white border border-teal-50/60 rounded-3xl p-5 shadow-[0_4px_20px_-4px_rgba(43,122,117,0.06)]"
                 >
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-white border border-teal-100 text-[#2B7A75] flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
+                  <div className="flex justify-between items-start gap-2 mb-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-12 h-12 rounded-full bg-teal-50 border border-teal-100/50 text-[#2B7A75] flex items-center justify-center font-bold text-base shrink-0 shadow-xs">
                         {terapis.nama.charAt(0).toUpperCase()}
                       </div>
-                      <div className="max-w-[150px]">
-                        <p className="text-sm font-bold text-[#1E5C58] truncate">
+                      <div className="min-w-0">
+                        <h3 className="text-sm font-bold text-[#1E5C58] truncate leading-snug">
                           {terapis.nama}
-                        </p>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider truncate">
+                        </h3>
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider truncate mt-0.5">
                           @{terapis.username}
                         </p>
-                        <div className="mt-0.5">
-                          <span className="capitalize text-[9px] font-black text-teal-850 bg-teal-55 px-1.5 py-0.5 rounded border border-teal-100/50">
-                            {terapis.role}
-                          </span>
-                        </div>
                       </div>
                     </div>
+                    
                     <span
-                      className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest
-                      ${
-                        terapis.status?.toLowerCase() === "aktif"
-                          ? "bg-green-100 text-green-700 border border-green-200"
-                          : "bg-gray-100 text-gray-600 border border-gray-200"
-                      }`}
+                      className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider shrink-0 shadow-2xs ${getStatusBadgeClass(terapis.status)}`}
                     >
                       {terapis.status || "Aktif"}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-2.5 mb-5 bg-white/50 p-3 rounded-xl border border-white/50">
-                    <div className="flex items-center gap-2 text-xs font-bold text-[#2B7A75]">
-                      <Stethoscope className="w-3.5 h-3.5" />
-                      {terapis.bidang}
+                  <div className="grid grid-cols-2 gap-3 mb-4 bg-[#F4F9F8]/60 p-3.5 rounded-2xl border border-teal-50/50">
+                    <div>
+                      <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Spesialisasi</span>
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-[#2B7A75] min-w-0">
+                        <Stethoscope className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">{terapis.bidang}</span>
+                      </div>
                     </div>
-                    <div className="h-px bg-teal-50/50 w-full" />
-                    <div className="flex items-center gap-2.5 text-xs text-gray-600 font-medium">
-                      <Mail className="w-3.5 h-3.5 text-[#2B7A75]/60" />
-                      <span className="truncate">{terapis.email}</span>
-                    </div>
-                    <div className="flex items-center gap-2.5 text-xs text-gray-600 font-medium">
-                      <Phone className="w-3.5 h-3.5 text-[#2B7A75]/60" />
-                      {terapis.telepon || "-"}
+                    <div>
+                      <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Role Akun</span>
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-[#2B7A75]">
+                        <span className="capitalize px-2 py-0.5 rounded bg-teal-50 border border-teal-150/40 text-[9px] font-bold text-teal-850">
+                          {terapis.role}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between gap-2 pt-3 border-t border-teal-50/50">
-                    <p className="text-[10px] font-bold text-gray-300">
+                  <div className="space-y-2 mb-4 px-1">
+                    <div className="flex items-center gap-2.5 text-xs text-gray-600 font-medium min-w-0">
+                      <Mail className="w-3.5 h-3.5 text-[#2B7A75] shrink-0" />
+                      <span className="truncate">{terapis.email}</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs text-gray-600 font-medium">
+                      <Phone className="w-3.5 h-3.5 text-[#2B7A75] shrink-0" />
+                      <span>{terapis.telepon || "-"}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2 pt-3.5 border-t border-teal-50/50">
+                    <p className="text-[10px] font-bold text-gray-400 tracking-wider">
                       ID: #{terapis.id.slice(-6).toUpperCase()}
                     </p>
-                    <div className="flex gap-1.5">
+                    <div className="flex gap-2">
                       <button
                         onClick={() => handleDetail(terapis.id)}
-                        className="cursor-pointer p-1.5 bg-white border border-teal-50 text-[#2B7A75] rounded-lg shadow-xs active:scale-90 transition-transform"
+                        className="cursor-pointer p-2 bg-white hover:bg-teal-50 border border-teal-100/60 text-[#2B7A75] rounded-xl shadow-2xs active:scale-90 transition-all"
+                        title="Detail"
                       >
-                        <Eye size={16} />
+                        <Eye size={15} strokeWidth={2.5} />
                       </button>
                       <button
                         onClick={() => {
                           setSelectedTerapis(terapis);
                           setShowUbah(true);
                         }}
-                        className="cursor-pointer p-1.5 bg-white border border-teal-50 text-amber-600 rounded-lg shadow-xs active:scale-90 transition-transform"
+                        className="cursor-pointer p-2 bg-white hover:bg-amber-50 border border-amber-100/60 text-amber-600 rounded-xl shadow-2xs active:scale-90 transition-all"
+                        title="Ubah"
                       >
-                        <Pencil size={16} />
+                        <Pencil size={15} strokeWidth={2.5} />
                       </button>
                       <button
                         onClick={() => {
                           setDeleteId(terapis.id);
                           setShowHapus(true);
                         }}
-                        className="cursor-pointer p-1.5 bg-white border border-teal-50 text-red-500 rounded-lg shadow-xs active:scale-90 transition-transform"
+                        className="cursor-pointer p-2 bg-white hover:bg-red-50 border border-red-100/60 text-red-500 rounded-xl shadow-2xs active:scale-90 transition-all"
+                        title="Hapus"
                       >
-                        <Trash2 size={16} />
+                        <Trash2 size={15} strokeWidth={2.5} />
                       </button>
                     </div>
                   </div>
@@ -570,7 +584,7 @@ export default function DataTerapisPage() {
 
           {/* Pagination */}
           {totalPages > 0 && (
-            <div className="bg-white border-t border-gray-100 p-4 px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="bg-white border border-teal-50 md:border-none border-t md:border-t-gray-100 p-4 px-6 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-3xl md:rounded-none shadow-xs md:shadow-none mt-2 md:mt-0">
               <p className="text-xs sm:text-sm font-medium text-gray-500">
                 Menampilkan{" "}
                 <span className="font-bold text-[#1E5C58]">

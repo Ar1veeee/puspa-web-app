@@ -146,6 +146,17 @@ function DetailAdmin({
 }
 
 export default function AdminPage() {
+  const getStatusBadgeClass = (status: string) => {
+    const s = status?.toLowerCase() || "aktif";
+    if (s === "aktif" || s === "terverifikasi") {
+      return "bg-emerald-50 text-emerald-700 border border-emerald-100";
+    }
+    if (s === "tidak terverifikasi" || s === "nonaktif" || s === "tidak_aktif") {
+      return "bg-rose-50 text-rose-700 border border-rose-100";
+    }
+    return "bg-amber-50 text-amber-700 border border-amber-100";
+  };
+
   const [search, setSearch] = useState("");
   const [admins, setAdmins] = useState<Admin[]>([]);
   const [selectedAdmin, setSelectedAdmin] = useState<Admin | null>(null);
@@ -284,13 +295,12 @@ export default function AdminPage() {
             </button>
           </div>
         </div>
-
         {/* Table Container (Desktop) & Cards (Mobile) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="bg-white rounded-3xl shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] border border-teal-50 overflow-hidden flex-1 flex flex-col"
+          className="bg-transparent md:bg-white rounded-3xl md:shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] md:border md:border-teal-50 overflow-hidden flex-1 flex flex-col"
         >
           {/* Desktop Table View */}
           <div className="hidden md:block overflow-x-auto w-full flex-1">
@@ -373,12 +383,8 @@ export default function AdminPage() {
                       </td>
                       <td className="py-4 px-6">
                         <span
-                          className={`inline-flex px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider
-                          ${
-                            admin.status?.toLowerCase() === "aktif"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-gray-100 text-gray-600"
-                          }`}
+                          className={`inline-flex px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider border
+                          ${getStatusBadgeClass(admin.status)}`}
                         >
                           {admin.status || "Aktif"}
                         </span>
@@ -423,88 +429,92 @@ export default function AdminPage() {
           </div>
 
           {/* Mobile Card View */}
-          <div className="md:hidden flex-1 overflow-y-auto w-full p-4 space-y-4">
+          <div className="md:hidden flex-1 w-full space-y-4">
             {isFetching ? (
-              <div className="py-12 flex flex-col items-center justify-center gap-3 text-gray-400">
+              <div className="py-12 flex flex-col items-center justify-center gap-3 text-gray-400 bg-white rounded-3xl border border-teal-50 shadow-xs">
                 <div className="w-8 h-8 border-4 border-teal-100 border-t-[#2B7A75] rounded-full animate-spin"></div>
                 <p className="text-sm font-medium">Memuat data...</p>
               </div>
             ) : paginatedAdmins.length === 0 ? (
-              <div className="py-12 flex flex-col items-center justify-center gap-2 text-gray-400">
+              <div className="py-12 flex flex-col items-center justify-center gap-2 text-gray-400 bg-white rounded-3xl border border-teal-50 shadow-xs">
                 <Filter className="w-10 h-10 text-gray-300 mb-2" />
                 <p className="text-sm font-medium">Tidak ada data ditemukan.</p>
               </div>
             ) : (
-              paginatedAdmins.map((admin, idx) => (
+              paginatedAdmins.map((admin) => (
                 <div
                   key={admin.admin_id}
-                  className="bg-[#F4F9F8]/30 border border-teal-50 rounded-2xl p-4 shadow-xs"
+                  className="bg-white border border-teal-50/60 rounded-3xl p-5 shadow-[0_4px_20px_-4px_rgba(43,122,117,0.06)]"
                 >
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-white border border-teal-100 text-[#2B7A75] flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
+                  <div className="flex justify-between items-start gap-2 mb-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-12 h-12 rounded-full bg-teal-50 border border-teal-100/50 text-[#2B7A75] flex items-center justify-center font-bold text-base shrink-0 shadow-xs">
                         {admin.admin_name.charAt(0).toUpperCase()}
                       </div>
-                      <div>
-                        <p className="text-sm font-bold text-[#1E5C58]">
+                      <div className="min-w-0">
+                        <h3 className="text-sm font-bold text-[#1E5C58] truncate leading-snug">
                           {admin.admin_name}
-                        </p>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                        </h3>
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider truncate mt-0.5">
                           @{admin.username}
                         </p>
+                        <div className="mt-1">
+                          <span className="capitalize px-2 py-0.5 rounded bg-teal-50 border border-teal-100/50 text-[9px] font-bold text-[#2B7A75]">
+                            Administrator
+                          </span>
+                        </div>
                       </div>
                     </div>
+                    
                     <span
-                      className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest
-                      ${
-                        admin.status?.toLowerCase() === "aktif"
-                          ? "bg-green-100 text-green-700 border border-green-200"
-                          : "bg-gray-100 text-gray-600 border border-gray-200"
-                      }`}
+                      className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider shrink-0 shadow-2xs ${getStatusBadgeClass(admin.status)}`}
                     >
                       {admin.status || "Aktif"}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-2.5 mb-5 bg-white/50 p-3 rounded-xl border border-white/50">
-                    <div className="flex items-center gap-2.5 text-xs text-gray-600 font-medium">
-                      <Mail className="w-3.5 h-3.5 text-[#2B7A75]/60" />
+                  <div className="space-y-2 mb-4 px-1 bg-[#F4F9F8]/60 p-3.5 rounded-2xl border border-teal-50/50">
+                    <div className="flex items-center gap-2.5 text-xs text-gray-600 font-medium min-w-0">
+                      <Mail className="w-3.5 h-3.5 text-[#2B7A75] shrink-0" />
                       <span className="truncate">{admin.email}</span>
                     </div>
                     <div className="flex items-center gap-2.5 text-xs text-gray-600 font-medium">
-                      <Phone className="w-3.5 h-3.5 text-[#2B7A75]/60" />
-                      {admin.admin_phone || "-"}
+                      <Phone className="w-3.5 h-3.5 text-[#2B7A75] shrink-0" />
+                      <span>{admin.admin_phone || "-"}</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between gap-2 pt-3 border-t border-teal-50/50">
-                    <p className="text-[10px] font-bold text-gray-300">
+                  <div className="flex items-center justify-between gap-2 pt-3.5 border-t border-teal-50/50">
+                    <p className="text-[10px] font-bold text-gray-400 tracking-wider">
                       ID: #{admin.admin_id.slice(-6).toUpperCase()}
                     </p>
-                    <div className="flex gap-1.5">
+                    <div className="flex gap-2">
                       <button
                         onClick={() => handleDetail(admin.admin_id)}
-                        className="p-1.5 bg-white border border-teal-50 text-[#2B7A75] rounded-lg shadow-xs active:scale-90 transition-transform"
+                        className="cursor-pointer p-2 bg-white hover:bg-teal-50 border border-teal-100/60 text-[#2B7A75] rounded-xl shadow-2xs active:scale-90 transition-all"
+                        title="Detail"
                       >
-                        <Eye size={16} />
+                        <Eye size={15} strokeWidth={2.5} />
                       </button>
                       <button
                         onClick={() => {
                           setSelectedAdmin(admin);
                           setShowUbah(true);
                         }}
-                        className="p-1.5 bg-white border border-teal-50 text-amber-600 rounded-lg shadow-xs active:scale-90 transition-transform"
+                        className="cursor-pointer p-2 bg-white hover:bg-amber-50 border border-amber-100/60 text-amber-600 rounded-xl shadow-2xs active:scale-90 transition-all"
+                        title="Ubah"
                       >
-                        <Pencil size={16} />
+                        <Pencil size={15} strokeWidth={2.5} />
                       </button>
                       <button
                         onClick={() => {
                           setDeleteId(admin.admin_id);
                           setShowHapus(true);
                         }}
-                        className="p-1.5 bg-white border border-teal-50 text-red-500 rounded-lg shadow-xs active:scale-90 transition-transform"
+                        className="cursor-pointer p-2 bg-white hover:bg-red-50 border border-red-100/60 text-red-500 rounded-xl shadow-2xs active:scale-90 transition-all"
+                        title="Hapus"
                       >
-                        <Trash2 size={16} />
+                        <Trash2 size={15} strokeWidth={2.5} />
                       </button>
                     </div>
                   </div>
@@ -515,7 +525,7 @@ export default function AdminPage() {
 
           {/* Pagination */}
           {totalPages > 0 && (
-            <div className="bg-white border-t border-gray-100 p-4 px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="bg-white border border-teal-50 md:border-none border-t md:border-t-gray-100 p-4 px-6 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-3xl md:rounded-none shadow-xs md:shadow-none mt-2 md:mt-0">
               <p className="text-xs sm:text-sm font-medium text-gray-500">
                 Menampilkan{" "}
                 <span className="font-bold text-[#1E5C58]">
@@ -536,7 +546,7 @@ export default function AdminPage() {
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                   disabled={currentPage === 1}
-                  className="px-2 py-1.5 rounded-lg border border-gray-100 text-[10px] sm:text-xs font-bold text-gray-500 hover:bg-[#F4F9F8] disabled:opacity-30 transition-colors"
+                  className="cursor-pointer px-2 py-1.5 rounded-lg border border-gray-100 text-[10px] sm:text-xs font-bold text-gray-500 hover:bg-[#F4F9F8] disabled:opacity-30 transition-colors"
                 >
                   Prev
                 </button>
@@ -545,7 +555,7 @@ export default function AdminPage() {
                     <button
                       key={i}
                       onClick={() => setCurrentPage(i + 1)}
-                      className={`shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition-all ${
+                      className={`cursor-pointer shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition-all ${
                         currentPage === i + 1
                           ? "bg-[#2B7A75] text-white shadow-sm scale-110"
                           : "text-gray-400 hover:bg-gray-50"
@@ -560,7 +570,7 @@ export default function AdminPage() {
                     setCurrentPage((p) => Math.min(p + 1, totalPages))
                   }
                   disabled={currentPage === totalPages || totalPages === 0}
-                  className="px-2 py-1.5 rounded-lg border border-gray-100 text-[10px] sm:text-xs font-bold text-gray-500 hover:bg-[#F4F9F8] disabled:opacity-30 transition-colors"
+                  className="cursor-pointer px-2 py-1.5 rounded-lg border border-gray-100 text-[10px] sm:text-xs font-bold text-gray-500 hover:bg-[#F4F9F8] disabled:opacity-30 transition-colors"
                 >
                   Next
                 </button>
