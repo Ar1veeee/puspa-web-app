@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { registrationChild, RegistrationPayload } from "@/lib/api/registration";
+import { handleApiError, showSuccessToast } from "@/lib/api-error";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -100,7 +101,7 @@ export default function Page() {
   const mutation = useMutation({
     mutationFn: (payload: RegistrationPayload) => registrationChild(payload),
     onSuccess: () => {
-      alert("✅ Pendaftaran berhasil!");
+      showSuccessToast("Pendaftaran berhasil!");
       setFormData({
         namaLengkap: "",
         tempatLahir: "",
@@ -121,11 +122,7 @@ export default function Page() {
     },
     onError: (error: any) => {
       console.error("❌ Error saat submit:", error);
-      if (error.response?.data) {
-        alert(`Error: ${JSON.stringify(error.response.data)}`);
-      } else {
-        alert(error.message || "Terjadi kesalahan saat pendaftaran.");
-      }
+      handleApiError(error, "Terjadi kesalahan saat pendaftaran.");
     },
   });
 
