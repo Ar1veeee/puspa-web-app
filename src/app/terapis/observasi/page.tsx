@@ -218,14 +218,14 @@ export default function ObservasiPage() {
       </div>
 
       {/* ================= CATEGORY NAVIGATION ================= */}
-      <div className="flex flex-wrap gap-2 p-1.5 bg-[#EAF4F2]/50 border border-teal-50/50 rounded-xl w-fit">
+      <div className="grid grid-cols-2 lg:flex lg:flex-wrap gap-2 p-1.5 bg-[#EAF4F2]/50 border border-teal-50/50 rounded-xl w-full lg:w-fit">
         {kategori.map((kat, idx) => {
           const isActive = activeKategori === idx;
           return (
             <button
               key={idx}
               onClick={() => setActiveKategori(idx)}
-              className={`cursor-pointer px-4 py-2 text-xs md:text-sm font-semibold rounded-lg transition-all duration-300 ${
+              className={`cursor-pointer px-3 py-2 text-[11px] lg:text-sm font-semibold rounded-lg text-center transition-all duration-300 w-full lg:w-auto ${
                 isActive
                   ? "bg-[#1E5C58] text-white shadow-sm"
                   : "text-[#1E5C58]/80 hover:bg-white/60 hover:text-[#1E5C58]"
@@ -263,7 +263,8 @@ export default function ObservasiPage() {
             </div>
           ) : (
             <div className="space-y-6">
-              <div className="overflow-x-auto">
+              {/* Desktop Table View */}
+              <div className="hidden lg:block overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-gray-100 text-gray-400 font-semibold">
@@ -313,6 +314,60 @@ export default function ObservasiPage() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="block lg:hidden space-y-4">
+                {paginatedData.map((d, index) => (
+                  <div
+                    key={d.observation_id ?? `card-${index}`}
+                    className={`bg-[#F4F9F8]/40 border border-teal-50 rounded-2xl p-4 space-y-3 shadow-xs ${
+                      selected?.observation_id === d.observation_id
+                        ? "border-[#1E5C58] bg-[#EAF4F2]/40"
+                        : ""
+                    }`}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-sm font-bold text-gray-700">{d.child_name}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">Wali: {d.guardian_name}</p>
+                      </div>
+                      <div className="flex gap-1.5">
+                        <button
+                          onClick={() => handleStartObservasi(d)}
+                          className="cursor-pointer bg-[#1E5C58] hover:bg-[#2E8B83] text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm"
+                        >
+                          Mulai
+                        </button>
+                        <button
+                          onClick={() => handleViewDetail(d.observation_id!)}
+                          className="cursor-pointer p-1.5 text-gray-400 hover:text-[#1E5C58] hover:bg-gray-100 rounded-lg transition-colors"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-teal-50/50 text-gray-500 font-medium">
+                      <div>
+                        <span className="block text-[10px] text-gray-400 uppercase">WhatsApp</span>
+                        <span className="font-mono text-gray-600">{d.guardian_phone || "-"}</span>
+                      </div>
+                      <div>
+                        <span className="block text-[10px] text-gray-400 uppercase">Administrator</span>
+                        <span className="text-gray-600">{d.admin_name || "-"}</span>
+                      </div>
+                      <div>
+                        <span className="block text-[10px] text-gray-400 uppercase">Tanggal</span>
+                        <span>{d.scheduled_date || "-"}</span>
+                      </div>
+                      <div>
+                        <span className="block text-[10px] text-gray-400 uppercase">Waktu</span>
+                        <span>{d.scheduled_time || "-"}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               {/* Pagination */}

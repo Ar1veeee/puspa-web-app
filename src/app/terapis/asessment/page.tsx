@@ -200,7 +200,7 @@ function AssessmentContent() {
 
 
       {/* ================= TAB TERAPI ================= */}
-      <div className="flex flex-wrap gap-2 p-1.5 bg-[#EAF4F2]/50 border border-teal-50/50 rounded-2xl w-fit">
+      <div className="grid grid-cols-2 lg:flex lg:flex-wrap gap-2 p-1.5 bg-[#EAF4F2]/50 border border-teal-50/50 rounded-2xl w-full lg:w-fit">
         {(
           [
             "PLB (Paedagog)",
@@ -214,7 +214,7 @@ function AssessmentContent() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`cursor-pointer px-4 py-2.5 text-xs md:text-sm font-semibold rounded-xl transition-all duration-300 ${
+              className={`cursor-pointer px-3 py-2.5 lg:px-4 text-[11px] lg:text-sm font-semibold rounded-xl text-center transition-all duration-300 w-full lg:w-auto ${
                 isActive
                   ? "bg-[#1E5C58] text-white shadow-sm"
                   : "text-[#1E5C58]/80 hover:bg-white/60 hover:text-[#1E5C58]"
@@ -296,7 +296,8 @@ function AssessmentContent() {
             transition={{ duration: 0.2 }}
             className="bg-white rounded-2xl p-6 md:p-8 border border-teal-50/60 shadow-[0_4px_24px_rgba(30,92,88,0.03)] hover:shadow-[0_8px_32px_rgba(30,92,88,0.06)] transition-shadow duration-300"
           >
-            <div className="overflow-x-auto">
+            {/* Desktop Table View */}
+            <div className="hidden lg:block overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-100 text-gray-400 font-semibold">
@@ -395,6 +396,88 @@ function AssessmentContent() {
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="block lg:hidden space-y-4">
+              {paginatedData.map((item) => (
+                <div
+                  key={item.assessment_id}
+                  className="bg-[#F4F9F8]/40 border border-teal-50 rounded-2xl p-4 space-y-3 shadow-xs text-left"
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-sm font-bold text-[#1E5C58]">{item.child_name}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">Wali: {item.guardian_name}</p>
+                    </div>
+                    <span className="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#EAF4F2] text-[#1E5C58] border border-teal-100">
+                      {item.type}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-teal-50/50 text-gray-500 font-medium">
+                    <div>
+                      <span className="block text-[10px] text-gray-400 uppercase">WhatsApp</span>
+                      <span className="font-mono text-gray-600">{item.guardian_phone || "-"}</span>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] text-gray-400 uppercase">
+                        {activeFilter === "Selesai" ? "Assessor" : "Administrator"}
+                      </span>
+                      <span className="text-gray-600">
+                        {activeFilter === "Selesai" ? item.assessor : item.administrator}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] text-gray-400 uppercase">Tanggal</span>
+                      <span>{item.scheduled_date || "-"}</span>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] text-gray-400 uppercase">Waktu</span>
+                      <span>
+                        {activeFilter === "Selesai" ? item.completed_at : item.scheduled_time}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 pt-3 border-t border-teal-50/50">
+                    {activeFilter === "Terjadwal" ? (
+                      <>
+                        <button
+                          onClick={() => handleStartAssessment(item.assessment_id)}
+                          className="cursor-pointer flex-1 flex items-center justify-center gap-1.5 bg-[#1E5C58] hover:bg-[#2E8B83] text-white text-xs font-semibold py-2 rounded-lg shadow-sm"
+                        >
+                          <Play size={14} />
+                          Mulai
+                        </button>
+                        <button
+                          onClick={() =>
+                            router.push(
+                              `/terapis/asessment/detailAsesment?assessment_id=${item.assessment_id}&type=${getType()}&status=${mappedStatus}`
+                            )
+                          }
+                          className="cursor-pointer flex-1 flex items-center justify-center gap-1.5 bg-white border border-teal-100 text-[#1E5C58] hover:bg-teal-50/20 text-xs font-semibold py-2 rounded-lg"
+                        >
+                          <Clock size={14} />
+                          Detail
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        onClick={() =>
+                          router.push(
+                            `/terapis/asessment/${getType()}Riwayat?assessment_id=${item.assessment_id}&status=${mappedStatus}`
+                          )
+                        }
+                        className="cursor-pointer w-full flex items-center justify-center gap-1.5 bg-[#1E5C58] hover:bg-[#2E8B83] text-white text-xs font-semibold py-2 rounded-lg shadow-sm"
+                      >
+                        <Clock size={14} />
+                        Riwayat Jawaban
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/* ================= PAGINATION ================= */}

@@ -50,9 +50,10 @@ export default function AssessmentPage() {
     }
   }, [statusParam]);
 
-  const [patients, setPatients] = useState<Patient[]>([]);
+   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(false);
   const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
+  const [expandedCardId, setExpandedCardId] = useState<number | null>(null);
   const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
 
   const [searchName, setSearchName] = useState("");
@@ -217,7 +218,8 @@ export default function AssessmentPage() {
             transition={{ duration: 0.2 }}
             className="bg-white rounded-2xl p-6 md:p-8 border border-teal-50/60 shadow-[0_4px_24px_rgba(30,92,88,0.03)] hover:shadow-[0_8px_32px_rgba(30,92,88,0.06)] transition-shadow duration-300"
           >
-            <div className="overflow-x-auto">
+            {/* Desktop Table View */}
+            <div className="hidden lg:block overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-100 text-gray-400 font-semibold">
@@ -317,9 +319,9 @@ export default function AssessmentPage() {
                             <button
                               className="w-full text-left px-4 py-2.5 text-xs font-bold text-[#1E5C58] hover:bg-teal-50/30 transition-colors border-t border-teal-50/60 flex items-center gap-1.5"
                               onClick={() => {
-                                setSelectedAssessmentId(row.assessment_id);
-                                setShowUploadModal(true);
-                                setOpenDropdownIndex(null);
+                                  setSelectedAssessmentId(row.assessment_id);
+                                  setShowUploadModal(true);
+                                  setOpenDropdownIndex(null);
                               }}
                             >
                               <Upload size={14} />
@@ -332,6 +334,121 @@ export default function AssessmentPage() {
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="block lg:hidden space-y-4">
+              {paginatedData.map((row, index) => (
+                <div
+                  key={row.assessment_id}
+                  className="bg-[#F4F9F8]/40 border border-teal-50 rounded-2xl p-4 space-y-3 shadow-xs text-left"
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-sm font-bold text-[#1E5C58]">{row.child_name}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">Wali: {row.guardian_name}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {Array.isArray(row.types) ? (
+                      row.types.map((type: string, i: number) => (
+                        <span key={i} className="inline-flex px-2 py-0.5 rounded-md text-[10px] font-semibold bg-teal-50/50 text-[#1E5C58] border border-teal-100/30">
+                          {type}
+                        </span>
+                      ))
+                    ) : typeof row.types === "string" ? (
+                      row.types.split(",").map((type: string, i: number) => (
+                        <span key={i} className="inline-flex px-2 py-0.5 rounded-md text-[10px] font-semibold bg-teal-50/50 text-[#1E5C58] border border-teal-100/30">
+                          {type.trim()}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-gray-400">-</span>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-teal-50/50 text-gray-500 font-medium">
+                    <div>
+                      <span className="block text-[10px] text-gray-400 uppercase">WhatsApp</span>
+                      <span className="font-mono text-gray-600">{row.guardian_phone || "-"}</span>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] text-gray-400 uppercase">Administrator</span>
+                      <span className="text-gray-600">{row.admin_name || "-"}</span>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] text-gray-400 uppercase">Tanggal</span>
+                      <span>{row.scheduled_date || "-"}</span>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] text-gray-400 uppercase">Waktu</span>
+                      <span>
+                        {activeFilter === "Selesai"
+                          ? row.parent_completed_time ?? "-"
+                          : row.scheduled_time ?? "-"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {activeFilter === "Selesai" && (
+                    <div className="pt-3 border-t border-teal-50/50 space-y-2">
+                      <button
+                        onClick={() => setExpandedCardId(expandedCardId === row.assessment_id ? null : row.assessment_id)}
+                        className="cursor-pointer w-full flex items-center justify-center gap-1.5 px-3 py-2 border border-teal-100 rounded-lg text-[#1E5C58] bg-white hover:bg-teal-50/20 text-xs font-semibold transition-colors"
+                      >
+                        <Settings size={14} />
+                        <span>{expandedCardId === row.assessment_id ? "Tutup Menu Aksi" : "Pilih Menu Aksi"}</span>
+                        <ChevronDown size={12} className={`transition-transform duration-200 ${expandedCardId === row.assessment_id ? "rotate-180" : ""}`} />
+                      </button>
+
+                      <AnimatePresence>
+                        {expandedCardId === row.assessment_id && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="overflow-hidden space-y-1 bg-white border border-teal-50/60 rounded-xl p-2"
+                          >
+                            {[
+                              { label: "Data Umum", route: "umumRiwayat", type: "umum_parent" },
+                              { label: "Data Fisioterapi", route: "fisioterapiRiwayat", type: "fisio_parent" },
+                              { label: "Data Terapi Okupasi", route: "okupasiRiwayat", type: "okupasi_parent" },
+                              { label: "Data Terapi Wicara", route: "wicaraRiwayat", type: "wicara_parent" },
+                              { label: "Data Paedagog", route: "paedagogRiwayat", type: "paedagog_parent" },
+                            ].map((item, i) => (
+                              <button
+                                key={i}
+                                className="w-full text-left px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-[#F4F9F8] hover:text-[#1E5C58] rounded-lg transition-colors"
+                                onClick={() => {
+                                  setExpandedCardId(null);
+                                  router.push(
+                                    `/terapis/riwayat/${item.route}?assessment_id=${row.assessment_id}&type=${item.type}`
+                                  );
+                                }}
+                              >
+                                {item.label}
+                              </button>
+                            ))}
+
+                            <button
+                              className="w-full text-left px-3 py-2.5 text-xs font-bold text-[#1E5C58] hover:bg-[#EAF4F2]/50 transition-colors border-t border-teal-50/50 flex items-center gap-1.5 mt-1 rounded-lg"
+                              onClick={() => {
+                                setSelectedAssessmentId(row.assessment_id);
+                                setShowUploadModal(true);
+                                setExpandedCardId(null);
+                              }}
+                            >
+                              <Upload size={14} />
+                              Upload File Laporan
+                            </button>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
 
             {/* ================= PAGINATION ================= */}
