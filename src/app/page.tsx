@@ -143,8 +143,31 @@ export default function Page() {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key === "Enter") {
+      const target = e.target as HTMLElement;
+      if (target.tagName === "TEXTAREA") {
+        return;
+      }
+      e.preventDefault(); // Prevent standard enter-to-submit behavior
+      
+      // Advance step if valid
+      if (currentStep === 1 && isStep1Valid()) {
+        setCurrentStep(2);
+      } else if (currentStep === 2 && isStep2Valid()) {
+        setCurrentStep(3);
+      }
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Prevent submission if not on final step or if final step is invalid
+    if (currentStep !== 3 || !isStep3Valid()) {
+      return;
+    }
+
     let birthDate = formData.tanggalLahir;
     if (birthDate) {
       const date = new Date(birthDate);
@@ -406,6 +429,7 @@ export default function Page() {
         <div className="scrollable-content lg:overflow-y-auto px-6 lg:px-8 pb-6 flex-1">
           <form
             onSubmit={handleSubmit}
+            onKeyDown={handleKeyDown}
             className="space-y-4 max-w-2xl mx-auto flex flex-col justify-between"
           >
             {/* Step 1 Contents */}
